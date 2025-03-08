@@ -1,0 +1,51 @@
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using TableTennisAPI.DTO.User;
+using TableTennisAPI.Models;
+using TableTennisAPI.Services.Users;
+
+// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+
+namespace TableTennisAPI.Controllers
+{
+    [Route("api/user")]
+    [ApiController]
+    public class AuthController : ControllerBase
+    {
+        private readonly UserService _userService;
+
+        public AuthController(UserService userService)
+        {
+            _userService = userService;
+        }
+
+        // POST api/<RegisterController>
+        [HttpPost("register")]
+        public async Task<IActionResult> Register([FromBody]RegisterDTO dto)
+        {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+
+            await _userService.SaveUserAsync(dto);
+
+            return Ok("User Registered");
+        }
+
+        [HttpGet]
+        public IActionResult GetUsers()
+        {
+            var users = _userService.GetUsers();
+            return Ok(users);
+        }
+
+
+        [HttpPost("login")]
+        public async Task<IActionResult> Login(string email, string password)
+        {
+            var user = await _userService.LoginAsync(email, password);
+
+            if (user == null) return BadRequest("Login failed");
+
+            return Ok(user);
+        }
+    }
+}
