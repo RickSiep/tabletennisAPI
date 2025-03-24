@@ -19,7 +19,8 @@ namespace TableTennisAPI.Util {
             var tokenDescriptor = new SecurityTokenDescriptor {
                 Subject = new ClaimsIdentity([
                     new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
-                    new Claim(JwtRegisteredClaimNames.Email, user.Email)
+                    new Claim(JwtRegisteredClaimNames.Email, user.Email),
+                    new Claim(ClaimTypes.Role, user.Roles)
                     ]),
                 Expires = DateTime.UtcNow.AddMinutes(60),
                 SigningCredentials = credentials,

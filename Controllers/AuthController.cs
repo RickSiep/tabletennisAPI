@@ -49,7 +49,14 @@ namespace TableTennisAPI.Controllers
         [HttpGet("test")]
         public IActionResult AuthenticatedEndpoint()
         {
-            return Ok("lol");
+            return Ok("What an user!");
+        }
+        
+        [Authorize(Roles = "Admin")]
+        [HttpGet("testAdmin")]
+        public IActionResult AuthenticatedAdmin()
+        {
+            return Ok("What an admin!");
         }
     }
 }

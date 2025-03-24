@@ -24,7 +24,7 @@ namespace TableTennisAPI.Services.Users
                 FirstName = dto.FirstName,
                 LastName = dto.LastName,
                 Email = dto.Email,
-                IsAdmin = false,
+                Roles = "User",
                 Elo = 1000
             };
 
