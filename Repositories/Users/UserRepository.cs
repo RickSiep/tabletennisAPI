@@ -5,14 +5,9 @@ using TableTennisAPI.DTO.User;
 using TableTennisAPI.Models;
 
 namespace TableTennisAPI.Repositories.Users {
-    public class UserRepository : IUserRepository {
+    public class UserRepository(DatabaseContext context) : IUserRepository {
 
-        private readonly DatabaseContext _context;
-
-        public UserRepository(DatabaseContext context)
-        {
-            _context = context;
-        }
+        private readonly DatabaseContext _context = context;
 
         public List<User> FindAll()
         {

@@ -6,6 +6,6 @@ namespace TableTennisAPI.Services.Users {
         IEnumerable<User> GetUsers();
         Task<User> SaveUserAsync(RegisterDTO dto);
 
-        Task<User?> LoginAsync(string email, string password);
+        Task<string?> LoginAsync(string email, string password);
     }
 }
