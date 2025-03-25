@@ -11,7 +11,7 @@ using TableTennisAPI.Util;
 
 namespace TableTennisAPI.Controllers
 {
-    [Route("api/user")]
+    [Route("user")]
     [ApiController]
     public class AuthController(UserService userService) : ControllerBase
     {
@@ -28,6 +28,7 @@ namespace TableTennisAPI.Controllers
             return Ok("User Registered");
         }
 
+        [Authorize]
         [HttpGet]
         public IActionResult GetUsers()
         {
@@ -58,18 +59,18 @@ namespace TableTennisAPI.Controllers
         }
 
 
-        [Authorize]
-        [HttpGet("test")]
-        public IActionResult AuthenticatedEndpoint()
-        {
-            return Ok("What an user!");
-        }
+        //[Authorize]
+        //[HttpGet("test")]
+        //public IActionResult AuthenticatedEndpoint()
+        //{
+        //    return Ok("What an user!");
+        //}
         
-        [Authorize(Roles = "Admin")]
-        [HttpGet("testAdmin")]
-        public IActionResult AuthenticatedAdmin()
-        {
-            return Ok("What an admin!");
-        }
+        //[Authorize(Roles = "Admin")]
+        //[HttpGet("testAdmin")]
+        //public IActionResult AuthenticatedAdmin()
+        //{
+        //    return Ok("What an admin!");
+        //}
     }
 }
