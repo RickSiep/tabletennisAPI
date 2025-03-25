@@ -16,7 +16,7 @@ namespace TableTennisAPI.Controllers
         [HttpPost("save")]
         public async Task<ActionResult<Match>> RegisterMatch([FromBody]MatchDTO request)
         {
-            var match = await _matchService.SaveMatchAsync(winnerId: request.MatchWinnerId, loserId: request.MatchLoserId);
+            var match = await _matchService.SaveMatchAsync(winnerId: request.MatchWinnerId, loserId: request.MatchLoserId, winnerScore: request.WinnerScore, loserScore: request.LoserScore);
 
             if (match is null)
                 return BadRequest("Something went wrong saving the match");

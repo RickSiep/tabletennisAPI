@@ -5,6 +5,9 @@ namespace TableTennisAPI.Models {
     public class Match {
         public int Id { get; set; }
 
+        public int WinnerScore { get; set; }
+        public int LoserScore { get; set; }
+
         [ForeignKey("MatchWinner")]
         public int? MatchWinnerID { get; set; }
         public User? MatchWinner { get; set; }
