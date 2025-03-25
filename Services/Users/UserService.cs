@@ -44,13 +44,16 @@ namespace TableTennisAPI.Services.Users
 
             if (!_passwordHelper.VerifyPassword(user, user.Password, password)) return null;
 
-            var response = new TokenResponseDto 
-            { 
-                AccessToken = _tokenProvider.Create(user), 
-                RefreshToken =  await GenerateAndSaveRefreshTokenAsync(user)
-            };
+            return await CreateTokenResponse(user);;
+        }
 
-            return response;
+        private async Task<TokenResponseDto> CreateTokenResponse(User user)
+        {
+            return new TokenResponseDto
+            {
+                AccessToken = _tokenProvider.Create(user),
+                RefreshToken = await GenerateAndSaveRefreshTokenAsync(user)
+            };
         }
 
         public async Task<string> GenerateAndSaveRefreshTokenAsync(User user)
@@ -62,6 +65,30 @@ namespace TableTennisAPI.Services.Users
             await _userRepository.UpdateUser(user);
 
             return refreshToken;
+        }
+
+        private async Task<User?> ValidateRefreshTokenAsync(int userId, string refreshToken)
+        {
+            var user = await _userRepository.FindUserById(userId);
+
+            if (user is null || user.RefreshToken != refreshToken 
+                || user.RefreshTokenExpiryTime <= DateTime.UtcNow)
+            {
+                return null;
+            }
+
+            return user;
+
+        }
+
+        public async Task<TokenResponseDto?> RefreshTokenAsync(RefreshTokenRequestDto request)
+        {
+            var user = await ValidateRefreshTokenAsync(request.UserId, request.RefreshToken);
+
+            if (user is null)
+                return null;
+
+            return await CreateTokenResponse(user);
         }
     }
 }

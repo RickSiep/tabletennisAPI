@@ -16,6 +16,11 @@ namespace TableTennisAPI.Repositories.Users
             return _context.Users.ToList();
         }
 
+        public async Task<User?> FindUserById(int id)
+        {
+            return await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
+        }
+
         public async Task<User?> GetUserByEmailAsync(string email)
         {
             return await _context.Users.FirstOrDefaultAsync(u => u.Email == email);

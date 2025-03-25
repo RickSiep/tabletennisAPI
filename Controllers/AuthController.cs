@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using TableTennisAPI.DTO.Token;
 using TableTennisAPI.DTO.User;
 using TableTennisAPI.Models;
 using TableTennisAPI.Services.Users;
@@ -44,6 +45,18 @@ namespace TableTennisAPI.Controllers
 
             return Ok(jwt);
         }
+
+        [HttpPost("refresh-token")]
+        public async Task<ActionResult<TokenResponseDto>> RefreshToken(RefreshTokenRequestDto request)
+        {
+            var result = await _userService.RefreshTokenAsync(request);
+
+            if (result is null || result.AccessToken is null || result.RefreshToken is null)
+                return Unauthorized("Invalid refresh token");
+
+            return Ok(result);
+        }
+
 
         [Authorize]
         [HttpGet("test")]
