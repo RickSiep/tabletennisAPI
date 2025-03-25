@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
 namespace TableTennisAPI.DTO.User {
-    public class RegisterDTO {
+    public class RegisterDto {
         [Required]
         public string FirstName { get; set; }
 

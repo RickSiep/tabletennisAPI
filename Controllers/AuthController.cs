@@ -18,7 +18,7 @@ namespace TableTennisAPI.Controllers
 
         // POST api/<RegisterController>
         [HttpPost("register")]
-        public async Task<IActionResult> Register([FromBody] RegisterDTO dto)
+        public async Task<IActionResult> Register([FromBody] RegisterDto dto)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
 

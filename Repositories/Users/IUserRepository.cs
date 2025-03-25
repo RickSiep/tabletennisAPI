@@ -7,5 +7,6 @@ namespace TableTennisAPI.Repositories.Users {
 
         Task<User?> GetUserByEmailAsync(string email);
         Task<User> Save(User user);
+        Task UpdateUser(User user);
     }
 }

@@ -4,8 +4,10 @@ using TableTennisAPI.Data;
 using TableTennisAPI.DTO.User;
 using TableTennisAPI.Models;
 
-namespace TableTennisAPI.Repositories.Users {
-    public class UserRepository(DatabaseContext context) : IUserRepository {
+namespace TableTennisAPI.Repositories.Users
+{
+    public class UserRepository(DatabaseContext context) : IUserRepository
+    {
 
         private readonly DatabaseContext _context = context;
 
@@ -26,6 +28,15 @@ namespace TableTennisAPI.Repositories.Users {
             await _context.SaveChangesAsync();
 
             return user;
+        }
+
+        public async Task UpdateUser(User user)
+        {
+            _context.Users.Update(user);
+            
+            await _context.SaveChangesAsync();
+
+            return;
         }
     }
 }

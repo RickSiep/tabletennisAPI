@@ -1,4 +1,7 @@
-﻿using TableTennisAPI.DTO.User;
+﻿using Microsoft.AspNetCore.Http.HttpResults;
+using System.Security.Cryptography;
+using TableTennisAPI.DTO.Token;
+using TableTennisAPI.DTO.User;
 using TableTennisAPI.Models;
 using TableTennisAPI.Repositories.Users;
 using TableTennisAPI.Util;
@@ -11,13 +14,12 @@ namespace TableTennisAPI.Services.Users
         private readonly IPasswordHelper _passwordHelper = passwordHelper;
         private readonly TokenProvider _tokenProvider = tokenProvider;
 
-
         public IEnumerable<User> GetUsers()
         {
             return _userRepository.FindAll();
         }
 
-        public async Task<User> SaveUserAsync(RegisterDTO dto)
+        public async Task<User> SaveUserAsync(RegisterDto dto)
         {
             var user = new User
             {
@@ -32,7 +34,7 @@ namespace TableTennisAPI.Services.Users
             return await _userRepository.Save(user);
         }
 
-        public async Task<string?> LoginAsync(string email, string password)
+        public async Task<TokenResponseDto?> LoginAsync(string email, string password)
         {
             if (email.Equals(string.Empty) || password.Equals(string.Empty)) return null;
 
@@ -40,8 +42,26 @@ namespace TableTennisAPI.Services.Users
 
             if (user is null) return null;
 
-            return _passwordHelper.VerifyPassword(user, user.Password, password) ? _tokenProvider.Create(user) : null;
+            if (!_passwordHelper.VerifyPassword(user, user.Password, password)) return null;
+
+            var response = new TokenResponseDto 
+            { 
+                AccessToken = _tokenProvider.Create(user), 
+                RefreshToken =  await GenerateAndSaveRefreshTokenAsync(user)
+            };
+
+            return response;
         }
 
+        public async Task<string> GenerateAndSaveRefreshTokenAsync(User user)
+        {
+            var refreshToken = _tokenProvider.GenerateRefreshToken();
+            user.RefreshToken = refreshToken;
+            user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(7);
+
+            await _userRepository.UpdateUser(user);
+
+            return refreshToken;
+        }
     }
 }
