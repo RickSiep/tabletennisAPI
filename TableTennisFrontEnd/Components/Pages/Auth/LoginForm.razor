@@ -1,0 +1,46 @@
+﻿@using TableTennisShared.DTO.User
+@using TableTennisShared.DTO.JWT
+@using System.Net.Http.Json
+@inject HttpClient Http
+@inject AntiforgeryStateProvider AntiForgery
+@rendermode InteractiveServer
+
+<EditForm method="post" FormName="create" Model="LoginRequest" OnValidSubmit="Submit" Enhance>
+    <DataAnnotationsValidator />
+    <ValidationSummary class="text-danger" />
+    <div class="form-group">
+        <label for="email" class="form-label">Email address</label>
+        <InputText type="email" class="form-control" @bind-Value="LoginRequest.Email" placeholder="Enter email" />
+        <ValidationMessage For="() => LoginRequest.Email" class="text-danger"/>
+    </div>
+    <div class="form-group my-3">
+        <label for="password" class="form-label">Password</label>
+        <InputText type="password" class="form-control" @bind-Value="LoginRequest.Password" placeholder="Enter password"/>
+        <ValidationMessage For="() => LoginRequest.Password" class="text-danger" />
+    </div>
+    <button type="submit" class="btn btn-primary bg-dark" disabled="@IsDisabled">Submit</button>
+</EditForm>
+
+@code {
+    [SupplyParameterFromForm]
+    public LoginRequestDto LoginRequest { get; set; } = new();
+
+    public bool IsDisabled = false;
+
+    private async Task Submit()
+    {
+        IsDisabled = true;
+        var response = await Http.PostAsJsonAsync("https://localhost:7149/user/login", LoginRequest);
+        if (response.IsSuccessStatusCode)
+        {
+            var authResult = await response.Content.ReadFromJsonAsync<LoginResponseDto>();
+
+        }
+        else
+        {
+
+        }
+
+        IsDisabled = false;
+    }
+}
