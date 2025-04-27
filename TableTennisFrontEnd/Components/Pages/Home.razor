@@ -1,14 +1,44 @@
 ﻿@page "/"
+@rendermode InteractiveServer
 
 <PageTitle>Home</PageTitle>
 
 <header class="fullscreen-header bg-primary h-100 d-flex">
     <div class="row g-0 justify-content-center align-items-center background-image--crystal_tower w-100 vh-100">
-        <div class="col-md-5 text-center mx-2 background-gradient--purple_reversed rounded">
-            <div class="my-2 mx-5 py-5">
-                <h2>Login / Register</h2>
-                <TableTennisFrontEnd.Components.Pages.Auth.LoginForm />
-            </div>
+        <div class="col-md-5 text-center mx-2 background-gradient--purple_reversed rounded d-flex flex-column">
+            @if (spinner)
+            {
+                <div class="position-absolute top-50 start-50 translate-middle bg-black bg-opacity-50 w-100 h-100 d-flex justify-content-center align-items-center">
+                    <div class="spinner-border" role="status"></div>
+                </div>
+            }
+
+            @if (Login)
+            {
+                <div class="my-2 mx-5 py-5">
+                    <h2>Login</h2>
+                    <TableTennisFrontEnd.Components.Pages.Auth.LoginForm SpinnerChanged="SetSpinnerVisible" />
+                </div>
+                <button class="btn btn-primary bg-dark align-self-end m-2" @onclick="() => Login = !Login">No account yet? Register here</button>
+            } 
+            else
+            {
+                <div class="my-2 mx-5 py-5">
+                    <h2>Register</h2>
+                    <TableTennisFrontEnd.Components.Pages.Auth.RegisterForm SpinnerChanged="SetSpinnerVisible" />
+                </div>
+                <button class="btn btn-primary bg-dark align-self-end m-2" @onclick="() => Login = !Login">Login instead?</button>
+            }
         </div>
     </div>
 </header>
+
+@code {
+    private bool spinner = false;
+    public bool Login { get; set; } = true;
+
+    private Task SetSpinnerVisible(bool isVisible) {
+        spinner = isVisible;
+        return Task.CompletedTask;
+    }
+}

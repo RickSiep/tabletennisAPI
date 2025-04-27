@@ -18,18 +18,34 @@
         <InputText type="password" class="form-control" @bind-Value="LoginRequest.Password" placeholder="Enter password"/>
         <ValidationMessage For="() => LoginRequest.Password" class="text-danger" />
     </div>
-    <button type="submit" class="btn btn-primary bg-dark" disabled="@IsDisabled">Submit</button>
+    <button type="submit" class="btn btn-primary bg-dark" disabled="@IsLoading">Submit</button>
 </EditForm>
 
 @code {
     [SupplyParameterFromForm]
     public LoginRequestDto LoginRequest { get; set; } = new();
 
-    public bool IsDisabled = false;
+    [Parameter]
+    public EventCallback<bool> SpinnerChanged { get; set; }
+
+    private bool _isLoading;
+    public bool IsLoading
+    {
+        get => _isLoading;
+        set
+        {
+            if (_isLoading != value)
+            {
+                _isLoading = value;
+                _ = SpinnerChanged.InvokeAsync(_isLoading);
+                StateHasChanged();
+            }
+        }
+    }
 
     private async Task Submit()
     {
-        IsDisabled = true;
+        IsLoading = true;
         var response = await Http.PostAsJsonAsync("https://localhost:7149/user/login", LoginRequest);
         if (response.IsSuccessStatusCode)
         {
@@ -41,6 +57,6 @@
 
         }
 
-        IsDisabled = false;
+        IsLoading = false;
     }
 }

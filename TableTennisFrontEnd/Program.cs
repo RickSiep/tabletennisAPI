@@ -4,6 +4,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
+    .AddInteractiveWebAssemblyComponents()
     .AddInteractiveServerComponents();
 
 builder.Services.AddHttpClient();
@@ -26,6 +27,8 @@ app.UseAntiforgery();
 
 app.MapStaticAssets();
 app.MapRazorComponents<App>()
+    .AddInteractiveWebAssemblyRenderMode()
     .AddInteractiveServerRenderMode();
+
 
 app.Run();
