@@ -1,18 +1,19 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Reflection.Metadata.Ecma335;
 using TableTennisAPI.Models;
 using TableTennisAPI.Services.Matches;
 using TableTennisShared.DTO.Match;
 
 namespace TableTennisAPI.Controllers
 {
+    [Authorize]
     [Route("match")]
     [ApiController]
     public class MatchController(MatchService matchService) : ControllerBase
     {
         private readonly MatchService _matchService = matchService;
 
-        [Authorize]
         [HttpPost("save")]
         public async Task<ActionResult<Match>> RegisterMatch([FromBody]MatchDto request)
         {
@@ -23,5 +24,8 @@ namespace TableTennisAPI.Controllers
 
             return Ok();
         }
+
+        [HttpGet]
+        public async Task GetMatches() => Ok(new Match());
     }
 }

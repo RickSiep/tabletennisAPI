@@ -1,3 +1,6 @@
+using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
+using TableTennisFrontEnd.Authentication;
 using TableTennisFrontEnd.Components;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -5,9 +8,16 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveWebAssemblyComponents()
-    .AddInteractiveServerComponents();
+    .AddInteractiveServerComponents()
+    .AddAuthenticationStateSerialization();
+
+builder.Services.AddAuthentication();
+builder.Services.AddCascadingAuthenticationState();
 
 builder.Services.AddHttpClient();
+builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthStateProvider>();
+builder.Services.AddAuthorizationCore();
+builder.Services.AddScoped<ProtectedLocalStorage>();
 
 var app = builder.Build();
 
@@ -22,6 +32,8 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.UseAntiforgery();
 

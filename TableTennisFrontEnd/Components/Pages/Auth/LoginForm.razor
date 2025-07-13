@@ -1,9 +1,12 @@
-﻿@using TableTennisShared.DTO.User
+﻿@using Microsoft.AspNetCore.Components.Authorization
+@using TableTennisFrontEnd.Authentication
+@using TableTennisShared.DTO.User
 @using TableTennisShared.DTO.JWT
 @using System.Net.Http.Json
 @inject HttpClient Http
 @inject AntiforgeryStateProvider AntiForgery
-@rendermode InteractiveServer
+@inject AuthenticationStateProvider AuthStateProvider
+@inject NavigationManager NavigationManager
 
 <EditForm method="post" FormName="create" Model="LoginRequest" OnValidSubmit="Submit" Enhance>
     <DataAnnotationsValidator />
@@ -50,7 +53,8 @@
         if (response.IsSuccessStatusCode)
         {
             var authResult = await response.Content.ReadFromJsonAsync<LoginResponseDto>();
-
+            await ((CustomAuthStateProvider)AuthStateProvider).NotifyUserAuthentication(authResult?.AccessToken);
+            NavigationManager.NavigateTo("/");
         }
         else
         {
