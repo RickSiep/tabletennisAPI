@@ -66,5 +66,11 @@ namespace TableTennisFrontEnd.Authentication
                 default: return base64;
             }
         }
+
+        public async Task Logout()
+        {
+            await _storage.DeleteAsync("authToken");
+            NotifyAuthenticationStateChanged(Task.FromResult(new AuthenticationState(_anonymous)));
+        }
     }
 }
