@@ -19,6 +19,7 @@ namespace TableTennisAPI.Util {
 
             var tokenDescriptor = new SecurityTokenDescriptor {
                 Subject = new ClaimsIdentity([
+                    new Claim(ClaimTypes.Name, user.FirstName),
                     new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
                     new Claim(JwtRegisteredClaimNames.Email, user.Email),
                     new Claim(ClaimTypes.Role, user.Roles)

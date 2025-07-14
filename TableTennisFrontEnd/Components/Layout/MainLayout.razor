@@ -2,17 +2,17 @@
 @using Microsoft.AspNetCore.Components.Authorization
 
 <div class="min-vh-100">
-    @* <NavMenu /> *@
+    <NavMenu />
+    @Body
 
-    <AuthorizeView>
+        <AuthorizeView>
         <Authorized>
             <div>Hello, @context.User.Identity?.Name!</div>
         </Authorized>
         <NotAuthorized>
-            @Body
         </NotAuthorized>
     </AuthorizeView>
-     
+
 </div>
 
 <div id="blazor-error-ui" data-nosnippet>

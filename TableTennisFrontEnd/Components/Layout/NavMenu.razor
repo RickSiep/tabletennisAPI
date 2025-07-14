@@ -1,33 +1,60 @@
-﻿<nav class="navbar navbar-expand-sm navbar-toggleable-sm background-gradient--purple fixed-top">
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-    </button>
-    <a class="navbar-brand" href="#"><img src="@Assets["favicon.png"]" alt="logo" class="mx-2"></a>
-    <div class="collapse navbar-collapse my-2" id="navbarNav">
-        <div class="d-flex justify-content-center w-100 flex-sm-row flex-column">
-            <div class="nav-item p-0 mx-2">
-                <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                    <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Home
-                </NavLink>
-            </div>
+﻿@using Microsoft.AspNetCore.Components.Authorization
+<AuthorizeView>
+    <Authorized>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm background-gradient--purple fixed-top justify-content-between">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse my-2" id="navbarNav">
+                <div class="d-flex justify-content-start w-100 flex-sm-row">
+                    <a class="navbar-brand" href="#"><img src="@Assets["favicon.png"]" alt="logo" class="mx-2"></a>
+                </div>
+                <div class="d-flex justify-content-center w-100 flex-sm-row flex-column">
+                    <div class="nav-item p-0 mx-2">
+                        <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+                            <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Home
+                        </NavLink>
+                    </div>
 
-            <div class="nav-item p-0 mx-2">
-                <NavLink class="nav-link" href="counter">
-                    <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Counter
-                </NavLink>
-            </div>
+                    <div class="nav-item p-0 mx-2">
+                        <NavLink class="nav-link" href="counter">
+                            <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Counter
+                        </NavLink>
+                    </div>
 
-            <div class="nav-item p-0 mx-2">
-                <NavLink class="nav-link" href="weather">
-                    <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Weather
-                </NavLink>
+                    <div class="nav-item p-0 mx-2">
+                        <NavLink class="nav-link" href="weather">
+                            <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Weather
+                        </NavLink>
+                    </div>
+                </div>
+                <div class="d-flex justify-content-end w-100 flex-sm-row flex-column">
+                    <div class="nav-item p-0 mx-2">
+                        <NavLink class="nav-link" href="testing">
+                            <span class="bi bi-plus-square-fill" aria-hidden="true"></span> @context.User.Identity?.Name!
+                        </NavLink>
+                    </div>
+                </div>
             </div>
-            <div class="nav-item p-0 mx-2">
-                <NavLink class="nav-link" href="testing">
-                    <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Test
-                </NavLink>
+        </nav>
+    </Authorized>
+    <NotAuthorized>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm background-gradient--purple fixed-top">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <a class="navbar-brand" href="#"><img src="@Assets["favicon.png"]" alt="logo" class="mx-2"></a>
+            <div class="collapse navbar-collapse my-2" id="navbarNav">
+                <div class="d-flex justify-content-center w-100 flex-sm-row flex-column">
+                    <div class="nav-item p-0 mx-2">
+                        <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+                            <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Home
+                        </NavLink>
+                    </div>
+                </div>
             </div>
-        </div>
-    </div>
-</nav>
+        </nav>
+    </NotAuthorized>
+</AuthorizeView>
