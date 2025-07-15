@@ -28,6 +28,7 @@
             <ValidationMessage For="() => RegisterRequest.Password" class="text-danger" />
         </div>
     </div>
+    <h5 class="text-danger">@FormMessage</h5>
     <button type="submit" class="btn btn-primary bg-dark" disabled="@IsLoading">Submit</button>
 
 </EditForm>
@@ -39,6 +40,7 @@
     [Parameter]
     public EventCallback<bool> SpinnerChanged { get; set; }
 
+    public string FormMessage { get; set; } = string.Empty;
     private bool _isLoading;
     public bool IsLoading
     {
@@ -60,12 +62,11 @@
         var response = await Http.PostAsJsonAsync("https://localhost:7149/user/register", RegisterRequest);
         if (response.IsSuccessStatusCode)
         {
-            // var authResult = await response.Content.ReadFromJsonAsync<LoginResponseDto>();
-
+            FormMessage = "User registered!";
         }
         else
         {
-
+            FormMessage = "Something went wrong, try again?";
         }
 
         IsLoading = false;

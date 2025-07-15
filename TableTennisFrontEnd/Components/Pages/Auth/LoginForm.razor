@@ -21,6 +21,7 @@
         <InputText type="password" class="form-control" @bind-Value="LoginRequest.Password" placeholder="Enter password"/>
         <ValidationMessage For="() => LoginRequest.Password" class="text-danger" />
     </div>
+    <h5 class="text-danger">@ErrorMessage</h5>
     <button type="submit" class="btn btn-primary bg-dark" disabled="@IsLoading">Submit</button>
 </EditForm>
 
@@ -31,6 +32,7 @@
     [Parameter]
     public EventCallback<bool> SpinnerChanged { get; set; }
 
+    public string ErrorMessage { get; set; } = string.Empty;
     private bool _isLoading;
     public bool IsLoading
     {
@@ -49,6 +51,7 @@
     private async Task Submit()
     {
         IsLoading = true;
+        ErrorMessage = "";
         var response = await Http.PostAsJsonAsync("https://localhost:7149/user/login", LoginRequest);
         if (response.IsSuccessStatusCode)
         {
@@ -58,7 +61,7 @@
         }
         else
         {
-
+            ErrorMessage = "Something went wrong, try again?";
         }
 
         IsLoading = false;
