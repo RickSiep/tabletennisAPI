@@ -14,11 +14,11 @@
     <div class="form-group">
         <label for="email" class="form-label">Email address</label>
         <InputText type="email" class="form-control" @bind-Value="LoginRequest.Email" placeholder="Enter email" />
-        <ValidationMessage For="() => LoginRequest.Email" class="text-danger"/>
+        <ValidationMessage For="() => LoginRequest.Email" class="text-danger" />
     </div>
     <div class="form-group my-3">
         <label for="password" class="form-label">Password</label>
-        <InputText type="password" class="form-control" @bind-Value="LoginRequest.Password" placeholder="Enter password"/>
+        <InputText type="password" class="form-control" @bind-Value="LoginRequest.Password" placeholder="Enter password" />
         <ValidationMessage For="() => LoginRequest.Password" class="text-danger" />
     </div>
     <h5 class="text-danger">@ErrorMessage</h5>
@@ -52,17 +52,25 @@
     {
         IsLoading = true;
         ErrorMessage = "";
-        var response = await Http.PostAsJsonAsync("https://localhost:7149/user/login", LoginRequest);
-        if (response.IsSuccessStatusCode)
+        try
         {
-            var authResult = await response.Content.ReadFromJsonAsync<LoginResponseDto>();
-            await ((CustomAuthStateProvider)AuthStateProvider).NotifyUserAuthentication(authResult?.AccessToken);
-            NavigationManager.NavigateTo("/");
+            var response = await Http.PostAsJsonAsync("https://localhost:7149/user/login", LoginRequest);
+            if (response.IsSuccessStatusCode)
+            {
+                var authResult = await response.Content.ReadFromJsonAsync<LoginResponseDto>();
+                await ((CustomAuthStateProvider)AuthStateProvider).NotifyUserAuthentication(authResult?.AccessToken);
+                NavigationManager.NavigateTo("/");
+            }
+            else
+            {
+                ErrorMessage = await response.Content.ReadAsStringAsync();
+            }
         }
-        else
+        catch (Exception e)
         {
-            ErrorMessage = "Something went wrong, try again?";
+            ErrorMessage = "Something went wrong, please try again later.";
         }
+
 
         IsLoading = false;
     }

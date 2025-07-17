@@ -37,9 +37,7 @@ namespace TableTennisAPI.Controllers
         {
             var jwt = await _userService.LoginAsync(dto.Email, dto.Password);
 
-            if (jwt is null) return BadRequest("Login failed");
-
-            return Ok(jwt);
+            return jwt is null ? BadRequest("Username password combination isn't known.") : Ok(jwt);
         }
 
         [HttpPost("refresh-token")]
