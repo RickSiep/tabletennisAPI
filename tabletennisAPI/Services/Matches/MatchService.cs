@@ -16,13 +16,7 @@ namespace TableTennisAPI.Services.Matches
 
             if (winner is null || loser is null) return null;
 
-            var match = new Match
-            {
-                MatchWinner = winner,
-                MatchLoser = loser,
-                WinnerScore = winnerScore,
-                LoserScore = loserScore
-            };
+            var match = new Match();
 
             return await _matchRepository.AddMatch(match);
         }

@@ -11,7 +11,7 @@
         public string? RefreshToken { get; set; }
         public DateTime? RefreshTokenExpiryTime { get; set; }
 
-        public ICollection<Match> MatchAsWinner { get; set; }
-        public ICollection<Match> MatchAsLoser { get; set; }
+        public List<Match> Matches { get; } = [];
+        public List<UserMatch> UserMatches { get; } = [];
     }
 }

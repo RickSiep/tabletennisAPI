@@ -14,20 +14,17 @@ namespace TableTennisAPI.Data {
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Match>()
-                .HasOne(e => e.MatchWinner)
-                .WithMany(u => u.MatchAsWinner)
-                .HasForeignKey(m => m.MatchWinnerID)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            modelBuilder.Entity<Match>()
-                .HasOne(m => m.MatchLoser)
-                .WithMany(u => u.MatchAsLoser)
-                .HasForeignKey(m => m.MatchLoserID)
-                .OnDelete(DeleteBehavior.Restrict);
+                .HasIndex(e => e.Id)
+                .IsUnique();
 
             modelBuilder.Entity<User>()
                 .HasIndex(u => u.Email)
                 .IsUnique();
+
+            modelBuilder.Entity<User>()
+                .HasMany(e => e.Matches)
+                .WithMany(e => e.Users)
+                .UsingEntity<UserMatch>();
         }
     }
 }
