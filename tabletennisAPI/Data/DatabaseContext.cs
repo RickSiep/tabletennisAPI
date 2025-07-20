@@ -23,8 +23,20 @@ namespace TableTennisAPI.Data {
 
             modelBuilder.Entity<User>()
                 .HasMany(e => e.Matches)
-                .WithMany(e => e.Users)
-                .UsingEntity<UserMatch>();
+                .WithMany(e => e.Users);
+
+            modelBuilder.Entity<UserMatch>()
+                .HasKey(um => new { um.UserId, um.MatchId});
+
+            modelBuilder.Entity<UserMatch>()
+                .HasOne<User>()
+                .WithMany(u => u.UserMatches)
+                .HasForeignKey(um  => um.UserId);
+
+            modelBuilder.Entity<UserMatch>()
+                .HasOne<Match>()
+                .WithMany(m => m.UserMatches)
+                .HasForeignKey(um =>um.MatchId);
         }
     }
 }

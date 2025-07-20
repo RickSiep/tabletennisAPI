@@ -4,6 +4,6 @@ namespace TableTennisAPI.Services.Matches
 {
     public interface IMatchService
     {
-        Task<Match?> SaveMatchAsync(int winnerId, int loserId, int winnerScore, int loserScore);
+        Task<Match?> SaveMatchAsync(Match match);
     }
 }

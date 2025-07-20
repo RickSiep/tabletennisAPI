@@ -9,16 +9,16 @@ namespace TableTennisAPI.Services.Matches
         private readonly IMatchRepository _matchRepository = matchRepository;
         private readonly IUserRepository _userRepository = userRepository;
 
-        public async Task<Match?> SaveMatchAsync(int winnerId, int loserId, int winnerScore, int loserScore)
+        public async Task<Match?> SaveMatchAsync(Match match)
         {
-            var winner = await _userRepository.FindUserById(winnerId);
-            var loser = await _userRepository.FindUserById(loserId);
+            //var winner = await _userRepository.FindUserById(winnerId);
+            //var loser = await _userRepository.FindUserById(loserId);
 
-            if (winner is null || loser is null) return null;
+            //if (winner is null || loser is null) return null;
 
-            var match = new Match();
+            var newMatch = new Match();
 
-            return await _matchRepository.AddMatch(match);
+            return await _matchRepository.AddMatch(newMatch);
         }
     }
 }
