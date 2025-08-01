@@ -54,16 +54,15 @@
         ErrorMessage = "";
         try
         {
-            var response = await ApiClient.PostJsonAsync("/user/login", LoginRequest);
-            if (response.IsSuccessStatusCode)
+            var response = await ApiClient.PostJsonAsyncWithResponseModel<LoginRequestDto, LoginResponseDto>("/user/login", LoginRequest);
+            if (response != null)
             {
-                var authResult = await response.Content.ReadFromJsonAsync<LoginResponseDto>();
-                await ((CustomAuthStateProvider)AuthStateProvider).NotifyUserAuthentication(authResult?.AccessToken);
+                await ((CustomAuthStateProvider)AuthStateProvider).NotifyUserAuthentication(response.AccessToken);
                 NavigationManager.NavigateTo("/");
             }
             else
             {
-                ErrorMessage = await response.Content.ReadAsStringAsync();
+                ErrorMessage = "Something went wrong";
             }
         }
         catch (Exception e)

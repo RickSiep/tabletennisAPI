@@ -7,9 +7,20 @@
             return client.GetFromJsonAsync<T>(path);
         }
 
-        public Task<HttpResponseMessage> PostJsonAsync<T>(string path, T value)
+        public async Task<HttpResponseMessage> PostJsonAsync<T>(string path, T value)
         {
-            return client.PostAsJsonAsync(path, value);
+            return await client.PostAsJsonAsync(path, value);
+        }
+
+        public async Task<TOut> PostJsonAsyncWithResponseModel<TIn, TOut>(string path, TIn postModel)
+        {
+            var response = await client.PostAsJsonAsync(path, postModel);
+            if (response == null || !response.IsSuccessStatusCode)
+            {
+                return default;
+            }
+
+            return await response.Content.ReadFromJsonAsync<TOut>();
         }
     }
 }
