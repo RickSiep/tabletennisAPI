@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Reflection.Metadata.Ecma335;
 using TableTennisAPI.Models;
 using TableTennisAPI.Services.Matches;
 using TableTennisShared.DTO.Match;

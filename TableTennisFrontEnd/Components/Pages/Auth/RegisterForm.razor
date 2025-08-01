@@ -1,8 +1,7 @@
 ﻿@using TableTennisShared.DTO.User
 @using TableTennisShared.DTO.JWT
 @using System.Net.Http.Json
-@inject HttpClient Http
-@inject AntiforgeryStateProvider AntiForgery
+@inject ApiClient ApiClient
 
 <EditForm method="post" FormName="create" Model="RegisterRequest" OnValidSubmit="Submit" Enhance>
     <DataAnnotationsValidator />
@@ -59,7 +58,8 @@
     private async Task Submit()
     {
         IsLoading = true;
-        var response = await Http.PostAsJsonAsync("https://localhost:7149/user/register", RegisterRequest);
+        var response = await ApiClient.PostJsonAsync("/user/register", RegisterRequest);
+
         if (response.IsSuccessStatusCode)
         {
             FormMessage = "User registered!";

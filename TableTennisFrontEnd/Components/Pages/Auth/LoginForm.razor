@@ -3,8 +3,7 @@
 @using TableTennisShared.DTO.User
 @using TableTennisShared.DTO.JWT
 @using System.Net.Http.Json
-@inject HttpClient Http
-@inject AntiforgeryStateProvider AntiForgery
+@inject ApiClient ApiClient
 @inject AuthenticationStateProvider AuthStateProvider
 @inject NavigationManager NavigationManager
 
@@ -26,6 +25,7 @@
 </EditForm>
 
 @code {
+
     [SupplyParameterFromForm]
     public LoginRequestDto LoginRequest { get; set; } = new();
 
@@ -54,7 +54,7 @@
         ErrorMessage = "";
         try
         {
-            var response = await Http.PostAsJsonAsync("https://localhost:7149/user/login", LoginRequest);
+            var response = await ApiClient.PostJsonAsync("/user/login", LoginRequest);
             if (response.IsSuccessStatusCode)
             {
                 var authResult = await response.Content.ReadFromJsonAsync<LoginResponseDto>();
@@ -70,7 +70,6 @@
         {
             ErrorMessage = "Something went wrong, please try again later.";
         }
-
 
         IsLoading = false;
     }

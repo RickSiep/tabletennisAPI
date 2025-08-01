@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
+using TableTennisFrontEnd;
 using TableTennisFrontEnd.Authentication;
 using TableTennisFrontEnd.Components;
 
@@ -18,6 +19,11 @@ builder.Services.AddHttpClient();
 builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthStateProvider>();
 builder.Services.AddAuthorizationCore();
 builder.Services.AddScoped<ProtectedLocalStorage>();
+
+builder.Services.AddHttpClient<ApiClient>(client =>
+{
+    client.BaseAddress = new("https://localhost:7149");
+});
 
 var app = builder.Build();
 
