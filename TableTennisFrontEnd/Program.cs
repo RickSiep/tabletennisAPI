@@ -12,7 +12,11 @@ builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents()
     .AddAuthenticationStateSerialization();
 
-builder.Services.AddAuthentication();
+builder.Services.AddAuthentication("CustomJwt")
+    .AddCookie("CustomJwt", options =>
+    {
+        options.LoginPath = "/login";
+    });
 builder.Services.AddCascadingAuthenticationState();
 
 builder.Services.AddHttpClient();

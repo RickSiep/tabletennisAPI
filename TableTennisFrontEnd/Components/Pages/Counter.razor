@@ -2,7 +2,9 @@
 @rendermode InteractiveServer
 @using Microsoft.AspNetCore.Components.Authorization;
 @using TableTennisFrontEnd.Authentication
+@using Microsoft.AspNetCore.Authorization
 @inject AuthenticationStateProvider AuthenticationStateProvider
+@attribute [Authorize]
 
 <PageTitle>Counter</PageTitle>
 
@@ -22,11 +24,4 @@
     {
         currentCount++;
     }
-
-    // protected override async Task OnInitializedAsync()
-    // {
-    //     ExampleService = ScopedService.GetRequiredService<ExampleAuthService>();
-
-    //     message = await ExampleService.ExampleMethod(AuthenticationStateProvider);
-    // }
 }

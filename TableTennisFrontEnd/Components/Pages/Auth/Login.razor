@@ -1,7 +1,12 @@
 ﻿@page "/login"
+@attribute [AllowAnonymous]
 @using TableTennisFrontEnd.Components.Pages.Auth
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.Authorization
+@inject AuthenticationStateProvider AuthStateProvider
+@inject NavigationManager Navigation
 
-<PageTitle>Home</PageTitle>
+<PageTitle>Login</PageTitle>
 
 <header class="fullscreen-header bg-primary h-100 d-flex">
     <div class="row g-0 justify-content-center align-items-center background-image--crystal_tower w-100 vh-100">
@@ -13,7 +18,7 @@
                 </div>
             }
 
-            @if (LoginOrRegister)
+            @if (_loginOrRegister)
             {
                 <div class="my-2 mx-5 py-5">
                     <h2>Login</h2>
@@ -35,7 +40,16 @@
 
 @code {
     private bool _spinner = false;
-    public bool LoginOrRegister { get; set; } = true;
+    private bool _loginOrRegister { get; set; } = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var user = (await AuthStateProvider.GetAuthenticationStateAsync()).User;
+        if (user.Identity?.IsAuthenticated ?? false)
+        {
+            Navigation.NavigateTo("/");
+        }
+    }
 
     private Task SetSpinnerVisible(bool isVisible)
     {
@@ -43,5 +57,5 @@
         return Task.CompletedTask;
     }
 
-    private void ToggleAuthentication() => LoginOrRegister = !LoginOrRegister;
+    private void ToggleAuthentication() => _loginOrRegister = !_loginOrRegister;
 }
