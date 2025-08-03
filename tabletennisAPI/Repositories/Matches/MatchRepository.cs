@@ -15,5 +15,10 @@ namespace TableTennisAPI.Repositories.Matches
 
             return match;
         }
+
+        public async Task<IEnumerable<Match>> GetAllMatches()
+        {
+            return _context.Matches.ToList();
+        }
     }
 }

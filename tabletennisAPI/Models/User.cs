@@ -1,5 +1,5 @@
 ﻿namespace TableTennisAPI.Models {
-    public record User {
+    public class User {
         public int Id { get; set; }
         public string FirstName { get; set; } = string.Empty;
         public string LastName { get; set; } = string.Empty;
@@ -10,8 +10,7 @@
 
         public string? RefreshToken { get; set; }
         public DateTime? RefreshTokenExpiryTime { get; set; }
-
-        public List<Match> Matches { get; } = [];
-        public List<UserMatch> UserMatches { get; } = [];
+        public List<Match> Matches { get; set; } = [];
+        public List<UserMatch> UserMatches { get; set; } = [];
     }
 }

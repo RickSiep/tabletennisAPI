@@ -2,9 +2,9 @@
 {
     public class ApiClient(HttpClient client)
     {
-        public Task<T> GetFromJsonAsync<T>(string path)
+        public async Task<IAsyncEnumerable<T>> GetAllFromJsonAsync<T>(string path)
         {
-            return client.GetFromJsonAsync<T>(path);
+            return client.GetFromJsonAsAsyncEnumerable<T>(path);
         }
 
         public async Task<HttpResponseMessage> PostJsonAsync<T>(string path, T value)

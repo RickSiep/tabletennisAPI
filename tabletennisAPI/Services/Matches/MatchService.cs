@@ -1,24 +1,33 @@
 ﻿using TableTennisAPI.Models;
 using TableTennisAPI.Repositories.Matches;
-using TableTennisAPI.Repositories.Users;
+using TableTennisAPI.Repositories.UserMatches;
+using TableTennisShared.DTO.Match;
 
 namespace TableTennisAPI.Services.Matches
 {
-    public class MatchService(IMatchRepository matchRepository, IUserRepository userRepository) : IMatchService
+    public class MatchService(IMatchRepository matchRepository, IUserMatchRepository userMatchRepository) : IMatchService
     {
         private readonly IMatchRepository _matchRepository = matchRepository;
-        private readonly IUserRepository _userRepository = userRepository;
+        private readonly IUserMatchRepository _userMatchRepository = userMatchRepository;
 
-        public async Task<Match?> SaveMatchAsync(Match match)
+        public async Task<Match?> SaveMatchAsync(MatchSubmissionDto match)
         {
-            //var winner = await _userRepository.FindUserById(winnerId);
-            //var loser = await _userRepository.FindUserById(loserId);
+            var newMatch = await _matchRepository.AddMatch(new() { DatePlayed = DateTime.Today.Date});
 
-            //if (winner is null || loser is null) return null;
+            foreach (var participant in match.Participants)
+            {
+                var userMatch = new UserMatch();
+                userMatch.MatchId = newMatch.Id;
+                userMatch.UserId = participant.UserId;
+                userMatch.IsWinner = participant.IsWinner;
+                userMatch.TeamNumber = participant.TeamNumber;
 
-            var newMatch = new Match();
+                await _userMatchRepository.AddUserMatch(userMatch);
+            }
 
-            return await _matchRepository.AddMatch(newMatch);
+            return newMatch;
         }
+
+        public async Task<IEnumerable<Match>> GetAllMatchesAsync() => await _matchRepository.GetAllMatches();
     }
 }

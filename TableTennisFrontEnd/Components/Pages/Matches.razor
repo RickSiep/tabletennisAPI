@@ -1,0 +1,49 @@
+﻿@page "/matches"
+@rendermode InteractiveServer
+@using Microsoft.AspNetCore.Components.Authorization;
+@using TableTennisFrontEnd.Authentication
+@using Microsoft.AspNetCore.Authorization
+@using TableTennisShared.DTO.Match
+@using System;
+@using System.Collections.Generic;
+@using System.Linq;
+@using System.Threading.Tasks;
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject ApiClient ApiClient
+@attribute [Authorize]
+
+<PageTitle>Matches</PageTitle>
+
+<div class="mt-5 pt-5">
+    <div class="container">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">First</th>
+                    <th scope="col">Last</th>
+                    <th scope="col">Handle</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var match in MatchDtos)
+                {
+                    <tr>
+                        <th scope="row">@match.DatePlayed.ToString()</th>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+@code {
+    public List<MatchDto> MatchDtos { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var result = await ApiClient.GetAllFromJsonAsync<MatchDto>("/match").Result.ToListAsync();
+        await base.OnInitializedAsync();
+    }
+}

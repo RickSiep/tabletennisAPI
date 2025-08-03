@@ -17,6 +17,7 @@ builder.Services.AddAuthentication("CustomJwt")
     {
         options.LoginPath = "/login";
     });
+
 builder.Services.AddCascadingAuthenticationState();
 
 builder.Services.AddHttpClient();
@@ -51,6 +52,5 @@ app.MapStaticAssets();
 app.MapRazorComponents<App>()
     .AddInteractiveWebAssemblyRenderMode()
     .AddInteractiveServerRenderMode();
-
 
 app.Run();

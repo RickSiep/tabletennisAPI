@@ -2,7 +2,7 @@
     public class Match {
         public int Id { get; set; }
         public DateTime DatePlayed { get; set; }
-        public List<User> Users { get; } = [];
-        public List<UserMatch> UserMatches { get; } = [];
+        public List<User> Users { get; set; } = [];
+        public List<UserMatch> UserMatches { get; set; } = [];
     }
 }

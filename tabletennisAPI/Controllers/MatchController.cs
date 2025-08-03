@@ -6,7 +6,7 @@ using TableTennisShared.DTO.Match;
 
 namespace TableTennisAPI.Controllers
 {
-    [Authorize]
+    //[Authorize]
     [Route("match")]
     [ApiController]
     public class MatchController(MatchService matchService) : ControllerBase
@@ -14,9 +14,9 @@ namespace TableTennisAPI.Controllers
         private readonly MatchService _matchService = matchService;
 
         [HttpPost("save")]
-        public async Task<ActionResult<Match>> RegisterMatch([FromBody]MatchDto request)
+        public async Task<ActionResult<Match>> RegisterMatch([FromBody]MatchSubmissionDto request)
         {
-            var match = await _matchService.SaveMatchAsync(new() { DatePlayed = request.DatePlayed});
+            var match = await _matchService.SaveMatchAsync(request);
 
             if (match is null)
                 return BadRequest("Something went wrong saving the match");
@@ -25,6 +25,6 @@ namespace TableTennisAPI.Controllers
         }
 
         [HttpGet]
-        public async Task GetMatches() => Ok(new Match());
+        public async Task GetMatches() => Ok(await _matchService.GetAllMatchesAsync());
     }
 }
