@@ -40,8 +40,15 @@ namespace TableTennisAPI.Services.Matches
             foreach (var userMatch  in userMatches)
             {
                 var user = await _userRepository.FindUserByIdAsync(userMatch.UserId);
+                var match = await _matchRepository.FindMatchById(userMatch.MatchId);
                 var firstName = user.FirstName ?? string.Empty;
-                formattedMatches.Add(new() { FirstName = firstName });
+                formattedMatches.Add(new() 
+                { 
+                    FirstName = user.FirstName ?? string.Empty, 
+                    Elo = (int)user.Elo, 
+                    DatePlayed = match.DatePlayed,
+                    Winner = (bool)userMatch.IsWinner 
+                });
                 //matchInformation.FirstName = 
             }
 

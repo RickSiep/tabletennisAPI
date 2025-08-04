@@ -5,6 +5,6 @@
         public required string FirstName { get; set; }
         public int Elo { get; set; }
         public DateTime DatePlayed { get; set; }
-        public int Winner { get; set; }
+        public bool Winner { get; set; }
     }
 }

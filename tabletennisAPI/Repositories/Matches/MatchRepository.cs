@@ -1,4 +1,5 @@
-﻿using TableTennisAPI.Data;
+﻿using Microsoft.EntityFrameworkCore;
+using TableTennisAPI.Data;
 using TableTennisAPI.Models;
 using TableTennisShared.DTO.Match;
 
@@ -16,6 +17,8 @@ namespace TableTennisAPI.Repositories.Matches
 
             return match;
         }
+
+        public async Task<Match?> FindMatchById(int id) => await _context.Matches.FirstOrDefaultAsync(m => m.Id == id);
 
         public async Task<IEnumerable<Match>> GetAllMatchesAsync()
         {
