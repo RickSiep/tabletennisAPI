@@ -6,7 +6,7 @@ namespace TableTennisAPI.Repositories.Matches
     {
         Task<Match> AddMatchAsync(Match match);
         Task<IEnumerable<Match>> GetAllMatchesAsync();
-        Task<IEnumerable<UserMatch>> GetFormattedMatchesAsync();
+        IEnumerable<UserMatch> GetUserMatches();
 
     }
 }

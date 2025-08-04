@@ -1,14 +1,16 @@
 ﻿using TableTennisAPI.Models;
 using TableTennisAPI.Repositories.Matches;
 using TableTennisAPI.Repositories.UserMatches;
+using TableTennisAPI.Repositories.Users;
 using TableTennisShared.DTO.Match;
 
 namespace TableTennisAPI.Services.Matches
 {
-    public class MatchService(IMatchRepository matchRepository, IUserMatchRepository userMatchRepository) : IMatchService
+    public class MatchService(IMatchRepository matchRepository, IUserMatchRepository userMatchRepository, IUserRepository userRepository) : IMatchService
     {
         private readonly IMatchRepository _matchRepository = matchRepository;
         private readonly IUserMatchRepository _userMatchRepository = userMatchRepository;
+        private readonly IUserRepository _userRepository = userRepository;
 
         public async Task<Match?> SaveMatchAsync(MatchSubmissionDto match)
         {
@@ -32,8 +34,18 @@ namespace TableTennisAPI.Services.Matches
 
         public async Task<IEnumerable<MatchInformationDto>> GetFormattedMatchesAsync()
         {
-            await _matchRepository.GetFormattedMatchesAsync();
-            return new List<MatchInformationDto> { new MatchInformationDto() { FirstName = "lol" } };
+            var userMatches = _matchRepository.GetUserMatches();
+            var formattedMatches = new List<MatchInformationDto>();
+
+            foreach (var userMatch  in userMatches)
+            {
+                var user = await _userRepository.FindUserByIdAsync(userMatch.UserId);
+                var firstName = user.FirstName ?? string.Empty;
+                formattedMatches.Add(new() { FirstName = firstName });
+                //matchInformation.FirstName = 
+            }
+
+            return formattedMatches;
         }
     }
 }

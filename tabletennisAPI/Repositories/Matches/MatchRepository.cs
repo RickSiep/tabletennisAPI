@@ -22,7 +22,7 @@ namespace TableTennisAPI.Repositories.Matches
             return _context.Matches.ToList();
         }
 
-        public async Task<IEnumerable<UserMatch>> GetFormattedMatchesAsync()
+        public IEnumerable<UserMatch> GetUserMatches()
         {
             return _context.UserMatches.ToList();
         }
