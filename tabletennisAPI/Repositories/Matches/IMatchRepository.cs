@@ -4,8 +4,9 @@ namespace TableTennisAPI.Repositories.Matches
 {
     public interface IMatchRepository
     {
-        Task<Match> AddMatch(Match match);
-        Task<IEnumerable<Match>> GetAllMatches();
+        Task<Match> AddMatchAsync(Match match);
+        Task<IEnumerable<Match>> GetAllMatchesAsync();
+        Task<IEnumerable<UserMatch>> GetFormattedMatchesAsync();
 
     }
 }

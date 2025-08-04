@@ -1,5 +1,6 @@
 ﻿using TableTennisAPI.Data;
 using TableTennisAPI.Models;
+using TableTennisShared.DTO.Match;
 
 namespace TableTennisAPI.Repositories.Matches
 {
@@ -7,7 +8,7 @@ namespace TableTennisAPI.Repositories.Matches
     {
         private readonly DatabaseContext _context = context;
 
-        public async Task<Match> AddMatch(Match match)
+        public async Task<Match> AddMatchAsync(Match match)
         {
             await _context.Matches.AddAsync(match);
 
@@ -16,9 +17,14 @@ namespace TableTennisAPI.Repositories.Matches
             return match;
         }
 
-        public async Task<IEnumerable<Match>> GetAllMatches()
+        public async Task<IEnumerable<Match>> GetAllMatchesAsync()
         {
             return _context.Matches.ToList();
+        }
+
+        public async Task<IEnumerable<UserMatch>> GetFormattedMatchesAsync()
+        {
+            return _context.UserMatches.ToList();
         }
     }
 }

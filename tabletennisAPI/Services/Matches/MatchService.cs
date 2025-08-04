@@ -12,7 +12,7 @@ namespace TableTennisAPI.Services.Matches
 
         public async Task<Match?> SaveMatchAsync(MatchSubmissionDto match)
         {
-            var newMatch = await _matchRepository.AddMatch(new() { DatePlayed = DateTime.Today.Date});
+            var newMatch = await _matchRepository.AddMatchAsync(new() { DatePlayed = DateTime.Today.Date});
 
             foreach (var participant in match.Participants)
             {
@@ -28,6 +28,12 @@ namespace TableTennisAPI.Services.Matches
             return newMatch;
         }
 
-        public async Task<IEnumerable<Match>> GetAllMatchesAsync() => await _matchRepository.GetAllMatches();
+        public async Task<IEnumerable<Match>> GetAllMatchesAsync() => await _matchRepository.GetAllMatchesAsync();
+
+        public async Task<IEnumerable<MatchInformationDto>> GetFormattedMatchesAsync()
+        {
+            await _matchRepository.GetFormattedMatchesAsync();
+            return new List<MatchInformationDto> { new MatchInformationDto() { FirstName = "lol" } };
+        }
     }
 }
