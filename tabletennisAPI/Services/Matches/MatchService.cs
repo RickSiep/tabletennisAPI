@@ -61,9 +61,12 @@ namespace TableTennisAPI.Services.Matches
             var userNameString = string.Empty;
 
             foreach (var userMatch in userMatches)
-            {  
+            {
                 var user = await _userRepository.FindUserByIdAsync(userMatch.UserId);
-                if (user != null && user.Id != userId) userNameString += $"{user.FirstName}, ";
+                if (user != null && user.Id != userId)
+                {
+                    userNameString += $"{user.FirstName}, ";
+                }
             }
 
             return userNameString.TrimEnd([',', ' ']);

@@ -19,17 +19,22 @@
         <table class="table table-striped">
             <thead>
                 <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">First</th>
-                    <th scope="col">Last</th>
-                    <th scope="col">Handle</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Match date</th>
+                    <th scope="col">Elo</th>
+                    <th scope="col">Winner</th>
+                    <th scope="col">Against</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach (var match in MatchDtos)
                 {
                     <tr>
-                        <th scope="row">@match.DatePlayed.ToString()</th>
+                        <th scope="row">@match.FirstName</th>
+                        <th scope="row">@match.DatePlayed</th>
+                        <th scope="row">@match.Elo</th>
+                        <th scope="row">@match.Winner</th>
+                        <th scope="row">@match.PlayedAgainst</th>
                     </tr>
                 }
             </tbody>
@@ -39,11 +44,12 @@
 
 
 @code {
-    public List<MatchDto> MatchDtos { get; set; }
+    public List<MatchInformationDto> MatchDtos { get; set; } = [];
 
     protected override async Task OnInitializedAsync()
     {
-        var result = await ApiClient.GetAllFromJsonAsync<MatchDto>("/match").Result.ToListAsync();
+        var formattedMatches = await ApiClient.GetAllFromJsonAsync<MatchInformationDto>("/match/formatted");
+        MatchDtos = await formattedMatches.ToListAsync();
         await base.OnInitializedAsync();
     }
 }
