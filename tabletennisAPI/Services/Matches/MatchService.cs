@@ -50,7 +50,6 @@ namespace TableTennisAPI.Services.Matches
                     Winner = (bool)userMatch.IsWinner,
                     PlayedAgainst = await GetPlayedAgainstUsernames(userMatch.MatchId, userMatch.UserId)
                 });
-                //matchInformation.FirstName = 
             }
 
             return formattedMatches;
@@ -67,7 +66,7 @@ namespace TableTennisAPI.Services.Matches
                 if (user != null && user.Id != userId) userNameString += $"{user.FirstName}, ";
             }
 
-            return userNameString;
+            return userNameString.TrimEnd([',', ' ']);
         }
     }
 }
