@@ -32,22 +32,19 @@ namespace TableTennisAPI.Services.Matches
 
         public async Task<IEnumerable<Match>> GetAllMatchesAsync() => await _matchRepository.GetAllMatchesAsync();
 
-        public async Task<IEnumerable<MatchInformationDto>> GetFormattedMatchesAsync()
+        public async Task<IEnumerable<MatchInformationDto>> GetFormattedMatchesAsync(int pageIndex, int pageSize)
         {
-            var userMatches = await _userMatchRepository.GetUserMatchesAsync();
+            var userMatches = await _userMatchRepository.GetUserMatchesPaginatedAsync(pageIndex, pageSize);
             var formattedMatches = new List<MatchInformationDto>();
 
             foreach (var userMatch  in userMatches)
             {
-                var user = await _userRepository.FindUserByIdAsync(userMatch.UserId);
-                var match = await _matchRepository.FindMatchById(userMatch.MatchId);
-                var firstName = user.FirstName ?? string.Empty;
                 formattedMatches.Add(new() 
                 { 
-                    FirstName = user.FirstName ?? string.Empty, 
-                    Elo = (int)user.Elo, 
-                    DatePlayed = match.DatePlayed,
-                    Winner = (bool)userMatch.IsWinner,
+                    FirstName = userMatch.User.FirstName ?? string.Empty, 
+                    Elo = (int)userMatch.User.Elo, 
+                    DatePlayed = userMatch.Match.DatePlayed,
+                    Winner = userMatch.IsWinner,
                     PlayedAgainst = await GetPlayedAgainstUsernames(userMatch.MatchId, userMatch.UserId)
                 });
             }

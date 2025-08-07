@@ -19,12 +19,16 @@ namespace TableTennisAPI.Repositories.UserMatches
 
         public async Task<IEnumerable<UserMatch>> GetUserMatchesAsync()
         {
-            return await _context.UserMatches.ToListAsync();
+            return await _context.UserMatches
+                .Include(um => um.User)
+                .Include(um => um.Match)
+                .ToListAsync();
         }
 
         public async Task<IEnumerable<UserMatch>> GetUserMatchesPaginatedAsync(int pageIndex = 1, int pageSize = 10)
         {
             var matches = await _context.UserMatches
+                .Include(um => um.User)
                 .Include(um => um.Match)
                 .OrderBy(um => um.Match.DatePlayed)
                 .Skip((pageIndex - 1) * pageSize)

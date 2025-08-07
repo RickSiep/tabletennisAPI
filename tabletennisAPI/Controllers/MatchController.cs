@@ -28,6 +28,6 @@ namespace TableTennisAPI.Controllers
         public async Task GetMatches() => Ok(await _matchService.GetAllMatchesAsync());
 
         [HttpGet("/match/formatted")]
-        public async Task<ActionResult<IEnumerable<MatchInformationDto>>> GetFormattedMatches() => Ok(await _matchService.GetFormattedMatchesAsync());
+        public async Task<ActionResult<IEnumerable<MatchInformationDto>>> GetFormattedMatches(int pageIndex, int pageSize) => Ok(await _matchService.GetFormattedMatchesAsync(pageIndex, pageSize));
     }
 }
