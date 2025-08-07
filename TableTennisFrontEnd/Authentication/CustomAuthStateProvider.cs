@@ -19,7 +19,7 @@ namespace TableTennisFrontEnd.Authentication
                 var identity = string.IsNullOrEmpty(token) ? _anonymous : new ClaimsPrincipal(GetClaimsIdentity(token));
                 return new AuthenticationState(identity);
             }
-            catch (InvalidOperationException)
+            catch (Exception e)
             {
                 return new AuthenticationState(_anonymous);
             }
