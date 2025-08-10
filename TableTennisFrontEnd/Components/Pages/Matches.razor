@@ -14,41 +14,55 @@
 
 <PageTitle>Matches</PageTitle>
 
-<div class="mt-5 pt-5">
-    <div class="container">
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th scope="col">Name</th>
-                    <th scope="col">Match date</th>
-                    <th scope="col">Elo</th>
-                    <th scope="col">Winner</th>
-                    <th scope="col">Against</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var match in MatchDtos)
-                {
-                    <tr>
-                        <th scope="row">@match.FirstName</th>
-                        <th scope="row">@match.DatePlayed</th>
-                        <th scope="row">@match.Elo</th>
-                        <th scope="row">@match.Winner</th>
-                        <th scope="row">@match.PlayedAgainst</th>
-                    </tr>
-                }
-            </tbody>
-        </table>
+@if (MatchDtos == null)
+{
+    <div class="position-absolute top-50 start-50 translate-middle bg-black bg-opacity-50 w-100 h-100 d-flex justify-content-center align-items-center">
+        <div class="spinner-border" role="status"></div>
     </div>
-</div>
+}
+else
+{
+    <div class="mt-5 pt-5">
+        <div class="container">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th scope="col">Name</th>
+                        <th scope="col">Match date</th>
+                        <th scope="col">Elo</th>
+                        <th scope="col">Winner</th>
+                        <th scope="col">Against</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var match in MatchDtos)
+                    {
+                        <tr>
+                            <th scope="row">@match.FirstName</th>
+                            <th scope="row">@match.DatePlayed</th>
+                            <th scope="row">@match.Elo</th>
+                            <th scope="row">@match.Winner</th>
+                            <th scope="row">@match.PlayedAgainst</th>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            <div>
+
+            </div>
+        </div>
+    </div>
+}
 
 
 @code {
-    public List<MatchInformationDto> MatchDtos { get; set; } = [];
+    public List<MatchInformationDto> MatchDtos { get; set; }
+    private int _pageSize = 10;
+    private int _pageIndex = 1;
 
     protected override async Task OnInitializedAsync()
     {
-        var formattedMatches = await ApiClient.GetAllFromJsonAsync<MatchInformationDto>("/match/formatted");
+        var formattedMatches = await ApiClient.GetAllFromJsonAsync<MatchInformationDto>($"/match/formatted?pageIndex={_pageIndex}&pageSize={_pageSize}");
         MatchDtos = await formattedMatches.ToListAsync();
         await base.OnInitializedAsync();
     }
