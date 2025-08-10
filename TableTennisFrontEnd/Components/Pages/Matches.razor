@@ -24,6 +24,7 @@ else
 {
     <div class="mt-5 pt-5">
         <div class="container">
+            <h1>Matches</h1>
             <table class="table table-striped">
                 <thead>
                     <tr>
@@ -48,13 +49,22 @@ else
                 </tbody>
             </table>
             <div class="d-flex flex-column justify-content-end align-items-end">
+                <div class="mb-2">
+                    <p>Page: @_pageIndex</p>
+                </div>
                 <div>
-                    <button @onclick="() => UpdateMatches(GetPreviousPageIndex())" class="btn-outline-info btn">←</button>
-                    @for(int i = 1; i < (TotalMatches % _pageSize); i++)
+                    @if (_pageIndex != 1)
                     {
-                        <button @onclick="() => UpdateMatches(i)" class="btn-outline-primary btn">@i</button>
+                        <button @onclick="() => UpdateMatches(GetPreviousPageIndex())" class="btn-outline-info btn">←</button>
                     }
-                    <button @onclick="() => UpdateMatches(GetNextPageIndex())" class="btn-outline-info btn">→</button>
+                    @foreach(var index in _pages)
+                    {
+                        <button @onclick="() => UpdateMatches(index)" class="btn @(IsPageIndex(index) ? "btn-primary" : "btn-outline-info") mx-1">@index</button>
+                    }
+                    @if (_pageIndex * _pageSize < TotalMatches)
+                    {
+                        <button @onclick="() => UpdateMatches(GetNextPageIndex())" class="btn-outline-info btn">→</button>
+                    }
                 </div>
             </div>
         </div>
@@ -68,25 +78,39 @@ else
     public int TotalMatches { get; set; }
     private int _pageSize = 5;
     private int _pageIndex = 1;
+    private List<int> _pages = [];
 
     protected override async Task OnInitializedAsync()
     {
-        var formattedMatches = await ApiClient.GetFromJsonAsync<MatchInformationWithTotalMatchesDto>($"/match/formatted?pageIndex={_pageIndex}&pageSize={_pageSize}");
-        MatchDtos = formattedMatches.MatchInformations;
-        TotalMatches = formattedMatches.TotalMatches;
+        await UpdateMatches(_pageIndex);
+
         await base.OnInitializedAsync();
     }
 
+    private bool IsPageIndex(int index) => index == _pageIndex;
     private int GetPreviousPageIndex() => _pageIndex == 1 ? _pageIndex : _pageIndex - 1;
     private int GetNextPageIndex() => _pageIndex == (TotalMatches / _pageSize) + 1 ? _pageIndex : _pageIndex + 1;
 
     public async Task UpdateMatches(int pageIndex)
     {
         _pageIndex = pageIndex;
+
         var formattedMatches = await ApiClient.GetFromJsonAsync<MatchInformationWithTotalMatchesDto>($"/match/formatted?pageIndex={_pageIndex}&pageSize={_pageSize}");
         MatchDtos = formattedMatches.MatchInformations;
         TotalMatches = formattedMatches.TotalMatches;
 
+        CalculatePages();
         StateHasChanged();
+    }
+
+    private void CalculatePages()
+    {
+        _pages = new List<int>
+        {
+            _pageIndex > 1 ? _pageIndex - 1 : _pageIndex,
+            _pageIndex,
+            _pageIndex * _pageSize < TotalMatches ? _pageIndex + 1 : _pageIndex
+        }
+        .Distinct().ToList();
     }
 }

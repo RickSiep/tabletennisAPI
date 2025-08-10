@@ -7,6 +7,11 @@
             return client.GetFromJsonAsAsyncEnumerable<T>(path);
         }
 
+        public async Task<T> GetFromJsonAsync<T>(string path)
+        {
+            return await client.GetFromJsonAsync<T>(path);
+        }
+
         public async Task<HttpResponseMessage> PostJsonAsync<T>(string path, T value)
         {
             return await client.PostAsJsonAsync(path, value);
