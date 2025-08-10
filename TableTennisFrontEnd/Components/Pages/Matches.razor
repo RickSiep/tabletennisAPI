@@ -47,8 +47,15 @@ else
                     }
                 </tbody>
             </table>
-            <div>
-
+            <div class="d-flex flex-column justify-content-end align-items-end">
+                <div>
+                    <button @onclick="() => UpdateMatches(GetPreviousPageIndex())" class="btn-outline-info btn">←</button>
+                    @for(int i = 1; i < (TotalMatches % _pageSize); i++)
+                    {
+                        <button @onclick="() => UpdateMatches(i)" class="btn-outline-primary btn">@i</button>
+                    }
+                    <button @onclick="() => UpdateMatches(GetNextPageIndex())" class="btn-outline-info btn">→</button>
+                </div>
             </div>
         </div>
     </div>
@@ -56,14 +63,30 @@ else
 
 
 @code {
+    public MatchInformationWithTotalMatchesDto MatchesInfoDto { get; set; }
     public List<MatchInformationDto> MatchDtos { get; set; }
-    private int _pageSize = 10;
+    public int TotalMatches { get; set; }
+    private int _pageSize = 5;
     private int _pageIndex = 1;
 
     protected override async Task OnInitializedAsync()
     {
-        var formattedMatches = await ApiClient.GetAllFromJsonAsync<MatchInformationDto>($"/match/formatted?pageIndex={_pageIndex}&pageSize={_pageSize}");
-        MatchDtos = await formattedMatches.ToListAsync();
+        var formattedMatches = await ApiClient.GetFromJsonAsync<MatchInformationWithTotalMatchesDto>($"/match/formatted?pageIndex={_pageIndex}&pageSize={_pageSize}");
+        MatchDtos = formattedMatches.MatchInformations;
+        TotalMatches = formattedMatches.TotalMatches;
         await base.OnInitializedAsync();
+    }
+
+    private int GetPreviousPageIndex() => _pageIndex == 1 ? _pageIndex : _pageIndex - 1;
+    private int GetNextPageIndex() => _pageIndex == (TotalMatches / _pageSize) + 1 ? _pageIndex : _pageIndex + 1;
+
+    public async Task UpdateMatches(int pageIndex)
+    {
+        _pageIndex = pageIndex;
+        var formattedMatches = await ApiClient.GetFromJsonAsync<MatchInformationWithTotalMatchesDto>($"/match/formatted?pageIndex={_pageIndex}&pageSize={_pageSize}");
+        MatchDtos = formattedMatches.MatchInformations;
+        TotalMatches = formattedMatches.TotalMatches;
+
+        StateHasChanged();
     }
 }

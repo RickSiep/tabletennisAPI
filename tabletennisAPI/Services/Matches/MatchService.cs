@@ -32,8 +32,9 @@ namespace TableTennisAPI.Services.Matches
 
         public async Task<IEnumerable<Match>> GetAllMatchesAsync() => await _matchRepository.GetAllMatchesAsync();
 
-        public async Task<IEnumerable<MatchInformationDto>> GetFormattedMatchesAsync(int pageIndex, int pageSize)
+        public async Task<MatchInformationWithTotalMatchesDto> GetFormattedMatchesAsync(int pageIndex, int pageSize)
         {
+            var totalMatches = await _userMatchRepository.GetTotalAmountOfMatches();
             var userMatches = await _userMatchRepository.GetUserMatchesPaginatedAsync(pageIndex, pageSize);
             var formattedMatches = new List<MatchInformationDto>();
 
@@ -49,7 +50,7 @@ namespace TableTennisAPI.Services.Matches
                 });
             }
 
-            return formattedMatches;
+            return new MatchInformationWithTotalMatchesDto() { MatchInformations = formattedMatches, TotalMatches = totalMatches};
         }
 
         private async Task<string> GetPlayedAgainstUsernames(int matchId, int userId)

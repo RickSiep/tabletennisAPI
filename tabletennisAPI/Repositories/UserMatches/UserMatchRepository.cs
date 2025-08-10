@@ -25,6 +25,11 @@ namespace TableTennisAPI.Repositories.UserMatches
                 .ToListAsync();
         }
 
+        public async Task<int> GetTotalAmountOfMatches()
+        {
+            return await _context.UserMatches.CountAsync();
+        }
+
         public async Task<IEnumerable<UserMatch>> GetUserMatchesPaginatedAsync(int pageIndex = 1, int pageSize = 10)
         {
             var matches = await _context.UserMatches

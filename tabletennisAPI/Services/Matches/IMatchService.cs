@@ -8,6 +8,6 @@ namespace TableTennisAPI.Services.Matches
         Task<Match?> SaveMatchAsync(MatchSubmissionDto match);
         Task<IEnumerable<Match>> GetAllMatchesAsync();
 
-        Task<IEnumerable<MatchInformationDto>> GetFormattedMatchesAsync(int pageIndex, int pageSize);
+        Task<MatchInformationWithTotalMatchesDto> GetFormattedMatchesAsync(int pageIndex, int pageSize);
     }
 }
