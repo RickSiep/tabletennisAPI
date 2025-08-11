@@ -28,7 +28,7 @@ else
             <table class="table table-striped">
                 <thead>
                     <tr>
-                        <th scope="col">Name</th>
+                        <th scope="col" @onclick="OrderByFirstName" role="button">Name</th>
                         <th scope="col">Match date</th>
                         <th scope="col">Elo</th>
                         <th scope="col">Winner</th>
@@ -84,8 +84,13 @@ else
     protected override async Task OnInitializedAsync()
     {
         await UpdateMatches(_pageIndex);
-
         await base.OnInitializedAsync();
+    }
+
+    private void OrderByFirstName() 
+    {
+        MatchDtos = MatchDtos.OrderBy(m => m.FirstName).ToList();
+        StateHasChanged();
     }
 
     private bool IsPageIndex(int index) => index == _pageIndex;
