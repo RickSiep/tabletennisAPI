@@ -46,7 +46,6 @@
     protected override async Task OnInitializedAsync()
     {
         await UpdateMatches(_pageIndex);
-        await base.OnInitializedAsync();
     }
 
     private async Task UpdateMatches(int pageIndex)
