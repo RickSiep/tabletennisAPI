@@ -4,6 +4,7 @@
 @using TableTennisFrontEnd.Authentication
 @using Microsoft.AspNetCore.Authorization
 @using TableTennisShared.DTO.Match
+@using TableTennisFrontEnd.Components.UI;
 @using System;
 @using System.Collections.Generic;
 @using System.Linq;
@@ -14,106 +15,45 @@
 
 <PageTitle>Matches</PageTitle>
 
-@if (IsLoading)
-{
-    <div class="position-absolute top-50 start-50 translate-middle bg-black bg-opacity-50 w-100 h-100 d-flex justify-content-center align-items-center">
-        <div class="spinner-border" role="status"></div>
+<div class="mt-5 pt-5">
+    <div class="container">
+        <h1>Matches</h1>
+        <GenericTableComponent TItem=MatchInformationDto OnPageChanged="UpdateMatches" Items="@MatchDtos" TotalCount="@_totalMatches">
+            <HeaderTemplate>
+                <th>Voornaam</th>
+                <th>Voornaam tegenstander</th>
+                <th>Gewonnen</th>
+                <th>Verschil in Elo</th>
+                <th>Gespeeld op</th>
+            </HeaderTemplate>
+            <RowTemplate>
+                <td>@context.FirstName</td>
+                <td>@context.PlayedAgainst</td>
+                <td>@(context.Winner ? @context.FirstName : @context.PlayedAgainst)</td>
+                <td>@context.EloDifference</td>
+                <td>@context.DatePlayed</td>
+            </RowTemplate>
+        </GenericTableComponent>
     </div>
-}
-else
-{
-    <div class="mt-5 pt-5">
-        <div class="container">
-            <h1>Matches</h1>
-            <table class="table table-striped">
-                <thead>
-                    <tr>
-                        <th scope="col">Name</th>
-                        <th scope="col">Match date</th>
-                        <th scope="col">Elo</th>
-                        <th scope="col">Winner</th>
-                        <th scope="col">Against</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var match in MatchDtos)
-                    {
-                        <tr>
-                            <th scope="row">@match.FirstName</th>
-                            <th scope="row">@match.DatePlayed</th>
-                            <th scope="row">@match.Elo</th>
-                            <th scope="row">@match.Winner</th>
-                            <th scope="row">@match.PlayedAgainst</th>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-            <div class="d-flex flex-column justify-content-end align-items-end">
-                <div class="mb-2">
-                    <p>Page: @_pageIndex</p>
-                </div>
-                <div>
-                    @if (_pageIndex != 1)
-                    {
-                        <button @onclick="() => UpdateMatches(GetPreviousPageIndex())" class="btn-outline-info btn">←</button>
-                    }
-                    @foreach(var index in _pages)
-                    {
-                        <button @onclick="() => UpdateMatches(index)" class="btn @(IsPageIndex(index) ? "btn-primary" : "btn-outline-info") mx-1" disabled=@IsPageIndex(index)>@index</button>
-                    }
-                    @if (_pageIndex * _pageSize < TotalMatches)
-                    {
-                        <button @onclick="() => UpdateMatches(GetNextPageIndex())" class="btn-outline-info btn">→</button>
-                    }
-                </div>
-            </div>
-        </div>
-    </div>
-}
+</div>
 
 
 @code {
-    public MatchInformationWithTotalMatchesDto MatchesInfoDto { get; set; }
     public List<MatchInformationDto> MatchDtos { get; set; }
-    public bool IsLoading { get; set; }
-    public int TotalMatches { get; set; }
-    private int _pageSize = 5;
+    private int _totalMatches;
     private int _pageIndex = 1;
-    private List<int> _pages = [];
 
     protected override async Task OnInitializedAsync()
     {
         await UpdateMatches(_pageIndex);
-
         await base.OnInitializedAsync();
     }
 
-    private bool IsPageIndex(int index) => index == _pageIndex;
-    private int GetPreviousPageIndex() => _pageIndex == 1 ? _pageIndex : _pageIndex - 1;
-    private int GetNextPageIndex() => _pageIndex == (TotalMatches / _pageSize) + 1 ? _pageIndex : _pageIndex + 1;
-
-    public async Task UpdateMatches(int pageIndex)
+    private async Task UpdateMatches(int pageIndex)
     {
-        IsLoading = true;
         _pageIndex = pageIndex;
-
-        var formattedMatches = await ApiClient.GetFromJsonAsync<MatchInformationWithTotalMatchesDto>($"/match/formatted?pageIndex={_pageIndex}&pageSize={_pageSize}");
+        var formattedMatches = await ApiClient.GetFromJsonAsync<MatchInformationWithTotalMatchesDto>($"/match/formatted?pageIndex={_pageIndex}&pageSize=5");
         MatchDtos = formattedMatches.MatchInformations;
-        TotalMatches = formattedMatches.TotalMatches;
-
-        CalculatePages();
-        IsLoading = false;
-        StateHasChanged();
-    }
-
-    private void CalculatePages()
-    {
-        _pages = new List<int>
-        {
-            _pageIndex > 1 ? _pageIndex - 1 : _pageIndex,
-            _pageIndex,
-            _pageIndex * _pageSize < TotalMatches ? _pageIndex + 1 : _pageIndex
-        }
-        .Distinct().ToList();
+        _totalMatches = formattedMatches.TotalMatches;
     }
 }
