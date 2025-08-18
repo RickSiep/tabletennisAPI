@@ -15,27 +15,23 @@
 
 <PageTitle>Matches</PageTitle>
 
-<div class="mt-5 pt-5">
-    <div class="container">
-        <h1>Matches</h1>
-        <GenericTableComponent TItem=MatchInformationDto OnPageChanged="UpdateMatches" Items="@MatchDtos" TotalCount="@_totalMatches">
-            <HeaderTemplate>
-                <th>Voornaam</th>
-                <th>Voornaam tegenstander</th>
-                <th>Gewonnen</th>
-                <th>Verschil in Elo</th>
-                <th>Gespeeld op</th>
-            </HeaderTemplate>
-            <RowTemplate>
-                <td>@context.FirstName</td>
-                <td>@context.PlayedAgainst</td>
-                <td>@(context.Winner ? @context.FirstName : @context.PlayedAgainst)</td>
-                <td>@context.EloDifference</td>
-                <td>@context.DatePlayed</td>
-            </RowTemplate>
-        </GenericTableComponent>
-    </div>
-</div>
+<h1>Matches</h1>
+<GenericTableComponent TItem=MatchInformationDto OnPageChanged="UpdateMatches" Items="@MatchDtos" TotalCount="@_totalMatches">
+    <HeaderTemplate>
+        <th>Voornaam</th>
+        <th>Voornaam tegenstander</th>
+        <th>Gewonnen</th>
+        <th>Verschil in Elo</th>
+        <th>Gespeeld op</th>
+    </HeaderTemplate>
+    <RowTemplate>
+        <td>@context.FirstName</td>
+        <td>@context.PlayedAgainst</td>
+        <td>@(context.Winner? @context.FirstName: @context.PlayedAgainst)</td>
+        <td>@context.EloDifference</td>
+        <td>@context.DatePlayed</td>
+    </RowTemplate>
+</GenericTableComponent>
 
 
 @code {

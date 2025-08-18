@@ -1,0 +1,11 @@
+﻿@if (IsLoading)
+{
+    <div class="position-absolute top-50 start-50 translate-middle bg-black bg-opacity-50 w-100 h-100 d-flex justify-content-center align-items-center">
+        <div class="spinner-border" role="status"></div>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public bool IsLoading { get; set; }
+}

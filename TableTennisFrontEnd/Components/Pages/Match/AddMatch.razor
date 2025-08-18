@@ -1,0 +1,44 @@
+﻿@page "/matches/add"
+@rendermode InteractiveServer
+@using TableTennisShared.DTO.Match
+@using TableTennisFrontEnd.Components.UI
+
+<h3>Add a match!</h3>
+
+<LoadingSpinnerComponent IsLoading=@_loading />
+
+<div class="mt-2">
+    <EditForm method="post" FormName="addMatch" Model="Participants" OnValidSubmit="HandleValidSubmit" Enhance>
+        <DataAnnotationsValidator />
+        <ValidationSummary class="text-danger" />
+
+        <div class="form-group">
+            <label for="user" class="form-label">User</label>
+            <InputSelect type="select" class="form-control" @bind-Value="Participants[0].UserId" placeholder="user">
+                <option value="1">Buhhh</option>
+            </InputSelect>
+            <ValidationMessage For="() => Participants[0].UserId" class="text-danger" />
+        </div>
+
+        <div class="mt-2 form-group">
+            <button type="submit" class="btn btn-primary bg-dark">Submit</button>
+        </div>
+    </EditForm>
+</div>
+
+@code {
+    private bool _loading;
+    public List<MatchParticipantDto> Participants { get; set; } = new()
+    {
+        new(),
+        new()
+    };
+
+    private async Task HandleValidSubmit()
+    {
+        _loading = true;
+        await Task.Delay(3000);
+        _loading = false;
+        await Task.CompletedTask;
+    }
+}
