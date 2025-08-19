@@ -13,6 +13,6 @@ namespace TableTennisAPI.Services.Users
 
         Task<string> GenerateAndSaveRefreshTokenAsync(User user);
         Task<TokenResponseDto?> RefreshTokenAsync(RefreshTokenRequestDto request);
-
+        Task<IEnumerable<UserIdAndNameDto>> GetUsersInfoAsync();
     }
 }

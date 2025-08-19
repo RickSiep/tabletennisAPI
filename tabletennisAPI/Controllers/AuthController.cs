@@ -1,16 +1,15 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using TableTennisAPI.Services.Users;
 using TableTennisShared.DTO.Token;
 using TableTennisShared.DTO.User;
 
 namespace TableTennisAPI.Controllers
 {
-    [Route("user")]
+    [Route("auth")]
     [ApiController]
-    public class AuthController(UserService userService) : ControllerBase
+    public class AuthController(IUserService userService) : ControllerBase
     {
-        private readonly UserService _userService = userService;
+        private readonly IUserService _userService = userService;
 
         // POST api/<RegisterController>
         [HttpPost("register")]
@@ -22,15 +21,6 @@ namespace TableTennisAPI.Controllers
 
             return Ok("User Registered");
         }
-
-        [Authorize]
-        [HttpGet]
-        public IActionResult GetUsers()
-        {
-            var users = _userService.GetUsers();
-            return Ok(users);
-        }
-
 
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginRequestDto dto)

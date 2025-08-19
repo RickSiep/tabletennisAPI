@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using TableTennisAPI.Data;
 using TableTennisAPI.Models;
+using TableTennisShared.DTO.User;
 
 namespace TableTennisAPI.Repositories.Users
 {
@@ -22,6 +23,17 @@ namespace TableTennisAPI.Repositories.Users
         public async Task<User?> GetUserByEmailAsync(string email)
         {
             return await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
+        }
+
+        public async Task<IEnumerable<UserIdAndNameDto>> GetUsersInfoAsync()
+        {
+            return await _context.Users
+                .Select(u => new UserIdAndNameDto
+                {
+                    Id = u.Id,
+                    FirstName = u.FirstName
+                })
+                .ToListAsync();
         }
 
         public async Task<User> Save(User user)

@@ -58,7 +58,7 @@
     private async Task Submit()
     {
         IsLoading = true;
-        var response = await ApiClient.PostJsonAsync<RegisterDto>("/user/register", RegisterRequest);
+        var response = await ApiClient.PostJsonAsync<RegisterDto>("/auth/register", RegisterRequest);
 
         if (response != null)
         {

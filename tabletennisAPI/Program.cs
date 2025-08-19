@@ -46,7 +46,7 @@ builder.Services.AddScoped<TokenProvider>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IMatchRepository, MatchRepository>();
 builder.Services.AddScoped<IUserMatchRepository, UserMatchRepository>();
-builder.Services.AddScoped<UserService>();
+builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<MatchService>();
 builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
 

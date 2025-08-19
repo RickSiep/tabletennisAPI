@@ -88,5 +88,10 @@ namespace TableTennisAPI.Services.Users
 
             return await CreateTokenResponse(user);
         }
+
+        public async Task<IEnumerable<UserIdAndNameDto>> GetUsersInfoAsync()
+        {
+            return await _userRepository.GetUsersInfoAsync();
+        }
     }
 }

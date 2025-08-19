@@ -54,7 +54,7 @@
         ErrorMessage = "";
         try
         {
-            var response = await ApiClient.PostJsonAsyncWithResponseModel<LoginRequestDto, LoginResponseDto>("/user/login", LoginRequest);
+            var response = await ApiClient.PostJsonAsyncWithResponseModel<LoginRequestDto, LoginResponseDto>("/auth/login", LoginRequest);
             if (response != null)
             {
                 await ((CustomAuthStateProvider)AuthStateProvider).NotifyUserAuthentication(response.AccessToken);

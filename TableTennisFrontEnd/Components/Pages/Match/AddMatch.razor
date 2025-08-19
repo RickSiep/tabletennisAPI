@@ -1,7 +1,14 @@
 ﻿@page "/matches/add"
 @rendermode InteractiveServer
-@using TableTennisShared.DTO.Match
+@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
+@using TableTennisFrontEnd.Authentication
 @using TableTennisFrontEnd.Components.UI
+@using TableTennisShared.DTO.Match
+@using TableTennisShared.DTO.User
+@inject ApiClient Client
+@inject AuthenticationStateProvider AuthStateProvider
+@inject ProtectedLocalStorage LocalStorage
 
 <h3>Add a match!</h3>
 
@@ -28,11 +35,25 @@
 
 @code {
     private bool _loading;
+    
     public List<MatchParticipantDto> Participants { get; set; } = new()
     {
         new(),
         new()
     };
+
+    protected override async Task OnInitializedAsync()
+    {
+        var token = (await LocalStorage.GetAsync<string>("authToken")).Value;
+
+        if (token == null)
+        {
+            throw new UnauthorizedAccessException("No authentication token found.");
+        };
+
+        var users = await Client.GetFromJsonAsyncAuthorized<List<UserIdAndNameDto>>("/user/firstname", token);
+        await base.OnInitializedAsync();
+    }
 
     private async Task HandleValidSubmit()
     {

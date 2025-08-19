@@ -12,6 +12,12 @@
             return await client.GetFromJsonAsync<T>(path);
         }
 
+        public async Task<T> GetFromJsonAsyncAuthorized<T>(string path, string token)
+        {
+            client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+            return await client.GetFromJsonAsync<T>(path);
+        }
+
         public async Task<HttpResponseMessage> PostJsonAsync<T>(string path, T value)
         {
             return await client.PostAsJsonAsync(path, value);
