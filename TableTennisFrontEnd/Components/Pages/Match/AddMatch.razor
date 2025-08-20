@@ -12,47 +12,67 @@
 
 <h3>Add a match!</h3>
 
-<LoadingSpinnerComponent IsLoading=@_loading />
-
-<div class="mt-2">
-    <EditForm method="post" FormName="addMatch" Model="Participants" OnValidSubmit="HandleValidSubmit" Enhance>
-        <DataAnnotationsValidator />
-        <ValidationSummary class="text-danger" />
-
-        <div class="form-group">
-            <label for="user" class="form-label">User</label>
-            <InputSelect type="select" class="form-control" @bind-Value="Participants[0].UserId" placeholder="user">
-                <option value="1">Buhhh</option>
-            </InputSelect>
-            <ValidationMessage For="() => Participants[0].UserId" class="text-danger" />
-        </div>
-
-        <div class="mt-2 form-group">
-            <button type="submit" class="btn btn-primary bg-dark">Submit</button>
-        </div>
-    </EditForm>
-</div>
+@if (_loading)
+{
+    <LoadingSpinnerComponent IsLoading=@_loading />
+}
+else
+{
+    <div class="mt-2">
+        <EditForm method="post" FormName="addMatch" Model="Participants" OnValidSubmit="HandleValidSubmit" Enhance>
+            <DataAnnotationsValidator />
+            <ValidationSummary class="text-danger" />
+            <div class="row">
+                @for (var i = 0; i < Participants.Count; i++)
+                {
+                    var participant = Participants[i];
+                    <div class="col-12 col-md-6">
+                        <h3></h3>
+                        <div class="form-group">
+                            <label for="user" class="form-label">User</label>
+                            <InputSelect type="select" class="form-control" @bind-Value="participant.UserId" placeholder="user">
+                                @foreach (var user in Users)
+                                {
+                                    <option value="@user.Id">@user.FirstName</option>
+                                }
+                            </InputSelect>
+                            <ValidationMessage For="() => Participants[0].UserId" class="text-danger" />
+                        </div>
+                    </div>
+                }
+            </div>
+            <div class="mt-2 form-group">
+                <button type="submit" class="btn btn-primary bg-dark">Submit</button>
+            </div>
+        </EditForm>
+    </div>
+}
 
 @code {
     private bool _loading;
-    
-    public List<MatchParticipantDto> Participants { get; set; } = new()
-    {
-        new(),
-        new()
-    };
+    public List<UserIdAndNameDto> Users { get; set; } = [];
+    public List<MatchParticipantDto> Participants { get; set; } = [new(), new()];
 
     protected override async Task OnInitializedAsync()
     {
+        _loading = true;
         var token = (await LocalStorage.GetAsync<string>("authToken")).Value;
 
         if (token == null)
         {
             throw new UnauthorizedAccessException("No authentication token found.");
-        };
+        }
 
-        var users = await Client.GetFromJsonAsyncAuthorized<List<UserIdAndNameDto>>("/user/firstname", token);
+        try
+        {
+            Users = await Client.GetFromJsonAsyncAuthorized<List<UserIdAndNameDto>>("/user/firstname", token);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message);
+        }
         await base.OnInitializedAsync();
+        _loading = false;
     }
 
     private async Task HandleValidSubmit()
