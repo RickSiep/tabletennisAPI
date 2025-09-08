@@ -36,6 +36,8 @@ namespace TableTennisAPI.Repositories.UserMatches
                 .Include(um => um.User)
                 .Include(um => um.Match)
                 .OrderBy(um => um.Match.DatePlayed)
+                .GroupBy(x => x.MatchId)
+                .Select(x => x.FirstOrDefault())
                 .Skip((pageIndex - 1) * pageSize)
                 .Take(pageSize)
                 .ToListAsync();

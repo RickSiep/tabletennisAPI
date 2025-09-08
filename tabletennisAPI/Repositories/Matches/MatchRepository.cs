@@ -20,9 +20,6 @@ namespace TableTennisAPI.Repositories.Matches
 
         public async Task<Match?> FindMatchById(int id) => await _context.Matches.FirstOrDefaultAsync(m => m.Id == id);
 
-        public async Task<IEnumerable<Match>> GetAllMatchesAsync()
-        {
-            return _context.Matches.ToList();
-        }
+        public async Task<IEnumerable<Match>> GetAllMatchesAsync() => _context.Matches.ToList();
     }
 }
