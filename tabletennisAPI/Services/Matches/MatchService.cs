@@ -14,7 +14,7 @@ namespace TableTennisAPI.Services.Matches
 
         public async Task<Match?> SaveMatchAsync(MatchSubmissionDto match)
         {
-            var newMatch = await _matchRepository.AddMatchAsync(new() { DatePlayed = DateTime.Today.Date});
+            var newMatch = await _matchRepository.AddMatchAsync(new() { DatePlayed = DateTime.Today.Date, WinnerScore = match.WinnerScore, LoserScore = match.LoserScore});
 
             foreach (var participant in match.Participants)
             {
