@@ -39,6 +39,9 @@
     [Parameter]
     public EventCallback<bool> SpinnerChanged { get; set; }
 
+    [Parameter]
+    public EventCallback OnRegisterSuccess { get; set; }
+
     public string FormMessage { get; set; } = string.Empty;
     private bool _isLoading;
     public bool IsLoading
@@ -60,8 +63,10 @@
         IsLoading = true;
         var response = await ApiClient.PostJsonAsync<RegisterDto>("/auth/register", RegisterRequest);
 
-        if (response != null)
+        if (response != null && response.IsSuccessStatusCode)
         {
+            RegisterRequest = new();
+            await OnRegisterSuccess.InvokeAsync();
             FormMessage = "User registered!";
         }
         else

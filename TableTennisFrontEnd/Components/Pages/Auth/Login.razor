@@ -30,7 +30,7 @@
             {
                 <div class="my-2 mx-5 py-5">
                     <h2>Register</h2>
-                    <RegisterForm SpinnerChanged="SetSpinnerVisible" />
+                    <RegisterForm SpinnerChanged="SetSpinnerVisible" OnRegisterSuccess="SetLoginScreen" />
                 </div>
                 <button class="btn btn-primary bg-dark align-self-end m-2" @onclick="ToggleAuthentication">Login instead?</button>
             }
@@ -56,6 +56,8 @@
         _spinner = isVisible;
         return Task.CompletedTask;
     }
+
+    private void SetLoginScreen() => _loginOrRegister = true;
 
     private void ToggleAuthentication() => _loginOrRegister = !_loginOrRegister;
 }

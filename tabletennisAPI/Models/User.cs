@@ -6,7 +6,7 @@
         public string Password { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;
         public string Roles { get; set; } = string.Empty;
-        public int? Elo { get; set; }
+        public int Elo { get; set; } = 1000;
 
         public string? RefreshToken { get; set; }
         public DateTime? RefreshTokenExpiryTime { get; set; }

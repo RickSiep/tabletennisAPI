@@ -31,10 +31,10 @@ else
     </table>
     <div class="d-flex flex-column justify-content-end align-items-end">
         <div class="mb-2">
-            <p>Page: @_pageIndex</p>
+            <p>Page: @PageIndex</p>
         </div>
         <div>
-            @if (_pageIndex != 1)
+            @if (PageIndex != 1)
             {
                 <button @onclick="() => UpdateItems(GetPreviousPageIndex())" class="btn-outline-info btn">←</button>
             }
@@ -42,7 +42,7 @@ else
             {
                 <button @onclick="() => UpdateItems(index)" class="btn @(IsPageIndex(index) ? "btn-primary" : "btn-outline-info") mx-1" disabled=@IsPageIndex(index)>@index</button>
             }
-            @if (_pageIndex * _pageSize < TotalCount)
+            @if (PageIndex * PageSize < TotalCount)
             {
                 <button @onclick="() => UpdateItems(GetNextPageIndex())" class="btn-outline-info btn">→</button>
             }
@@ -66,18 +66,21 @@ else
     [Parameter]
     public EventCallback<int> OnPageChanged { get; set; }
 
-    public bool IsLoading { get; set; }
-    private int _pageSize = 5;
-    private int _pageIndex = 1;
-    private List<int> _pages = [];
+    [Parameter]
+    public int PageSize { get; set; } = 5;
 
-    private bool IsPageIndex(int index) => index == _pageIndex;
-    private int GetPreviousPageIndex() => _pageIndex == 1 ? _pageIndex : _pageIndex - 1;
-    private int GetNextPageIndex() => _pageIndex == (TotalCount / _pageSize) + 1 ? _pageIndex : _pageIndex + 1;
+    [Parameter]
+    public int PageIndex { get; set; } = 1;
+
+    public bool IsLoading { get; set; }
+    private List<int> _pages = [];
+    private bool IsPageIndex(int index) => index == PageIndex;
+    private int GetPreviousPageIndex() => PageIndex == 1 ? PageIndex : PageIndex - 1;
+    private int GetNextPageIndex() => PageIndex == (TotalCount / PageSize) + 1 ? PageIndex : PageIndex + 1;
 
     protected override async Task OnInitializedAsync()
     {
-        await UpdateItems(_pageIndex);
+        await UpdateItems(PageIndex);
 
         await base.OnInitializedAsync();
     }
@@ -85,8 +88,8 @@ else
     public async Task UpdateItems(int pageIndex)
     {
         IsLoading = true;
-        _pageIndex = pageIndex;
-        await OnPageChanged.InvokeAsync(_pageIndex);
+        PageIndex = pageIndex;
+        await OnPageChanged.InvokeAsync(PageIndex);
         CalculatePages();
         IsLoading = false;
         StateHasChanged();
@@ -96,9 +99,9 @@ else
     {
         _pages = new List<int>
         {
-            _pageIndex > 1 ? _pageIndex - 1 : _pageIndex,
-            _pageIndex,
-            _pageIndex * _pageSize < TotalCount ? _pageIndex + 1 : _pageIndex
+            PageIndex > 1 ? PageIndex - 1 : PageIndex,
+            PageIndex,
+            PageIndex * PageSize < TotalCount ? PageIndex + 1 : PageIndex
         }
         .Distinct().ToList();
     }

@@ -5,7 +5,7 @@ using TableTennisShared.DTO.User;
 
 namespace TableTennisAPI.Controllers
 {
-    [Authorize]
+    //[Authorize]
     [Route("user")]
     [ApiController]
     public class UserController(IUserService userService) : ControllerBase

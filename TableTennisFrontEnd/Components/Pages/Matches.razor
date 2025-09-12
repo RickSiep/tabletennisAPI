@@ -16,26 +16,31 @@
 <PageTitle>Matches</PageTitle>
 
 <h1>Matches</h1>
-<GenericTableComponent TItem=MatchInformationDto OnPageChanged="UpdateMatches" Items="@MatchDtos" TotalCount="@_totalMatches">
-    <HeaderTemplate>
+<div class="container">
+    <GenericTableComponent TItem=MatchInformationDto OnPageChanged="UpdateMatches" Items="@MatchDtos" TotalCount="@_totalMatches">
+        <HeaderTemplate>
         <th>Voornaam</th>
         <th>Voornaam tegenstander</th>
         <th>Gewonnen</th>
         <th>Verschil in Elo</th>
         <th>Gespeeld op</th>
-    </HeaderTemplate>
-    <RowTemplate>
-        <td>@context.FirstName</td>
-        <td>@context.PlayedAgainst</td>
-        <td>@(context.Winner? @context.FirstName: @context.PlayedAgainst)</td>
-        <td>@context.EloDifference</td>
-        <td>@context.DatePlayed</td>
-    </RowTemplate>
-</GenericTableComponent>
+        </HeaderTemplate>
+        <RowTemplate>
+            <td>@context.FirstName</td>
+            <td>@context.PlayedAgainst</td>
+            <td>@(context.Winner? @context.FirstName: @context.PlayedAgainst)</td>
+            <td>@context.EloDifference</td>
+            <td>@context.DatePlayed.ToShortDateString()</td>
+        </RowTemplate>
+    </GenericTableComponent>
+    <div class="d-flex justify-content-center align-items-center mt-2">
+        <button class="btn btn-primary"><NavLink class="nav-link" href="matches/add">Add Match</NavLink></button>
+    </div>
+</div>
 
 
 @code {
-    public List<MatchInformationDto> MatchDtos { get; set; }
+    public List<MatchInformationDto> MatchDtos { get; set; } = [];
     private int _totalMatches;
     private int _pageIndex = 1;
 
