@@ -24,10 +24,30 @@ namespace TableTennisAPI.Controllers
             return Ok();
         }
 
+        [HttpPut("update")]
+        public async Task<ActionResult<Match>> UpdateMatch([FromBody] MatchSubmissionDto request)
+        {
+            var match = await _matchService.UpdateMatchAsync(request);
+            if (match is null)
+                return BadRequest("Something went wrong updating the match");
+            return Ok();
+        }
+
         [HttpGet]
         public async Task GetMatches() => Ok(await _matchService.GetAllMatchesAsync());
 
+        [HttpGet("{matchId}")]
+        public async Task<ActionResult<MatchSubmissionDto>> GetMatchById(int matchId)
+        {
+            Console.WriteLine("lol");
+            return Ok();
+        }
+
         [HttpGet("/match/formatted")]
         public async Task<ActionResult<IEnumerable<MatchInformationDto>>> GetFormattedMatches(int pageIndex = 1, int pageSize = 10) => Ok(await _matchService.GetFormattedMatchesAsync(pageIndex, pageSize));
+
+        [HttpGet("/match/formatted/date")]
+        public async Task<ActionResult<GenericMatchDto<MatchesPerDayDto>>> GetFormattedMatchesByDate(int pageIndex = 1, int pageSize = 10) 
+            => Ok(await _matchService.GetFormattedMatchesByDateAsync(pageIndex, pageSize));
     }
 }

@@ -1,4 +1,5 @@
 ﻿@page "/matches/add"
+@page "/matches/add/{MatchId:int}"
 @rendermode InteractiveServer
 @using Microsoft.AspNetCore.Components.Authorization
 @using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
@@ -77,6 +78,9 @@ else
 }
 
 @code {
+    [Parameter]
+    public int? MatchId { get; set; }
+
     private bool _loading;
     public List<UserIdAndNameDto> Users { get; set; } = [];
     public MatchSubmissionDto Match { get; set; } = new();

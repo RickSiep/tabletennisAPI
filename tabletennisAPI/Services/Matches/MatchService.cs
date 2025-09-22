@@ -68,5 +68,35 @@ namespace TableTennisAPI.Services.Matches
 
             return userNameString.TrimEnd([',', ' ']);
         }
+
+        public Task<Match?> UpdateMatchAsync(MatchSubmissionDto match)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<List<MatchesPerDayDto>> GetFormattedMatchesByDateAsync(int pageIndex, int pageSize)
+        {
+            var userMatches = await _userMatchRepository.GetUserMatchesPaginatedAsync(pageIndex, pageSize);
+            var formattedMatches = new List<MatchesPerDayDto>();
+            var groupedUsermatches = userMatches
+                .GroupBy(um => um.Match.DatePlayed)
+                .ToList();
+
+            foreach (var groupedUsermatch in groupedUsermatches)
+            {
+                var userMatchInfo = new MatchesPerDayDto() { Date = groupedUsermatch.Key };
+                foreach (var match in groupedUsermatch)
+                {
+                    Console.WriteLine(match.UserId);
+                }
+                formattedMatches.Add(new()
+                {
+                    Date = groupedUsermatch.Key
+                    //Matches = groupedUsermatch.Value
+                });
+            }
+
+            return new();
+        }
     }
 }

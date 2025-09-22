@@ -6,7 +6,9 @@ namespace TableTennisAPI.Services.Matches
     public interface IMatchService
     {
         Task<Match?> SaveMatchAsync(MatchSubmissionDto match);
+        Task<Match?> UpdateMatchAsync(MatchSubmissionDto match);
         Task<IEnumerable<Match>> GetAllMatchesAsync();
+        Task<List<MatchesPerDayDto>> GetFormattedMatchesByDateAsync(int pageIndex, int pageSize);
 
         Task<MatchInformationWithTotalMatchesDto> GetFormattedMatchesAsync(int pageIndex, int pageSize);
     }
