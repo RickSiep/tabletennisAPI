@@ -35,39 +35,54 @@ namespace TableTennisAPI.Services.Matches
         public async Task<MatchInformationWithTotalMatchesDto> GetFormattedMatchesAsync(int pageIndex, int pageSize)
         {
             var userMatches = await _userMatchRepository.GetUserMatchesPaginatedAsync(pageIndex, pageSize);
+            var opponentsByMatch = await GetOpponentsByMatchIdsAsync(userMatches);
             var formattedMatches = new List<MatchInformationDto>();
 
             foreach (var userMatch  in userMatches)
             {
                 formattedMatches.Add(new() 
                 { 
-                    FirstName = userMatch.User.FirstName ?? string.Empty, 
+                    FirstName = userMatch.User.FirstName ?? string.Empty,
                     Elo = userMatch.User.Elo, 
                     DatePlayed = userMatch.Match.DatePlayed,
                     Winner = userMatch.IsWinner,
-                    PlayedAgainst = await GetPlayedAgainstUsernames(userMatch.MatchId, userMatch.UserId)
+                    PlayedAgainst = opponentsByMatch[(userMatch.MatchId, userMatch.UserId)]
                 });
             }
 
             return new MatchInformationWithTotalMatchesDto() { MatchInformations = formattedMatches, TotalMatches = userMatches.Count()};
         }
 
-        private async Task<string> GetPlayedAgainstUsernames(int matchId, int userId)
+        private async Task<Dictionary<(int MatchId, int UserId), string>> GetOpponentsByMatchIdsAsync(IEnumerable<UserMatch> userMatches)
         {
-            var userMatches = await _userMatchRepository.GetUserMatchesByMatchIdAsync(matchId);
-            var userNameString = string.Empty;
+            var allMatchIds = userMatches
+                .Select(um => um.MatchId)
+                .Distinct()
+                .ToList();
 
-            foreach (var userMatch in userMatches)
-            {
-                var user = await _userRepository.FindUserByIdAsync(userMatch.UserId);
-                if (user != null && user.Id != userId)
+            var userMatchesWithUsers = await _userMatchRepository
+                .GetUserMatchesByMatchIdAsync(allMatchIds);
+
+            // Build dictionary keyed by both MatchId and UserId
+            var opponentsByMatch = userMatchesWithUsers
+                .GroupBy(um => um.MatchId)
+                .SelectMany(g => g.Select(um => new
                 {
-                    userNameString += $"{user.FirstName}, ";
-                }
-            }
+                    um.MatchId,
+                    um.UserId,
+                    Opponents = g
+                        .Where(other => other.UserId != um.UserId)
+                        .Select(other => other.User?.FirstName)
+                        .Where(name => !string.IsNullOrEmpty(name))
+                }))
+                .ToDictionary(
+                    x => (x.MatchId, x.UserId),
+                    x => string.Join(", ", x.Opponents)
+                );
 
-            return userNameString.TrimEnd([',', ' ']);
+            return opponentsByMatch;
         }
+
 
         public Task<Match?> UpdateMatchAsync(MatchSubmissionDto match)
         {
@@ -77,6 +92,7 @@ namespace TableTennisAPI.Services.Matches
         public async Task<List<MatchesPerDayDto>> GetFormattedMatchesByDateAsync(int pageIndex, int pageSize)
         {
             var userMatches = await _userMatchRepository.GetUserMatchesPaginatedAsync(pageIndex, pageSize);
+            var opponentsByMatch = await GetOpponentsByMatchIdsAsync(userMatches);
             var formattedMatches = new List<MatchesPerDayDto>();
             var groupedUsermatches = userMatches
                 .GroupBy(um => um.Match.DatePlayed)
@@ -87,16 +103,18 @@ namespace TableTennisAPI.Services.Matches
                 var userMatchInfo = new MatchesPerDayDto() { Date = groupedUsermatch.Key };
                 foreach (var match in groupedUsermatch)
                 {
-                    Console.WriteLine(match.UserId);
+                    userMatchInfo.Matches.Add(new() 
+                    {
+                        FirstName = match.User.FirstName ?? string.Empty,
+                        Elo = match.User.Elo,
+                        DatePlayed = match.Match.DatePlayed,
+                        Winner = match.IsWinner,
+                        PlayedAgainst = opponentsByMatch[(match.MatchId, match.UserId)]
+                    });
                 }
-                formattedMatches.Add(new()
-                {
-                    Date = groupedUsermatch.Key
-                    //Matches = groupedUsermatch.Value
-                });
+                formattedMatches.Add(userMatchInfo);
             }
-
-            return new();
+            return formattedMatches;
         }
     }
 }

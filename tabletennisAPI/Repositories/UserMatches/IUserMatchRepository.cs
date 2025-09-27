@@ -8,6 +8,6 @@ namespace TableTennisAPI.Repositories.UserMatches
         Task<int> GetTotalAmountOfMatches();
         Task<IEnumerable<UserMatch>> GetUserMatchesAsync();
         Task<IEnumerable<UserMatch>> GetUserMatchesPaginatedAsync(int pageIndex, int pageSize);
-        Task<IEnumerable<UserMatch>> GetUserMatchesByMatchIdAsync(int matchId);
+        Task<IEnumerable<UserMatch>> GetUserMatchesByMatchIdAsync(IEnumerable<int> matchIds);
     }
 }
