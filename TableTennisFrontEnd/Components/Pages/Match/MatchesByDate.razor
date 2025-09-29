@@ -1,7 +1,33 @@
-﻿@inject ApiClient ApiClient
+﻿@using TableTennisShared.DTO.Match
+@inject ApiClient ApiClient
 
-<h3>MatchesByDate</h3>
+<TableTennisFrontEnd.Components.UI.LoadingSpinnerComponent IsLoading="_isLoading"/>
+<div class="container">
+    <div class="d-flex justify-content-center align-items-center flex-column">
+        @foreach (var matches in MatchesPerDayDtos)
+        {
+            <h3>@matches.Date</h3>
+        }
+    </div>
+</div>
 
 @code {
+    [Parameter]
+    public int PageSize { get; set; } = 5;
+    public List<MatchesPerDayDto> MatchesPerDayDtos { get; set; } = [];
+    private int _pageIndex = 1;
+    private bool _isLoading = false;
 
+    protected override async Task OnInitializedAsync()
+    {
+        _isLoading = true;
+        await LoadMatches();
+        await base.OnInitializedAsync();
+        _isLoading = false;
+    }
+
+    private async Task LoadMatches()
+    {
+        MatchesPerDayDtos = await ApiClient.GetFromJsonAsync<List<MatchesPerDayDto>>($"/match/formatted/date?pageIndex={_pageIndex}&pageSize={PageSize}");
+    }
 }

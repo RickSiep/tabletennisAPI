@@ -92,6 +92,7 @@ namespace TableTennisAPI.Services.Matches
         public async Task<List<MatchesPerDayDto>> GetFormattedMatchesByDateAsync(int pageIndex, int pageSize)
         {
             var userMatches = await _userMatchRepository.GetUserMatchesPaginatedAsync(pageIndex, pageSize);
+            userMatches = userMatches.Reverse();
             var opponentsByMatch = await GetOpponentsByMatchIdsAsync(userMatches);
             var formattedMatches = new List<MatchesPerDayDto>();
             var groupedUsermatches = userMatches

@@ -1,5 +1,6 @@
 ﻿@page "/"
 @using TableTennisFrontEnd.Components.Pages.Auth
+@using TableTennisFrontEnd.Components.Pages.Match
 @using Microsoft.AspNetCore.Authorization
 @using TableTennisShared.DTO.Match
 @inject ApiClient ApiClient
@@ -9,21 +10,9 @@
 
 <h1>Home</h1>
 
-<div class="container">
+<MatchesByDate PageSize="5"/>
 
-</div>
-@code {
-    public List<MatchesPerDayDto> MatchesPerDayDtos { get; set; } = [];
-    private int _pageIndex = 1;
+@code 
+{
 
-    protected override async Task OnInitializedAsync()
-    {
-        await LoadMatches();
-        await base.OnInitializedAsync();
-    }
-
-    private async Task LoadMatches()
-    {
-        MatchesPerDayDtos = await ApiClient.GetFromJsonAsync<List<MatchesPerDayDto>>($"/match/formatted/date?pageIndex={_pageIndex}&pageSize=5");
-    }
 }
