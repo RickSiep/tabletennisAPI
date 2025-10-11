@@ -40,18 +40,36 @@ namespace TableTennisAPI.Services.Matches
 
             foreach (var userMatch  in userMatches)
             {
-                formattedMatches.Add(new() 
-                { 
-                    FirstName = userMatch.User.FirstName ?? string.Empty,
-                    Elo = userMatch.User.Elo, 
+                var formattedMatch = GetUserMatch(userMatch);
+                var userName = userMatch.User.FirstName ?? string.Empty;
+                var oppenentsName = opponentsByMatch[(userMatch.MatchId, userMatch.UserId)];
+
+                var (winnerName, loserName) = userMatch.IsWinner
+                    ? (userName, oppenentsName)
+                    : (oppenentsName, userName);
+
+                formattedMatches.Add(new()
+                {
+                    WinnerName = winnerName,
+                    WinnerElo = userMatch.User.Elo,
                     DatePlayed = userMatch.Match.DatePlayed,
                     Winner = userMatch.IsWinner,
-                    PlayedAgainst = opponentsByMatch[(userMatch.MatchId, userMatch.UserId)]
+                    LoserName = loserName,
+                    WinnerScore = userMatch.Match.WinnerScore,
+                    LoserScore = userMatch.Match.LoserScore
                 });
             }
 
             return new MatchInformationWithTotalMatchesDto() { MatchInformations = formattedMatches, TotalMatches = userMatches.Count()};
         }
+
+        //private UserMatch GetUserMatch(UserMatch userMatch)
+        //{
+        //    var formattedUserMatch = new MatchInformationDto()
+        //    {
+
+        //    };
+        //}
 
         private async Task<Dictionary<(int MatchId, int UserId), string>> GetOpponentsByMatchIdsAsync(IEnumerable<UserMatch> userMatches)
         {
@@ -63,7 +81,6 @@ namespace TableTennisAPI.Services.Matches
             var userMatchesWithUsers = await _userMatchRepository
                 .GetUserMatchesByMatchIdAsync(allMatchIds);
 
-            // Build dictionary keyed by both MatchId and UserId
             var opponentsByMatch = userMatchesWithUsers
                 .GroupBy(um => um.MatchId)
                 .SelectMany(g => g.Select(um => new
@@ -106,11 +123,11 @@ namespace TableTennisAPI.Services.Matches
                 {
                     userMatchInfo.Matches.Add(new() 
                     {
-                        FirstName = match.User.FirstName ?? string.Empty,
-                        Elo = match.User.Elo,
+                        WinnerName = match.User.FirstName ?? string.Empty,
+                        WinnerElo = match.User.Elo,
                         DatePlayed = match.Match.DatePlayed,
                         Winner = match.IsWinner,
-                        PlayedAgainst = opponentsByMatch[(match.MatchId, match.UserId)]
+                        LoserName = opponentsByMatch[(match.MatchId, match.UserId)]
                     });
                 }
                 formattedMatches.Add(userMatchInfo);

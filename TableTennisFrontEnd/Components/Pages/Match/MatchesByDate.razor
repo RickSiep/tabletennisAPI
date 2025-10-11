@@ -1,14 +1,36 @@
 ﻿@using TableTennisShared.DTO.Match
 @inject ApiClient ApiClient
 
-<TableTennisFrontEnd.Components.UI.LoadingSpinnerComponent IsLoading="_isLoading"/>
+<TableTennisFrontEnd.Components.UI.LoadingSpinnerComponent IsLoading="_isLoading" />
 <div class="container">
-    <div class="d-flex justify-content-center align-items-center flex-column">
-        @foreach (var matches in MatchesPerDayDtos)
-        {
-            <h3>@matches.Date</h3>
-        }
+    <div class="row">
+        <div class="d-none d-lg-block col-lg-2">
+            <h3>Linkerkant</h3>
+        </div>
+        <div class="col-8">
+            <div class="d-flex justify-content-center align-items-center flex-column">
+                @foreach (var matchesAndDate in MatchesPerDayDtos)
+                {
+                    <h3>@matchesAndDate.Date.ToShortDateString()</h3>
+                    @foreach (var match in matchesAndDate.Matches)
+                    {
+                        <div class="border-1 bg-success w-100 d-flex">
+                            <div class="w-50">
+                                <h4>@match.WinnerName</h4>
+                            </div>
+                            <div class="w-50">
+                                <h4>@match.LoserName</h4>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+        <div class="d-none d-lg-block col-md-2">
+            <h3>Rechterkant</h3>
+        </div>
     </div>
+
 </div>
 
 @code {

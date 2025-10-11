@@ -26,9 +26,9 @@
         <th>Gespeeld op</th>
         </HeaderTemplate>
         <RowTemplate>
-            <td>@context.FirstName</td>
-            <td>@context.PlayedAgainst</td>
-            <td>@(context.Winner? @context.FirstName: @context.PlayedAgainst)</td>
+            <td>@context.WinnerName</td>
+            <td>@context.LoserName</td>
+            <td>@(context.Winner? @context.WinnerName: @context.LoserName)</td>
             <td>@context.EloDifference</td>
             <td>@context.DatePlayed.ToShortDateString()</td>
             <td><button class="btn btn-primary"><NavLink class="nav-link" href="matches/add">Edit</NavLink></button></td>

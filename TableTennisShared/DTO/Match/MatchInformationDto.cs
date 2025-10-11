@@ -2,11 +2,14 @@
 {
     public class MatchInformationDto
     {
-        public required string FirstName { get; set; }
-        public int Elo { get; set; }
+        public required string WinnerName { get; set; }
+        public required string LoserName { get; set; }
+        public int WinnerScore { get; set; }
+        public int LoserScore { get; set; }
+        public int WinnerElo { get; set; }
+        public int LoserElo { get; set; }
         public DateTime DatePlayed { get; set; }
         public bool Winner { get; set; }
         public int EloDifference { get; set; }
-        public required string PlayedAgainst { get; set; }
     }
 }
