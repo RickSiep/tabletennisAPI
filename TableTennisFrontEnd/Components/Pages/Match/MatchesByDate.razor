@@ -17,9 +17,11 @@
                         <div class="border-1 bg-success w-100 d-flex">
                             <div class="w-50">
                                 <h4>@match.WinnerName</h4>
+                                <h3>@match.WinnerScore</h3>
                             </div>
                             <div class="w-50">
                                 <h4>@match.LoserName</h4>
+                                <h3>@match.LoserScore</h3>
                             </div>
                         </div>
                     }
@@ -35,7 +37,7 @@
 
 @code {
     [Parameter]
-    public int PageSize { get; set; } = 5;
+    public int PageSize { get; set; }
     public List<MatchesPerDayDto> MatchesPerDayDtos { get; set; } = [];
     private int _pageIndex = 1;
     private bool _isLoading = false;

@@ -40,7 +40,6 @@ namespace TableTennisAPI.Services.Matches
 
             foreach (var userMatch  in userMatches)
             {
-                var formattedMatch = GetUserMatch(userMatch);
                 var userName = userMatch.User.FirstName ?? string.Empty;
                 var oppenentsName = opponentsByMatch[(userMatch.MatchId, userMatch.UserId)];
 
@@ -121,13 +120,22 @@ namespace TableTennisAPI.Services.Matches
                 var userMatchInfo = new MatchesPerDayDto() { Date = groupedUsermatch.Key };
                 foreach (var match in groupedUsermatch)
                 {
+                    var userName = match.User.FirstName ?? string.Empty;
+                    var oppenentsName = opponentsByMatch[(match.MatchId, match.UserId)];
+
+                    var (winnerName, loserName) = match.IsWinner
+                        ? (userName, oppenentsName)
+                        : (oppenentsName, userName);
+
                     userMatchInfo.Matches.Add(new() 
                     {
-                        WinnerName = match.User.FirstName ?? string.Empty,
+                        WinnerName = winnerName,
                         WinnerElo = match.User.Elo,
                         DatePlayed = match.Match.DatePlayed,
                         Winner = match.IsWinner,
-                        LoserName = opponentsByMatch[(match.MatchId, match.UserId)]
+                        LoserName = loserName,
+                        WinnerScore = match.Match.WinnerScore,
+                        LoserScore = match.Match.LoserScore
                     });
                 }
                 formattedMatches.Add(userMatchInfo);
