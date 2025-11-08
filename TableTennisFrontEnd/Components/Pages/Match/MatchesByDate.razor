@@ -11,7 +11,7 @@
             <div class="d-flex justify-content-center align-items-center flex-column">
                 @foreach (var matchesAndDate in MatchesPerDayDtos)
                 {
-                    <div class="d-flex flex-column w-100 mt-3 justify-content-center bg-primary-subtle">
+                    <div class="d-flex flex-column w-100 mt-3 justify-content-center bg-secondary">
                         <h3 class="text-center">@matchesAndDate.Date.ToShortDateString()</h3>
                         @foreach (var match in matchesAndDate.Matches)
                         {
