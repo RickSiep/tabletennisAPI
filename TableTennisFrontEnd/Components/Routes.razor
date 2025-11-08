@@ -4,17 +4,15 @@
     <Router AppAssembly="typeof(Program).Assembly">
         <Found Context="routeData">
             <div class="mt-5 pt-5">
-                <div class="container">
-                    <AuthorizeRouteView RouteData="routeData" DefaultLayout="typeof(Layout.MainLayout)">
-                        <NotAuthorized>
-                            <RedirectToLogin />
-                        </NotAuthorized>
-                        <Authorizing>
-                            <div>Authorizing</div>
-                        </Authorizing>
-                    </AuthorizeRouteView>
-                    <FocusOnNavigate RouteData="routeData" Selector="h1" />
-                </div>
+                <AuthorizeRouteView RouteData="routeData" DefaultLayout="typeof(Layout.MainLayout)">
+                    <NotAuthorized>
+                        <RedirectToLogin />
+                    </NotAuthorized>
+                    <Authorizing>
+                        <div>Authorizing</div>
+                    </Authorizing>
+                </AuthorizeRouteView>
+                <FocusOnNavigate RouteData="routeData" Selector="h1" />
             </div>
         </Found>
         <NotFound>

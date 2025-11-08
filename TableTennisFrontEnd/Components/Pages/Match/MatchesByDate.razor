@@ -2,30 +2,30 @@
 @inject ApiClient ApiClient
 
 <TableTennisFrontEnd.Components.UI.LoadingSpinnerComponent IsLoading="_isLoading" />
-<div class="container">
+<div class="container-fluid">
     <div class="row">
-        <div class="d-none d-lg-block col-lg-2">
+        <div class="d-none d-lg-block col-lg-3">
             <h3>Linkerkant</h3>
         </div>
-        <div class="col-8">
+        <div class="col-6">
             <div class="d-flex justify-content-center align-items-center flex-column">
                 @foreach (var matchesAndDate in MatchesPerDayDtos)
                 {
-                    <div class="d-flex flex-column w-100 mt-2">
-                        <h3>@matchesAndDate.Date.ToShortDateString()</h3>
+                    <div class="d-flex flex-column w-100 mt-3 justify-content-center bg-primary-subtle">
+                        <h3 class="text-center">@matchesAndDate.Date.ToShortDateString()</h3>
                         @foreach (var match in matchesAndDate.Matches)
                         {
-                            <div class="border-1 bg-success w-100 d-flex flex-row">
-                                <div class="w-50 p-2 m-2 d-flex flex-row justify-content-between">
-                                    <h2>@match.WinnerName</h2>
-                                    <h2>@match.WinnerScore</h2>
+                            <div class="border-1 bg-primary rounded mt-2 w-100 d-flex flex-row">
+                                <div class="w-50 p-2 m-2 d-flex flex-row justify-content-between align-self-center">
+                                    <h3>@match.WinnerName</h3>
+                                    <h3>@match.WinnerScore</h3>
                                 </div>
                                 <div class="d-flex p-2 m-2">
                                     <h2>/</h2>
                                 </div>
-                                <div class="w-50 p-2 m-2 d-flex flex-row justify-content-between">
-                                    <h2>@match.LoserScore</h2>
-                                    <h2>@match.LoserName</h2>
+                                <div class="w-50 p-2 m-2 d-flex flex-row justify-content-between align-self-center">
+                                    <h3>@match.LoserScore</h3>
+                                    <h3>@match.LoserName</h3>
                                 </div>
                             </div>
                         }
@@ -33,7 +33,7 @@
                 }
             </div>
         </div>
-        <div class="d-none d-lg-block col-md-2">
+        <div class="d-none d-lg-block col-lg-3">
             <h3>Rechterkant</h3>
         </div>
     </div>
