@@ -99,7 +99,6 @@ namespace TableTennisAPI.Services.Matches
             return opponentsByMatch;
         }
 
-
         public Task<Match?> UpdateMatchAsync(MatchSubmissionDto match)
         {
             throw new NotImplementedException();
