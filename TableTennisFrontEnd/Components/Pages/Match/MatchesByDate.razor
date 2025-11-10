@@ -7,25 +7,28 @@
         <div class="d-none d-lg-block col-lg-3">
             <h3>Linkerkant</h3>
         </div>
-        <div class="col-6">
+        <div class="col-12 col-lg-6">
             <div class="d-flex justify-content-center align-items-center flex-column">
                 @foreach (var matchesAndDate in MatchesPerDayDtos)
                 {
-                    <div class="d-flex flex-column w-100 mt-3 justify-content-center bg-secondary">
-                        <h3 class="text-center">@matchesAndDate.Date.ToShortDateString()</h3>
+                    <div class="@(matchesAndDate.Equals(MatchesPerDayDtos.First()) ? 
+                        "d-flex flex-column w-100 justify-content-center bg-secondary" : "mt-3 d-flex flex-column w-100 justify-content-center bg-secondary")">
+                    <h2 class="pt-1 ps-3 mt-2">@FormatDateString(matchesAndDate.Date)</h2>
                         @foreach (var match in matchesAndDate.Matches)
                         {
-                            <div class="border-1 bg-primary rounded mt-2 w-100 d-flex flex-row">
-                                <div class="w-50 p-2 m-2 d-flex flex-row justify-content-between align-self-center">
-                                    <h3>@match.WinnerName</h3>
-                                    <h3>@match.WinnerScore</h3>
-                                </div>
-                                <div class="d-flex p-2 m-2">
-                                    <h2>/</h2>
-                                </div>
-                                <div class="w-50 p-2 m-2 d-flex flex-row justify-content-between align-self-center">
-                                    <h3>@match.LoserScore</h3>
-                                    <h3>@match.LoserName</h3>
+                            <div class="border-1 bg-primary rounded mt-2 width-95-percent d-flex flex-row align-self-center mb-3">
+                                <div class="d-flex flex-row w-100">
+                                    <div class="w-50 p-2 m-2 d-flex flex-row justify-content-between align-self-center">
+                                        <h3>@match.WinnerName</h3>
+                                        <h3>@match.WinnerScore</h3>
+                                    </div>
+                                    <div class="d-flex p-2 m-2">
+                                        <h2>/</h2>
+                                    </div>
+                                    <div class="w-50 p-2 m-2 d-flex flex-row justify-content-between align-self-center">
+                                        <h3>@match.LoserScore</h3>
+                                        <h3>@match.LoserName</h3>
+                                    </div>
                                 </div>
                             </div>
                         }
@@ -59,4 +62,6 @@
     {
         MatchesPerDayDtos = await ApiClient.GetFromJsonAsync<List<MatchesPerDayDto>>($"/match/formatted/date?pageIndex={_pageIndex}&pageSize={PageSize}");
     }
+
+    private string FormatDateString(DateTime dateTime) => $"{dateTime.ToString("dddd")} {dateTime.ToString("dd")} {dateTime.ToString("MMMM").Substring(0, 3)}";
 }

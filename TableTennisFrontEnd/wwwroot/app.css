@@ -18,6 +18,10 @@ body {
     padding: 0;
 }
 
+.width-95-percent {
+    width: 95%;
+}
+
 /*a, .btn-link {
     color: #006bb7;
 }

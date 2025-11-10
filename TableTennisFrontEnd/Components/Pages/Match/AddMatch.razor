@@ -12,15 +12,14 @@
 @inject ProtectedLocalStorage LocalStorage
 @inject NavigationManager NavigationManager
 
-<h3>Add a match!</h3>
-
 @if (_loading)
 {
     <LoadingSpinnerComponent IsLoading=@_loading />
 }
 else
 {
-    <div class="container mt-2">
+    <div class="container">
+        <h3>Add a match!</h3>
         <EditForm method="post" FormName="addMatch" Model="Match" OnValidSubmit="HandleValidSubmit" Enhance>
             <DataAnnotationsValidator />
             <ValidationSummary class="text-danger" />
