@@ -23,7 +23,7 @@ else
         <EditForm method="post" FormName="addMatch" Model="Match" OnValidSubmit="HandleValidSubmit" Enhance>
             <DataAnnotationsValidator />
             <ValidationSummary class="text-danger" />
-            <div class="row">
+            <div class="row mt-5">
                 @for (var i = 0; i < Match.Participants.Count; i++)
                 {
                     var participant = Match.Participants[i];
@@ -98,8 +98,8 @@ else
                 Match.Participants.Add(new() { IsWinner = false });
             }
         }
-        var token = (await LocalStorage.GetAsync<string>("authToken")).Value;
 
+        var token = (await LocalStorage.GetAsync<string>("authToken")).Value;
         if (token == null)
         {
             throw new UnauthorizedAccessException("No authentication token found.");
