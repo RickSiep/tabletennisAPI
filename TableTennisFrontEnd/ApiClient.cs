@@ -1,4 +1,5 @@
-﻿namespace TableTennisFrontEnd
+﻿using System.Net.Http.Headers;
+namespace TableTennisFrontEnd
 {
     public class ApiClient(HttpClient client)
     {
@@ -7,14 +8,11 @@
             return client.GetFromJsonAsAsyncEnumerable<T>(path);
         }
 
-        public async Task<T> GetFromJsonAsync<T>(string path)
-        {
-            return await client.GetFromJsonAsync<T>(path);
-        }
+        public async Task<T> GetFromJsonAsync<T>(string path) => await client.GetFromJsonAsync<T>(path);
 
         public async Task<T> GetFromJsonAsyncAuthorized<T>(string path, string token)
         {
-            client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             return await client.GetFromJsonAsync<T>(path);
         }
 

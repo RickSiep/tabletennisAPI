@@ -74,6 +74,7 @@ else
 
     public bool IsLoading { get; set; }
     private List<int> _pages = [];
+
     private bool IsPageIndex(int index) => index == PageIndex;
     private int GetPreviousPageIndex() => PageIndex == 1 ? PageIndex : PageIndex - 1;
     private int GetNextPageIndex() => PageIndex == (TotalCount / PageSize) + 1 ? PageIndex : PageIndex + 1;

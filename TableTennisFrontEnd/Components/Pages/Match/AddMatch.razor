@@ -23,7 +23,7 @@ else
         <EditForm method="post" FormName="addMatch" Model="Match" OnValidSubmit="HandleValidSubmit" Enhance>
             <DataAnnotationsValidator />
             <ValidationSummary class="text-danger" />
-            <div class="row">
+            <div class="row mt-5">
                 @for (var i = 0; i < Match.Participants.Count; i++)
                 {
                     var participant = Match.Participants[i];

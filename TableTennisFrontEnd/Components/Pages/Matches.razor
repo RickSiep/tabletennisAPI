@@ -11,6 +11,7 @@
 @using System.Threading.Tasks;
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject ApiClient ApiClient
+@inject NavigationManager Navigation
 @attribute [Authorize]
 
 <PageTitle>Matches</PageTitle>
@@ -19,11 +20,11 @@
 <div class="container">
     <GenericTableComponent TItem=MatchInformationDto OnPageChanged="UpdateMatches" Items="@MatchDtos" TotalCount="@_totalMatches">
         <HeaderTemplate>
-        <th>Voornaam</th>
-        <th>Voornaam tegenstander</th>
-        <th>Gewonnen</th>
-        <th>Verschil in Elo</th>
-        <th>Gespeeld op</th>
+            <th>Voornaam</th>
+            <th>Voornaam tegenstander</th>
+            <th>Gewonnen</th>
+            <th>Verschil in Elo</th>
+            <th>Gespeeld op</th>
         </HeaderTemplate>
         <RowTemplate>
             <td>@context.WinnerName</td>
@@ -35,7 +36,7 @@
         </RowTemplate>
     </GenericTableComponent>
     <div class="d-flex justify-content-center align-items-center mt-2">
-        <button class="btn btn-primary"><NavLink class="nav-link" href="matches/add">Add Match</NavLink></button>
+        <button class="btn btn-primary" @onclick="NavigateToAddMatch">Add Match</button>
     </div>
 </div>
 
@@ -53,8 +54,10 @@
     private async Task UpdateMatches(int pageIndex)
     {
         _pageIndex = pageIndex;
-        var formattedMatches = await ApiClient.GetFromJsonAsync<MatchInformationWithTotalMatchesDto>($"/match/formatted?pageIndex={_pageIndex}&pageSize=5");
+        var formattedMatches = await ApiClient.GetFromJsonAsyncAuthorized<MatchInformationWithTotalMatchesDto>($"/match/formatted?pageIndex={_pageIndex}&pageSize=5");
         MatchDtos = formattedMatches.MatchInformations;
         _totalMatches = formattedMatches.TotalMatches;
     }
+
+    private void NavigateToAddMatch() => Navigation.NavigateTo("/matches/add");
 }

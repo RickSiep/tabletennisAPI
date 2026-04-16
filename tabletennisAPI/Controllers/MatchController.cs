@@ -6,7 +6,7 @@ using TableTennisShared.DTO.Match;
 
 namespace TableTennisAPI.Controllers
 {
-    //[Authorize]
+    [Authorize]
     [Route("match")]
     [ApiController]
     public class MatchController(MatchService matchService) : ControllerBase
