@@ -39,8 +39,18 @@ namespace TableTennisAPI.Controllers
         [HttpGet("{matchId}")]
         public async Task<ActionResult<MatchSubmissionDto>> GetMatchById(int matchId)
         {
-            Console.WriteLine("lol");
-            return Ok();
+            var match = await _matchService.GetMatchById(matchId);
+            var matchSubmissionDto = new MatchSubmissionDto
+            {
+                WinnerScore = match?.WinnerScore ?? 0,
+                LoserScore = match?.LoserScore ?? 0,
+                Participants = match?.Users.Select(p => new MatchParticipantDto
+                {
+                    UserId = p.UserId,
+                    IsWinner = p.IsWinner
+                }).ToList() ?? new List<MatchParticipantDto>()
+            }
+            return match != null ? Ok(match) : NotFound($"No match found with id {matchId}");
         }
 
         [HttpGet("/match/formatted")]

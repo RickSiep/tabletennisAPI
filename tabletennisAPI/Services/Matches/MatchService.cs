@@ -141,5 +141,7 @@ namespace TableTennisAPI.Services.Matches
             }
             return formattedMatches;
         }
+
+        public async Task<Match?> GetMatchById(int matchId) => await _matchRepository.FindMatchById(matchId);
     }
 }

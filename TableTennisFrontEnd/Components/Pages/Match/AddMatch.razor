@@ -77,9 +77,10 @@ else
 }
 
 @code {
-    [Parameter]
+    [Parameter, SupplyParameterFromQuery]
     public int? MatchId { get; set; }
 
+    private bool IsEditMode => MatchId.HasValue;
     private bool _loading;
     public List<UserIdAndNameDto> Users { get; set; } = [];
     public MatchSubmissionDto Match { get; set; } = new();
@@ -87,19 +88,7 @@ else
     protected override async Task OnInitializedAsync()
     {
         _loading = true;
-        for (int i = 0; i < 2; i++)
-        {
-            if (i == 0)
-            {
-                Match.Participants.Add(new() { IsWinner = true });
-            }
-            else
-            {
-                Match.Participants.Add(new() { IsWinner = false });
-            }
-        }
         var token = (await LocalStorage.GetAsync<string>("authToken")).Value;
-
         if (token == null)
         {
             throw new UnauthorizedAccessException("No authentication token found.");
@@ -108,13 +97,44 @@ else
         try
         {
             Users = await Client.GetFromJsonAsyncAuthorized<List<UserIdAndNameDto>>("/user/firstname", token);
+
+            if (IsEditMode)
+            {
+                await LoadMatchData(MatchId.Value, token);
+            }
+            else
+            {
+                InitializeNewMatch();
+            }
         }
         catch (Exception e)
         {
-            Console.WriteLine(e.Message);
+            Console.WriteLine($"Error initializing match data: {e.Message}");
         }
+
         await base.OnInitializedAsync();
         _loading = false;
+    }
+
+    private async Task LoadMatchData(int matchId, string token)
+    {
+        try
+        {
+            Match = await Client.GetFromJsonAsyncAuthorized<MatchSubmissionDto>($"/match/{matchId}", token);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"Error loading match data: {e.Message}");
+        }
+    }
+
+    private void InitializeNewMatch()
+    {
+        Match = new();
+        for (int i = 0; i < 2; i++)
+        {
+            Match.Participants.Add(new() { IsWinner = i == 0 });
+        }
     }
 
     private async Task HandleValidSubmit()

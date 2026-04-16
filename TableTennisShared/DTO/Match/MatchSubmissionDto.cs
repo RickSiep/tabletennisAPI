@@ -6,4 +6,4 @@
         public int WinnerScore { get; set; }
         public int LoserScore { get; set; }
     }
-}
+} 
