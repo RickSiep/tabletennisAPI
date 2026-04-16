@@ -78,7 +78,7 @@ namespace TableTennisAPI.Services.Matches
                 .ToList();
 
             var userMatchesWithUsers = await _userMatchRepository
-                .GetUserMatchesByMatchIdAsync(allMatchIds);
+                .GetUserMatchesByMatchIdsAsync(allMatchIds);
 
             var opponentsByMatch = userMatchesWithUsers
                 .GroupBy(um => um.MatchId)

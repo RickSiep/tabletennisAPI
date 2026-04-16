@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TableTennisAPI.Models;
+using TableTennisAPI.Repositories.UserMatches;
 using TableTennisAPI.Services.Matches;
 using TableTennisShared.DTO.Match;
 
@@ -9,7 +10,7 @@ namespace TableTennisAPI.Controllers
     [Authorize]
     [Route("match")]
     [ApiController]
-    public class MatchController(MatchService matchService) : ControllerBase
+    public class MatchController(MatchService matchService, IUserMatchRepository userMatchRepository) : ControllerBase
     {
         private readonly MatchService _matchService = matchService;
 
@@ -29,8 +30,10 @@ namespace TableTennisAPI.Controllers
         {
             var match = await _matchService.UpdateMatchAsync(request);
             if (match is null)
+            {
                 return BadRequest("Something went wrong updating the match");
-            return Ok();
+            }
+            return Ok(match);
         }
 
         [HttpGet]
@@ -39,18 +42,32 @@ namespace TableTennisAPI.Controllers
         [HttpGet("{matchId}")]
         public async Task<ActionResult<MatchSubmissionDto>> GetMatchById(int matchId)
         {
+            var userMatches = await userMatchRepository.GetUserMatchesByMatchIdsAsync(matchId);
+            if (userMatches.Count == 0)
+            {
+                NotFound($"No match found with id {matchId}");
+            }
+
+            var matchParticipants = new List<MatchParticipantDto>();
+            foreach (var userMatch in userMatches)
+            {
+                matchParticipants.Add(new()
+                {
+                    UserId = userMatch.UserId,
+                    IsWinner = userMatch.IsWinner,
+                    TeamNumber = userMatch.TeamNumber,
+                });
+            }
+
             var match = await _matchService.GetMatchById(matchId);
             var matchSubmissionDto = new MatchSubmissionDto
             {
                 WinnerScore = match?.WinnerScore ?? 0,
                 LoserScore = match?.LoserScore ?? 0,
-                Participants = match?.Users.Select(p => new MatchParticipantDto
-                {
-                    UserId = p.UserId,
-                    IsWinner = p.IsWinner
-                }).ToList() ?? new List<MatchParticipantDto>()
-            }
-            return match != null ? Ok(match) : NotFound($"No match found with id {matchId}");
+                Participants = matchParticipants
+            };
+
+            return Ok(matchSubmissionDto);
         }
 
         [HttpGet("/match/formatted")]

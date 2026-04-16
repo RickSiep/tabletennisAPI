@@ -11,9 +11,7 @@ namespace TableTennisAPI.Repositories.UserMatches
         public async Task<UserMatch> AddUserMatch(UserMatch userMatch)
         {
             await _context.UserMatches.AddAsync(userMatch);
-
             await _context.SaveChangesAsync();
-
             return userMatch;
         }
 
@@ -45,12 +43,18 @@ namespace TableTennisAPI.Repositories.UserMatches
             return matches;
         }
 
-        public async Task<IEnumerable<UserMatch>> GetUserMatchesByMatchIdAsync(IEnumerable<int> matchIds)
+        public async Task<IEnumerable<UserMatch>> GetUserMatchesByMatchIdsAsync(IEnumerable<int> matchIds)
         {
             return await _context.UserMatches
                 .Include(um => um.User)
                 .Where(um => matchIds.Contains(um.MatchId))
                 .ToListAsync();
         }
+
+        public async Task<List<UserMatch>> GetUserMatchesByMatchIdsAsync(int matchId) => 
+                await _context.UserMatches
+                .Include(usermatch => usermatch.User)
+                .Where(usermatch => usermatch.MatchId == matchId)
+                .ToListAsync();
     }
 }
