@@ -51,10 +51,17 @@ namespace TableTennisAPI.Repositories.UserMatches
                 .ToListAsync();
         }
 
-        public async Task<List<UserMatch>> GetUserMatchesByMatchIdsAsync(int matchId) => 
+        public async Task<List<UserMatch>> GetUserMatchesByMatchIdsAsync(int matchId) =>
                 await _context.UserMatches
                 .Include(usermatch => usermatch.User)
                 .Where(usermatch => usermatch.MatchId == matchId)
                 .ToListAsync();
+
+        public async Task DeleteUserMatchesByMatchIdAsync(int matchId)
+        {
+            var userMatchesToDelete = await _context.UserMatches.Where(um => um.MatchId == matchId).ToListAsync();
+            _context.UserMatches.RemoveRange(userMatchesToDelete);
+            await _context.SaveChangesAsync();
+        }
     }
 }

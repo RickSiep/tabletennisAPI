@@ -6,11 +6,10 @@ using TableTennisShared.DTO.Match;
 
 namespace TableTennisAPI.Services.Matches
 {
-    public class MatchService(IMatchRepository matchRepository, IUserMatchRepository userMatchRepository, IUserRepository userRepository) : IMatchService
+    public class MatchService(IMatchRepository matchRepository, IUserMatchRepository userMatchRepository) : IMatchService
     {
         private readonly IMatchRepository _matchRepository = matchRepository;
         private readonly IUserMatchRepository _userMatchRepository = userMatchRepository;
-        private readonly IUserRepository _userRepository = userRepository;
 
         public async Task<Match?> SaveMatchAsync(MatchSubmissionDto match)
         {
@@ -18,11 +17,13 @@ namespace TableTennisAPI.Services.Matches
 
             foreach (var participant in match.Participants)
             {
-                var userMatch = new UserMatch();
-                userMatch.MatchId = newMatch.Id;
-                userMatch.UserId = participant.UserId;
-                userMatch.IsWinner = participant.IsWinner;
-                userMatch.TeamNumber = participant.TeamNumber;
+                var userMatch = new UserMatch
+                {
+                    MatchId = newMatch.Id,
+                    UserId = participant.UserId,
+                    IsWinner = participant.IsWinner,
+                    TeamNumber = participant.TeamNumber
+                };
 
                 await _userMatchRepository.AddUserMatch(userMatch);
             }
@@ -100,8 +101,9 @@ namespace TableTennisAPI.Services.Matches
             return opponentsByMatch;
         }
 
-        public Task<Match?> UpdateMatchAsync(MatchSubmissionDto match)
+        public async Task<Match?> UpdateMatchAsync(MatchSubmissionDto match)
         {
+            //var updatedMatch = await _matchRepository.UpdateMatchAsync(match);
             throw new NotImplementedException();
         }
 
@@ -144,5 +146,7 @@ namespace TableTennisAPI.Services.Matches
         }
 
         public async Task<Match?> GetMatchById(int matchId) => await _matchRepository.FindMatchById(matchId);
+
+        public async Task DeleteMatchAsync(int matchId) => await _matchRepository.DeleteMatchAsync(matchId);
     }
 }

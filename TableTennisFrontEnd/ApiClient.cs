@@ -31,5 +31,12 @@ namespace TableTennisFrontEnd
 
             return await response.Content.ReadFromJsonAsync<TOut>();
         }
+
+        public async Task<HttpResponseMessage> DeleteRouteAuthorizedAsync(string path, string token)
+        {
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            var response = await client.DeleteAsync(path);
+            return response;
+        }
     }
 }

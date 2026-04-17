@@ -18,6 +18,7 @@
 
 <PageTitle>Matches</PageTitle>
 
+<TableTennisFrontEnd.Components.UI.LoadingSpinnerComponent IsLoading="_isLoading" />
 <h1 class="text-center">Matches</h1>
 <div class="container">
     <GenericTableComponent TItem=MatchInformationDto OnPageChanged="UpdateMatches" Items="@MatchDtos" TotalCount="@_totalMatches">
@@ -34,7 +35,10 @@
             <td>@(context.Winner? @context.WinnerName: @context.LoserName)</td>
             <td>@context.EloDifference</td>
             <td>@context.DatePlayed.ToShortDateString()</td>
-            <td><button class="btn btn-primary"><NavLink class="nav-link" href=@($"match/edit/{context.MatchId}")>Edit</NavLink></button></td>
+            <td>
+                <button class="btn btn-primary"><NavLink class="nav-link" href=@($"match/edit/{context.MatchId}")>Edit</NavLink></button>
+                <button class="btn btn-danger" @onclick="() => DeleteMatch(context.MatchId)">Delete</button>
+            </td>
         </RowTemplate>
     </GenericTableComponent>
     <div class="d-flex justify-content-center align-items-center mt-2">
@@ -47,26 +51,38 @@
     public List<MatchInformationDto> MatchDtos { get; set; } = [];
     private int _totalMatches;
     private int _pageIndex = 1;
+    private string _accessToken = string.Empty;
+    private bool _isLoading = false;
 
     protected override async Task OnInitializedAsync()
     {
+        _accessToken = (await LocalStorage.GetAsync<string>("authToken")).Value;
+        if (_accessToken == null)
+        {
+            throw new UnauthorizedAccessException("No authentication token found.");
+        }
+
+        _isLoading = true;
         await UpdateMatches(_pageIndex);
+        _isLoading = false;
     }
 
     private async Task UpdateMatches(int pageIndex)
     {
         _pageIndex = pageIndex;
-
-        var token = (await LocalStorage.GetAsync<string>("authToken")).Value;
-        if (token == null)
-        {
-            throw new UnauthorizedAccessException("No authentication token found.");
-        }
-
-        var formattedMatches = await ApiClient.GetFromJsonAsyncAuthorized<MatchInformationWithTotalMatchesDto>($"/match/formatted?pageIndex={_pageIndex}&pageSize=5", token);
+        _accessToken = (await LocalStorage.GetAsync<string>("authToken")).Value;
+        var formattedMatches = await ApiClient.GetFromJsonAsyncAuthorized<MatchInformationWithTotalMatchesDto>($"/match/formatted?pageIndex={_pageIndex}&pageSize=5", _accessToken);
         MatchDtos = formattedMatches.MatchInformations;
         _totalMatches = formattedMatches.TotalMatches;
     }
 
     private void NavigateToAddMatch() => Navigation.NavigateTo("/matches/add");
+
+    private async Task DeleteMatch(int matchId)
+    {
+        _isLoading = true;
+        await ApiClient.DeleteRouteAuthorizedAsync($"/match/delete/{matchId}", _accessToken);
+        await UpdateMatches(_pageIndex);
+        _isLoading = false;
+    }
 }
