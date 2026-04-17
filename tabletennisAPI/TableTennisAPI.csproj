@@ -22,6 +22,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\TableTennisShared\TableTennisShared.csproj" />
+    <ProjectReference Include="..\TableTennis.ServiceDefaults\TableTennis.ServiceDefaults.csproj" />
   </ItemGroup>
 
 </Project>

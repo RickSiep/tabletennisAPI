@@ -5,3 +5,10 @@ TableTennisFrontEnd/obj
 TableTennisFrontEnd/bin
 TableTennisFrontEnd/.vs
 .vs
+bin/
+obj/
+.vs/
+*.user
+*.suo
+*.log
+node_modules/
