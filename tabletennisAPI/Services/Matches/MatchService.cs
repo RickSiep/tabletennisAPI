@@ -49,6 +49,7 @@ namespace TableTennisAPI.Services.Matches
 
                 formattedMatches.Add(new()
                 {
+                    MatchId = userMatch.MatchId,
                     WinnerName = winnerName,
                     WinnerElo = userMatch.User.Elo,
                     DatePlayed = userMatch.Match.DatePlayed,

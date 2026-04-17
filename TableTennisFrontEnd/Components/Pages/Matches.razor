@@ -34,7 +34,7 @@
             <td>@(context.Winner? @context.WinnerName: @context.LoserName)</td>
             <td>@context.EloDifference</td>
             <td>@context.DatePlayed.ToShortDateString()</td>
-            <td><button class="btn btn-primary"><NavLink class="nav-link" href="matches/add">Edit</NavLink></button></td>
+            <td><button class="btn btn-primary"><NavLink class="nav-link" href=@($"match/edit/{context.MatchId}")>Edit</NavLink></button></td>
         </RowTemplate>
     </GenericTableComponent>
     <div class="d-flex justify-content-center align-items-center mt-2">

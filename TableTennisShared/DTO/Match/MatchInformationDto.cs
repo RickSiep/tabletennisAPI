@@ -2,6 +2,7 @@
 {
     public class MatchInformationDto
     {
+        public int MatchId { get; set; }
         public required string WinnerName { get; set; }
         public required string LoserName { get; set; }
         public int WinnerScore { get; set; }
