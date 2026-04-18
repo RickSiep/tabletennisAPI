@@ -18,7 +18,6 @@ namespace TableTennisAPI.Util {
         public bool VerifyPassword(User user, string hashedPassword, string password)
         {
             var result = _passwordHasher.VerifyHashedPassword(user, hashedPassword, password);
-
             return result == PasswordVerificationResult.Success;
         }
     }

@@ -28,7 +28,10 @@ builder.Services.AddScoped<ProtectedLocalStorage>();
 builder.Services.AddHttpClient<ApiClient>(client =>
 {
     client.BaseAddress = new("https://localhost:7149");
-});
+})
+    .AddHttpMessageHandler<TokenRefreshHandler>();
+
+builder.Services.AddScoped<TokenRefreshHandler>();
 
 var app = builder.Build();
 

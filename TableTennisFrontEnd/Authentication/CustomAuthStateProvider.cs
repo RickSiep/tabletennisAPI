@@ -40,11 +40,12 @@ namespace TableTennisFrontEnd.Authentication
             return null;
         }
 
-        public async Task NotifyUserAuthentication(string token)
+        public async Task NotifyUserAuthentication(string accessToken, string refreshToken)
         {
-            await _storage.SetAsync("authToken", token);
+            await _storage.SetAsync("authToken", accessToken);
+            await _storage.SetAsync("refreshToken", refreshToken);
 
-            var identity = GetClaimsIdentity(token);
+            var identity = GetClaimsIdentity(accessToken);
             var user = new ClaimsPrincipal(identity);
             var authState = new AuthenticationState(user);
 
@@ -57,15 +58,12 @@ namespace TableTennisFrontEnd.Authentication
             return new ClaimsIdentity(claims, "jwt");
         }
 
-        private string PadBase64(string base64)
+        public static string PadBase64(string base64) => (base64.Length % 4) switch
         {
-            switch (base64.Length % 4)
-            {
-                case 2: return base64 + "==";
-                case 3: return base64 + "=";
-                default: return base64;
-            }
-        }
+            2 => base64 + "==",
+            3 => base64 + "=",
+            _ => base64
+        };
 
         public async Task Logout()
         {

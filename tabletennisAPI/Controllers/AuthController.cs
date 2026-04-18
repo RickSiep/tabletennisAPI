@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using TableTennisAPI.Services.Users;
+using TableTennisAPI.Services.Auth;
 using TableTennisShared.DTO.Token;
 using TableTennisShared.DTO.User;
 
@@ -7,17 +7,15 @@ namespace TableTennisAPI.Controllers
 {
     [Route("auth")]
     [ApiController]
-    public class AuthController(IUserService userService) : ControllerBase
+    public class AuthController(IAuthService authService) : ControllerBase
     {
-        private readonly IUserService _userService = userService;
-
         // POST api/<RegisterController>
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterDto dto)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
 
-            await _userService.SaveUserAsync(dto);
+            await authService.SaveUserAsync(dto);
 
             return Ok("User Registered");
         }
@@ -25,7 +23,7 @@ namespace TableTennisAPI.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginRequestDto dto)
         {
-            var jwt = await _userService.LoginAsync(dto.Email, dto.Password);
+            var jwt = await authService.LoginAsync(dto.Email, dto.Password);
 
             return jwt is null ? BadRequest("Username password combination isn't known.") : Ok(jwt);
         }
@@ -33,7 +31,7 @@ namespace TableTennisAPI.Controllers
         [HttpPost("refresh-token")]
         public async Task<ActionResult<TokenResponseDto>> RefreshToken(RefreshTokenRequestDto request)
         {
-            var result = await _userService.RefreshTokenAsync(request);
+            var result = await authService.RefreshTokenAsync(request);
 
             if (result is null || result.AccessToken is null || result.RefreshToken is null)
                 return Unauthorized("Invalid refresh token");

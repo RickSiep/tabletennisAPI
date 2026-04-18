@@ -1,7 +1,5 @@
-﻿using Microsoft.AspNetCore.Components.Forms;
-using Microsoft.IdentityModel.JsonWebTokens;
+﻿using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
@@ -14,7 +12,6 @@ namespace TableTennisAPI.Util {
         {
             string secretKey = config["Appsettings:Token"];
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
-
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
             var tokenDescriptor = new SecurityTokenDescriptor {
@@ -24,14 +21,13 @@ namespace TableTennisAPI.Util {
                     new Claim(JwtRegisteredClaimNames.Email, user.Email),
                     new Claim(ClaimTypes.Role, user.Roles)
                     ]),
-                Expires = DateTime.UtcNow.AddMinutes(60),
+                Expires = DateTime.UtcNow.AddMinutes(1),
                 SigningCredentials = credentials,
                 Issuer = config["AppSettings:issuer"],
                 Audience = config["AppSettings:audience"]
             };
 
             var handler = new JsonWebTokenHandler();
-
             string token = handler.CreateToken(tokenDescriptor);
 
             return token;

@@ -1,16 +1,17 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 using TableTennisAPI.Data;
 using TableTennisAPI.Models;
+using TableTennisAPI.Repositories.Matches;
+using TableTennisAPI.Repositories.UserMatches;
 using TableTennisAPI.Repositories.Users;
+using TableTennisAPI.Services.Auth;
+using TableTennisAPI.Services.Matches;
 using TableTennisAPI.Services.Users;
 using TableTennisAPI.Util;
-using System.Text;
-using TableTennisAPI.Repositories.Matches;
-using TableTennisAPI.Services.Matches;
-using TableTennisAPI.Repositories.UserMatches;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -43,6 +44,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped<TokenProvider>();
+builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IMatchRepository, MatchRepository>();
 builder.Services.AddScoped<IUserMatchRepository, UserMatchRepository>();

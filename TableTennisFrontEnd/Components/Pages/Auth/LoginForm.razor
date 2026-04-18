@@ -57,7 +57,7 @@
             var response = await ApiClient.PostJsonAsyncWithResponseModel<LoginRequestDto, LoginResponseDto>("/auth/login", LoginRequest);
             if (response != null)
             {
-                await ((CustomAuthStateProvider)AuthStateProvider).NotifyUserAuthentication(response.AccessToken);
+                await ((CustomAuthStateProvider)AuthStateProvider).NotifyUserAuthentication(response.AccessToken, response.RefreshToken);
                 NavigationManager.NavigateTo("/");
             }
             else

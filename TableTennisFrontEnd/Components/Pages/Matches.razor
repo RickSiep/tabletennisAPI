@@ -63,8 +63,14 @@
         }
 
         _isLoading = true;
-        await UpdateMatches(_pageIndex);
-        _isLoading = false;
+        try
+        {
+            await UpdateMatches(_pageIndex);
+        }
+        finally
+        {
+            _isLoading = false;
+        }
     }
 
     private async Task UpdateMatches(int pageIndex)
