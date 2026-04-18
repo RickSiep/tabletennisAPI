@@ -35,11 +35,12 @@ namespace TableTennisAPI.Services.Matches
 
         public async Task<MatchInformationWithTotalMatchesDto> GetFormattedMatchesAsync(int pageIndex, int pageSize)
         {
+            var totalMatches = (await _matchRepository.GetAllMatchesAsync()).ToList().Count;
             var userMatches = await _userMatchRepository.GetUserMatchesPaginatedAsync(pageIndex, pageSize);
             var opponentsByMatch = await GetOpponentsByMatchIdsAsync(userMatches);
             var formattedMatches = new List<MatchInformationDto>();
 
-            foreach (var userMatch  in userMatches)
+            foreach (var userMatch in userMatches)
             {
                 var userName = userMatch.User.FirstName ?? string.Empty;
                 var oppenentsName = opponentsByMatch[(userMatch.MatchId, userMatch.UserId)];
@@ -61,7 +62,7 @@ namespace TableTennisAPI.Services.Matches
                 });
             }
 
-            return new MatchInformationWithTotalMatchesDto() { MatchInformations = formattedMatches, TotalMatches = userMatches.Count()};
+            return new() { MatchInformations = formattedMatches, TotalMatches = totalMatches};
         }
 
         //private UserMatch GetUserMatch(UserMatch userMatch)

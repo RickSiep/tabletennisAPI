@@ -74,7 +74,7 @@ namespace TableTennisAPI.Controllers
         public async Task<ActionResult<IEnumerable<MatchInformationDto>>> GetFormattedMatches(int pageIndex = 1, int pageSize = 10) => Ok(await _matchService.GetFormattedMatchesAsync(pageIndex, pageSize));
 
         [HttpGet("/match/formatted/date")]
-        public async Task<ActionResult<GenericMatchDto<MatchesPerDayDto>>> GetFormattedMatchesByDate(int pageIndex = 1, int pageSize = 10) 
+        public async Task<ActionResult<MatchesPerDayDto>> GetFormattedMatchesByDate(int pageIndex = 1, int pageSize = 10) 
             => Ok(await _matchService.GetFormattedMatchesByDateAsync(pageIndex, pageSize));
 
         [HttpDelete("delete/{matchId}")]
