@@ -8,7 +8,6 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
-    .AddInteractiveWebAssemblyComponents()
     .AddInteractiveServerComponents()
     .AddAuthenticationStateSerialization();
 
@@ -24,12 +23,12 @@ builder.Services.AddHttpClient();
 builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthStateProvider>();
 builder.Services.AddAuthorizationCore();
 builder.Services.AddScoped<ProtectedLocalStorage>();
+builder.Services.AddScoped<TokenStorageHandler>();
 
 builder.Services.AddHttpClient<ApiClient>(client =>
 {
     client.BaseAddress = new("https://localhost:7149");
-})
-    .AddHttpMessageHandler<TokenRefreshHandler>();
+}).AddHttpMessageHandler<TokenRefreshHandler>();
 
 builder.Services.AddScoped<TokenRefreshHandler>();
 
@@ -53,7 +52,6 @@ app.UseAntiforgery();
 
 app.MapStaticAssets();
 app.MapRazorComponents<App>()
-    .AddInteractiveWebAssemblyRenderMode()
     .AddInteractiveServerRenderMode();
 
 app.Run();
