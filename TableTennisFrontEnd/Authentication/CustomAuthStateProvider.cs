@@ -6,16 +6,15 @@ using System.Text.Json;
 
 namespace TableTennisFrontEnd.Authentication
 {
-    public class CustomAuthStateProvider(ProtectedLocalStorage storage) : AuthenticationStateProvider
+    public class CustomAuthStateProvider(TokenStorageHandler tokenStorage) : AuthenticationStateProvider
     {
-        private readonly ProtectedLocalStorage _storage = storage;
-        private ClaimsPrincipal _anonymous = new(new ClaimsIdentity());
+        private readonly ClaimsPrincipal _anonymous = new(new ClaimsIdentity());
 
         public override async Task<AuthenticationState> GetAuthenticationStateAsync()
         {
             try
             {
-                var token = (await _storage.GetAsync<string>("authToken")).Value;
+                var token = tokenStorage.AccessToken;
                 var identity = string.IsNullOrEmpty(token) ? _anonymous : new ClaimsPrincipal(GetClaimsIdentity(token));
                 return new AuthenticationState(identity);
             }
@@ -25,7 +24,7 @@ namespace TableTennisFrontEnd.Authentication
             }
         }
 
-        private IEnumerable<Claim> ParseClaimsFromJwt(string jwt)
+        private static IEnumerable<Claim>? ParseClaimsFromJwt(string jwt)
         {
             var payload = jwt.Split('.')[1];
             var json = Encoding.UTF8.GetString(Convert.FromBase64String(PadBase64(payload)));
@@ -42,8 +41,7 @@ namespace TableTennisFrontEnd.Authentication
 
         public async Task NotifyUserAuthentication(string accessToken, string refreshToken)
         {
-            await _storage.SetAsync("authToken", accessToken);
-            await _storage.SetAsync("refreshToken", refreshToken);
+            await tokenStorage.SetTokens(accessToken, refreshToken);
 
             var identity = GetClaimsIdentity(accessToken);
             var user = new ClaimsPrincipal(identity);
@@ -67,7 +65,7 @@ namespace TableTennisFrontEnd.Authentication
 
         public async Task Logout()
         {
-            await _storage.DeleteAsync("authToken");
+            await tokenStorage.DeleteTokens();
             NotifyAuthenticationStateChanged(Task.FromResult(new AuthenticationState(_anonymous)));
         }
     }

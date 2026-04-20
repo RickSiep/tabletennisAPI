@@ -26,7 +26,7 @@ namespace TableTennisAPI.Services.Auth
                 return null;
             }
 
-            return await CreateTokenResponse(user); ;
+            return await CreateTokenResponse(user);
         }
 
         public async Task<User> SaveUserAsync(RegisterDto dto)
