@@ -8,6 +8,8 @@ namespace TableTennisFrontEnd.Authentication
     {
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
+            //await tokenStorage.Ready;
+
             var response = await base.SendAsync(request, cancellationToken);
 
             if (response.StatusCode == HttpStatusCode.Unauthorized)

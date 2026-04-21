@@ -1,6 +1,7 @@
 ﻿@inherits LayoutComponentBase
 @inject NavigationManager NavigationManager
 @inject TokenStorageHandler TokenHandler
+@inject AuthenticationStateProvider AuthStateProvider
 @using Microsoft.AspNetCore.Components.Authorization
 @using TableTennisFrontEnd.Authentication
 
@@ -28,6 +29,7 @@ else
         if (firstRender)
         {
             await TokenHandler.InitializeAsync();
+            ((CustomAuthStateProvider)AuthStateProvider).NotifyAuthChanged();
             StateHasChanged();
         }
 

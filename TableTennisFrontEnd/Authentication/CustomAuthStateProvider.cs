@@ -10,18 +10,33 @@ namespace TableTennisFrontEnd.Authentication
     {
         private readonly ClaimsPrincipal _anonymous = new(new ClaimsIdentity());
 
-        public override async Task<AuthenticationState> GetAuthenticationStateAsync()
+        public override Task<AuthenticationState> GetAuthenticationStateAsync()
         {
+            if (!tokenStorage.IsInitialized)
+            {
+                return Task.FromResult(new AuthenticationState(_anonymous));
+            }
+
+            if (string.IsNullOrEmpty(tokenStorage.AccessToken))
+            {
+                return Task.FromResult(new AuthenticationState(_anonymous));
+            }
+
             try
             {
                 var token = tokenStorage.AccessToken;
                 var identity = string.IsNullOrEmpty(token) ? _anonymous : new ClaimsPrincipal(GetClaimsIdentity(token));
-                return new AuthenticationState(identity);
+                return Task.FromResult(new AuthenticationState(identity));
             }
             catch (Exception)
             {
-                return new AuthenticationState(_anonymous);
+                return Task.FromResult(new AuthenticationState(_anonymous));
             }
+        }
+
+        public void NotifyAuthChanged()
+        {
+            NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
         }
 
         private static IEnumerable<Claim>? ParseClaimsFromJwt(string jwt)
