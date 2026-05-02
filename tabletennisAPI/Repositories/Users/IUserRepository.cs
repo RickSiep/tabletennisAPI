@@ -9,5 +9,6 @@ namespace TableTennisAPI.Repositories.Users {
         Task<IEnumerable<UserIdAndNameDto>> GetUsersInfoAsync();
         Task<User> Save(User user);
         Task UpdateUser(User user);
+        Task<User> GetUserByRefreshTokenAsync(string refreshToken);
     }
 }

@@ -4,20 +4,18 @@ using TableTennisShared.DTO.Token;
 
 namespace TableTennisFrontEnd.Authentication
 {
-    public class TokenRefreshHandler(TokenStorageHandler tokenStorage, IHttpClientFactory factory) : DelegatingHandler
+    public class TokenRefreshHandler(AuthState authState, IHttpClientFactory factory) : DelegatingHandler
     {
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
-            //await tokenStorage.Ready;
-
             var response = await base.SendAsync(request, cancellationToken);
 
             if (response.StatusCode == HttpStatusCode.Unauthorized)
             {
                 try
                 {
-                    var refreshToken = tokenStorage.RefreshToken;
-                    var authToken = tokenStorage.AccessToken;
+                    var refreshToken = authState.RefreshToken;
+                    var authToken = authState.AccessToken;
 
                     if (string.IsNullOrEmpty(refreshToken) || string.IsNullOrEmpty(authToken))
                     {
@@ -34,7 +32,7 @@ namespace TableTennisFrontEnd.Authentication
 
                     if (newTokens != null)
                     {
-                        await tokenStorage.SetTokens(newTokens.AccessToken, newTokens.RefreshToken);
+                        authState.SetTokens(newTokens.AccessToken, newTokens.RefreshToken);
 
                         request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", newTokens.AccessToken);
                         response = await base.SendAsync(request, cancellationToken);
@@ -62,7 +60,7 @@ namespace TableTennisFrontEnd.Authentication
             }
             catch
             {
-                // Token parsing failed
+            
             }
 
             return -1;

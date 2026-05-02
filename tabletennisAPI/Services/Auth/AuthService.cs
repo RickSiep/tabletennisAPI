@@ -8,7 +8,7 @@ namespace TableTennisAPI.Services.Auth
 {
     public class AuthService(IUserRepository userRepository, IPasswordHelper passwordHelper, TokenProvider tokenProvider) : IAuthService
     {
-        public async Task<TokenResponseDto?> LoginAsync(string email, string password)
+        public async Task<User?> LoginAsync(string email, string password)
         {
             if (email.Equals(string.Empty) || password.Equals(string.Empty))
             {
@@ -26,7 +26,7 @@ namespace TableTennisAPI.Services.Auth
                 return null;
             }
 
-            return await CreateTokenResponse(user);
+            return user;
         }
 
         public async Task<User> SaveUserAsync(RegisterDto dto)
@@ -44,7 +44,7 @@ namespace TableTennisAPI.Services.Auth
             return await userRepository.Save(user);
         }
 
-        private async Task<TokenResponseDto> CreateTokenResponse(User user)
+        public async Task<TokenResponseDto> CreateTokenResponse(User user)
         {
             return new TokenResponseDto
             {
@@ -85,6 +85,11 @@ namespace TableTennisAPI.Services.Auth
                 return null;
 
             return await CreateTokenResponse(user);
+        }
+
+        public async Task<User> GetUserByRefreshTokenAsync(string refreshToken)
+        {
+            return await userRepository.GetUserByRefreshTokenAsync(refreshToken);
         }
     }
 }

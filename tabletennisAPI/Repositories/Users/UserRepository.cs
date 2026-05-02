@@ -53,5 +53,11 @@ namespace TableTennisAPI.Repositories.Users
 
             return;
         }
+
+        public async Task<User> GetUserByRefreshTokenAsync(string refreshToken)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.RefreshToken == refreshToken);
+            return user;
+        }
     }
 }

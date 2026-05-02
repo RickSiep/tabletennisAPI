@@ -1,6 +1,6 @@
 ﻿namespace TableTennisFrontEnd.Authentication
 {
-    public class TokenStorageHandler
+    public class AuthState
     {
         public string? AccessToken { get; set; }
         public string? RefreshToken { get; set; }

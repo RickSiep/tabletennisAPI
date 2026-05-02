@@ -36,7 +36,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                     Encoding.UTF8.GetBytes(builder.Configuration["AppSettings:token"]!)),
             ValidateIssuerSigningKey = true
         };
-    }) ;
+    })
+    .AddCookie("Cookies");
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

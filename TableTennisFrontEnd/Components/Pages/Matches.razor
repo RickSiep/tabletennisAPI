@@ -56,12 +56,6 @@
 
     protected override async Task OnInitializedAsync()
     {
-        _accessToken = (await LocalStorage.GetAsync<string>("authToken")).Value;
-        if (_accessToken == null)
-        {
-            throw new UnauthorizedAccessException("No authentication token found.");
-        }
-
         _isLoading = true;
         try
         {

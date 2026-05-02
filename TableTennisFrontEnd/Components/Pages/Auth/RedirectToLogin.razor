@@ -1,15 +1,10 @@
 ﻿@inject NavigationManager NavigationManager
-@inject TokenStorageHandler TokenHandler
+@inject AuthState TokenHandler
 @using TableTennisFrontEnd.Authentication
 
 @code {
     protected override void OnInitialized()
     {
-        if (!TokenHandler.IsInitialized)
-        {
-            return;
-        }
-
         var currentUri = NavigationManager.ToBaseRelativePath(NavigationManager.Uri);
         if (!currentUri.StartsWith("login", StringComparison.OrdinalIgnoreCase))
         {

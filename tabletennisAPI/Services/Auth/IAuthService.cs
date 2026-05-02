@@ -6,9 +6,11 @@ namespace TableTennisAPI.Services.Auth
 {
     public interface IAuthService
     {
-        Task<TokenResponseDto?> LoginAsync(string email, string password);
+        Task<User?> LoginAsync(string email, string password);
         Task<User> SaveUserAsync(RegisterDto dto);
         Task<string> GenerateAndSaveRefreshTokenAsync(User user);
         Task<TokenResponseDto?> RefreshTokenAsync(RefreshTokenRequestDto request);
+        Task<User> GetUserByRefreshTokenAsync(string refreshToken);
+        Task<TokenResponseDto> CreateTokenResponse(User user);
     }
 }

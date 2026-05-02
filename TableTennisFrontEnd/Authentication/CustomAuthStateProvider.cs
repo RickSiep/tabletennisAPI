@@ -1,32 +1,29 @@
 ﻿using Microsoft.AspNetCore.Components.Authorization;
-using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 using System.Security.Claims;
 using System.Text;
 using System.Text.Json;
 
 namespace TableTennisFrontEnd.Authentication
 {
-    public class CustomAuthStateProvider(TokenStorageHandler tokenStorage) : AuthenticationStateProvider
+    public class CustomAuthStateProvider(AuthState authState) : AuthenticationStateProvider
     {
         private readonly ClaimsPrincipal _anonymous = new(new ClaimsIdentity());
 
         public override Task<AuthenticationState> GetAuthenticationStateAsync()
         {
-            if (!tokenStorage.IsInitialized)
-            {
-                return Task.FromResult(new AuthenticationState(_anonymous));
-            }
-
-            if (string.IsNullOrEmpty(tokenStorage.AccessToken))
+            if (string.IsNullOrEmpty(authState.AccessToken))
             {
                 return Task.FromResult(new AuthenticationState(_anonymous));
             }
 
             try
             {
-                var token = tokenStorage.AccessToken;
-                var identity = string.IsNullOrEmpty(token) ? _anonymous : new ClaimsPrincipal(GetClaimsIdentity(token));
-                return Task.FromResult(new AuthenticationState(identity));
+                var identity = new ClaimsIdentity(
+                [
+                    new Claim(ClaimTypes.Name, "")
+                ], "Cookies");
+
+                return Task.FromResult(new AuthenticationState(new ClaimsPrincipal(identity)));
             }
             catch (Exception)
             {
@@ -54,15 +51,15 @@ namespace TableTennisFrontEnd.Authentication
             return null;
         }
 
-        public async Task NotifyUserAuthentication(string accessToken, string refreshToken)
+        public void NotifyUserAuthentication(string accessToken, string refreshToken)
         {
-            await tokenStorage.SetTokens(accessToken, refreshToken);
+            authState.SetTokens(accessToken, refreshToken);
 
             var identity = GetClaimsIdentity(accessToken);
             var user = new ClaimsPrincipal(identity);
-            var authState = new AuthenticationState(user);
+            var authenticationState = new AuthenticationState(user);
 
-            NotifyAuthenticationStateChanged(Task.FromResult(authState));
+            NotifyAuthenticationStateChanged(Task.FromResult(authenticationState));
         }
 
         private ClaimsIdentity GetClaimsIdentity(string token)
@@ -78,9 +75,9 @@ namespace TableTennisFrontEnd.Authentication
             _ => base64
         };
 
-        public async Task Logout()
+        public void Logout()
         {
-            await tokenStorage.DeleteTokens();
+            authState.Clear();
             NotifyAuthenticationStateChanged(Task.FromResult(new AuthenticationState(_anonymous)));
         }
     }

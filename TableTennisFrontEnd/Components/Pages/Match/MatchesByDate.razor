@@ -3,7 +3,7 @@
 @using TableTennisFrontEnd.Authentication
 @using Microsoft.AspNetCore.Components.Authorization
 @inject AuthenticationStateProvider AuthStateProvider
-@inject TokenStorageHandler TokenHandler
+@inject AuthState TokenHandler
 @inject ApiClient ApiClient
 
 <TableTennisFrontEnd.Components.UI.LoadingSpinnerComponent IsLoading="_isLoading" />
@@ -16,10 +16,10 @@
             <div class="d-flex justify-content-center align-items-center flex-column">
                 @foreach (var matchesAndDate in MatchesPerDayDtos)
                 {
-                    <div class="@(matchesAndDate.Equals(MatchesPerDayDtos.First()) ? 
-                        "d-flex flex-column w-100 justify-content-center bg-secondary" : "mt-3 d-flex flex-column w-100 justify-content-center bg-secondary")">
+                    <div class="@(matchesAndDate.Equals(MatchesPerDayDtos.First()) ?
+                                                 "d-flex flex-column w-100 justify-content-center bg-secondary" : "mt-3 d-flex flex-column w-100 justify-content-center bg-secondary")">
                     <h2 class="pt-1 ps-3 mt-2">@FormatDateString(matchesAndDate.Date)</h2>
-                        @foreach (var match in matchesAndDate.Matches)
+                    @foreach (var match in matchesAndDate.Matches)
                         {
                             <div class="border-1 bg-primary rounded mt-2 width-95-percent d-flex flex-row align-self-center mb-3">
                                 <div class="d-flex flex-row w-100">
@@ -58,15 +58,11 @@
     protected override async Task OnInitializedAsync()
     {
         _isLoading = true;
-    }
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
         var user = (await AuthStateProvider.GetAuthenticationStateAsync()).User;
         await LoadMatches();
         _isLoading = false;
     }
-
+    
     private async Task LoadMatches()
     {
         var token = TokenHandler.AccessToken;
