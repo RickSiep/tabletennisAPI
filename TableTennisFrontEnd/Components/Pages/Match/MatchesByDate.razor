@@ -3,7 +3,6 @@
 @using TableTennisFrontEnd.Authentication
 @using Microsoft.AspNetCore.Components.Authorization
 @inject AuthenticationStateProvider AuthStateProvider
-@inject AuthState TokenHandler
 @inject ApiClient ApiClient
 
 <TableTennisFrontEnd.Components.UI.LoadingSpinnerComponent IsLoading="_isLoading" />
@@ -65,8 +64,8 @@
     
     private async Task LoadMatches()
     {
-        var token = TokenHandler.AccessToken;
-        MatchesPerDayDtos = await ApiClient.GetFromJsonAsyncAuthorized<List<MatchesPerDayDto>>($"/match/formatted/date?pageIndex={_pageIndex}&pageSize={PageSize}", token);
+        // var token = TokenHandler.AccessToken;
+        // MatchesPerDayDtos = await ApiClient.GetFromJsonAsyncAuthorized<List<MatchesPerDayDto>>($"/match/formatted/date?pageIndex={_pageIndex}&pageSize={PageSize}", token);
     }
 
     private string FormatDateString(DateTime dateTime) => $"{dateTime.ToString("dddd")} {dateTime.ToString("dd")} {dateTime.ToString("MMMM").Substring(0, 3)}";

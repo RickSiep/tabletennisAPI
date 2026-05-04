@@ -4,8 +4,7 @@
 @using TableTennisShared.DTO.JWT
 @using System.Net.Http.Json
 @inject ApiClient ApiClient
-@inject HttpClient Http
-@inject AuthService AuthService
+@inject IHttpClientFactory Factory
 @inject AuthenticationStateProvider AuthStateProvider
 @inject NavigationManager NavigationManager
 
@@ -35,6 +34,7 @@
     public EventCallback<bool> SpinnerChanged { get; set; }
 
     public string ErrorMessage { get; set; } = string.Empty;
+    private HttpClient _http => Factory.CreateClient("local");
     private bool _isLoading;
     public bool IsLoading
     {
@@ -57,10 +57,10 @@
         try
         {
             // var response = await ApiClient.PostJsonAsyncWithResponseModel<LoginRequestDto, LoginResponseDto>("/auth/login", LoginRequest);
-            var response = await ApiClient.PostJsonAsyncWithResponseModel<LoginRequestDto, LoginResponseDto>("/auth/login", LoginRequest);
+            var response = await _http.PostAsJsonAsync("/auth/login", LoginRequest);
             if (response != null)
             {
-                NavigationManager.NavigateTo("/");
+                NavigationManager.NavigateTo("/", forceLoad: true);
             }
             else
             {

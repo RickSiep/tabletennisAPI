@@ -1,14 +1,11 @@
 using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
-using Microsoft.AspNetCore.Identity.Data;
-using System.Net;
 using System.Security.Claims;
 using TableTennisFrontEnd;
 using TableTennisFrontEnd.Authentication;
 using TableTennisFrontEnd.Components;
-using TableTennisShared.DTO.JWT;
 using TableTennisShared.DTO.Token;
+using TableTennisShared.DTO.User;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,24 +26,24 @@ builder.Services.AddCascadingAuthenticationState();
 
 builder.Services.AddHttpClient();
 builder.Services.AddHttpContextAccessor();
-builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthStateProvider>();
+//builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthStateProvider>();
 builder.Services.AddAuthorizationCore();
-builder.Services.AddScoped<ProtectedLocalStorage>();
-builder.Services.AddScoped<AuthState>();
-builder.Services.AddScoped<AuthService>();
+//builder.Services.AddScoped<AuthState>();
+//builder.Services.AddScoped<AuthService>();
 
-builder.Services.AddHttpClient<ApiClient>(client =>
+builder.Services.AddHttpClient<ApiClient>("api", client =>
 {
     client.BaseAddress = new("https://localhost:7149");
-})
-    //.ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler
-    //{
-    //    UseCookies = true,
-    //    CookieContainer = new CookieContainer()
-    //})
-    .AddHttpMessageHandler<TokenRefreshHandler>();
+});
 
-builder.Services.AddScoped<TokenRefreshHandler>();
+builder.Services.AddHttpClient<HttpClient>("local", client =>
+{
+    client.BaseAddress = new("https://localhost:7147");
+});
+
+    //.AddHttpMessageHandler<TokenRefreshHandler>();
+
+//builder.Services.AddScoped<TokenRefreshHandler>();
 
 var app = builder.Build();
 
@@ -70,21 +67,17 @@ app.MapStaticAssets();
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
 
-app.Run();
-
-
-app.MapPost("/auth/login", async (
-    HttpContext context,
-    IHttpClientFactory factory,
-    LoginRequest request) =>
+app.MapPost("/auth/login", async (HttpContext context, IHttpClientFactory factory, LoginRequestDto request) =>
 {
     var http = factory.CreateClient("api");
 
     // call your API
-    var response = await http.PostAsJsonAsync("api/auth/login", request);
+    var response = await http.PostAsJsonAsync("auth/login", request);
 
     if (!response.IsSuccessStatusCode)
+    {
         return Results.Unauthorized();
+    }
 
     var result = await response.Content.ReadFromJsonAsync<UserInfoWithTokens>();
 
@@ -110,3 +103,5 @@ app.MapPost("/auth/logout", async (HttpContext context) =>
     await context.SignOutAsync("Cookies");
     return Results.Ok();
 });
+
+app.Run();
