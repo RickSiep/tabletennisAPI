@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
+using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using TableTennisFrontEnd;
 using TableTennisFrontEnd.Authentication;
@@ -17,17 +18,19 @@ builder.Services.AddRazorComponents()
 builder.Services.AddAuthentication("Cookies")
     .AddCookie("Cookies", options =>
     {
-        options.LoginPath = "/login";
+        options.LoginPath = "/account/login";
         options.ExpireTimeSpan = TimeSpan.FromDays(7);
         options.SlidingExpiration = true;
+        options.Cookie.SameSite = SameSiteMode.Lax;
+        options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
     });
 
 builder.Services.AddCascadingAuthenticationState();
-
+builder.Services.AddRazorPages();
 builder.Services.AddHttpClient();
 builder.Services.AddHttpContextAccessor();
 //builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthStateProvider>();
-builder.Services.AddAuthorizationCore();
+builder.Services.AddAuthorization();
 //builder.Services.AddScoped<AuthState>();
 //builder.Services.AddScoped<AuthService>();
 
@@ -41,7 +44,7 @@ builder.Services.AddHttpClient<HttpClient>("local", client =>
     client.BaseAddress = new("https://localhost:7147");
 });
 
-    //.AddHttpMessageHandler<TokenRefreshHandler>();
+//.AddHttpMessageHandler<TokenRefreshHandler>();
 
 //builder.Services.AddScoped<TokenRefreshHandler>();
 
@@ -60,14 +63,14 @@ app.UseHttpsRedirection();
 
 app.UseAuthentication();
 app.UseAuthorization();
-
 app.UseAntiforgery();
 
+app.MapRazorPages();
 app.MapStaticAssets();
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
 
-app.MapPost("/auth/login", async (HttpContext context, IHttpClientFactory factory, LoginRequestDto request) =>
+app.MapPost("/auth/login", async (HttpContext context, IHttpClientFactory factory, [FromForm] LoginRequestDto request) =>
 {
     var http = factory.CreateClient("api");
 
@@ -86,8 +89,8 @@ app.MapPost("/auth/login", async (HttpContext context, IHttpClientFactory factor
 
     var claims = new List<Claim>
     {
-        new Claim(ClaimTypes.Name, result.FirstName),
-        new Claim(ClaimTypes.NameIdentifier, result.UserId.ToString())
+        new(ClaimTypes.Name, result.FirstName),
+        new(ClaimTypes.NameIdentifier, result.UserId.ToString())
     };
 
     var identity = new ClaimsIdentity(claims, "Cookies");
@@ -96,12 +99,12 @@ app.MapPost("/auth/login", async (HttpContext context, IHttpClientFactory factor
     await context.SignInAsync("Cookies", principal);
 
     return Results.Ok();
-});
+}).DisableAntiforgery();
 
-app.MapPost("/auth/logout", async (HttpContext context) =>
-{
-    await context.SignOutAsync("Cookies");
-    return Results.Ok();
-});
+//app.MapPost("/auth/logout", async (HttpContext context) =>
+//{
+//    await context.SignOutAsync("Cookies");
+//    return Results.Ok();
+//}).DisableAntiforgery();;
 
 app.Run();

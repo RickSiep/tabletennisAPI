@@ -1,15 +1,11 @@
 ﻿@page "/logout"
 @using TableTennisFrontEnd.Authentication
 @using Microsoft.AspNetCore.Components.Authorization
-@inject AuthenticationStateProvider AuthStateProvider
 @inject NavigationManager Navigation
-@inject HttpContext HttpContext
 
 @code {
     protected override async Task OnInitializedAsync()
     {
-        HttpContext.Response.Cookies.Delete("refreshToken");
-        ((CustomAuthStateProvider)AuthStateProvider).Logout();
-        Navigation.NavigateTo("/login");
+        Navigation.NavigateTo("/Account/Logout", forceLoad: true);
     }
 }

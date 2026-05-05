@@ -1,14 +1,17 @@
-﻿@using Microsoft.AspNetCore.Components.Authorization
+﻿@using Microsoft.AspNetCore.Authentication
+@using Microsoft.AspNetCore.Components.Authorization
+@using System.Security.Claims
 @using TableTennisFrontEnd.Authentication
+@using TableTennisShared.DTO.Token
 @using TableTennisShared.DTO.User
 @using TableTennisShared.DTO.JWT
 @using System.Net.Http.Json
-@inject ApiClient ApiClient
 @inject IHttpClientFactory Factory
+@inject ApiClient ApiClient
 @inject AuthenticationStateProvider AuthStateProvider
 @inject NavigationManager NavigationManager
 
-<EditForm method="post" FormName="create" Model="LoginRequest" OnValidSubmit="Submit" Enhance>
+<EditForm method="post" FormName="create" Model="LoginRequest" OnValidSubmit="Submit" >
     <DataAnnotationsValidator />
     <ValidationSummary class="text-danger" />
     <div class="form-group">
@@ -26,6 +29,8 @@
 </EditForm>
 
 @code {
+    [CascadingParameter]
+    private HttpContext HttpContext { get; set; } = default!;
 
     [SupplyParameterFromForm]
     public LoginRequestDto LoginRequest { get; set; } = new();
@@ -53,24 +58,26 @@
     private async Task Submit()
     {
         IsLoading = true;
-        ErrorMessage = "";
-        try
+        var http = Factory.CreateClient("api");
+        var response = await http.PostAsJsonAsync("auth/login", LoginRequest);
+
+        if (!response.IsSuccessStatusCode)
+            return;
+
+        var result = await response.Content.ReadFromJsonAsync<UserInfoWithTokens>();
+
+        var claims = new List<Claim>
         {
-            // var response = await ApiClient.PostJsonAsyncWithResponseModel<LoginRequestDto, LoginResponseDto>("/auth/login", LoginRequest);
-            var response = await _http.PostAsJsonAsync("/auth/login", LoginRequest);
-            if (response != null)
-            {
-                NavigationManager.NavigateTo("/", forceLoad: true);
-            }
-            else
-            {
-                ErrorMessage = "Something went wrong";
-            }
-        }
-        catch (Exception e)
-        {
-            ErrorMessage = "Something went wrong, please try again later.";
-        }
+            new(ClaimTypes.Name, result.FirstName),
+            new(ClaimTypes.NameIdentifier, result.UserId.ToString())
+        };
+
+        var identity = new ClaimsIdentity(claims, "Cookies");
+        var principal = new ClaimsPrincipal(identity);
+
+        await HttpContext.SignInAsync("Cookies", principal); // ✅ THIS is the key
+
+        NavigationManager.NavigateTo("/", forceLoad: true);
 
         IsLoading = false;
     }

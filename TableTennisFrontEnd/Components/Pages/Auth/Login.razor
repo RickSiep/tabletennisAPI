@@ -8,7 +8,7 @@
 
 <PageTitle>Login</PageTitle>
 
-<header class="fullscreen-header bg-primary h-100 d-flex no-padding-top">
+@* <header class="fullscreen-header bg-primary h-100 d-flex no-padding-top">
     <div class="row g-0 justify-content-center align-items-center background-image--crystal_tower w-100 vh-100">
         <div class="col-md-5 text-center mx-2 background-gradient--purple_reversed rounded d-flex flex-column">
             @if (_spinner)
@@ -36,28 +36,33 @@
             }
         </div>
     </div>
-</header>
+</header> *@
 
 @code {
     private bool _spinner = false;
     private bool _loginOrRegister { get; set; } = true;
 
-    protected override async Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
-        var user = (await AuthStateProvider.GetAuthenticationStateAsync()).User;
-        if (user.Identity?.IsAuthenticated ?? false)
-        {
-            Navigation.NavigateTo("/");
-        }
+        Navigation.NavigateTo("/account/login?returnUrl=/", forceLoad: true);
     }
 
-    private Task SetSpinnerVisible(bool isVisible)
-    {
-        _spinner = isVisible;
-        return Task.CompletedTask;
-    }
+    // protected override async Task OnInitializedAsync()
+    // {
+    //     var user = (await AuthStateProvider.GetAuthenticationStateAsync()).User;
+    //     if (user.Identity?.IsAuthenticated ?? false)
+    //     {
+    //         Navigation.NavigateTo("/");
+    //     }
+    // }
 
-    private void SetLoginScreen() => _loginOrRegister = true;
+    // private Task SetSpinnerVisible(bool isVisible)
+    // {
+    //     _spinner = isVisible;
+    //     return Task.CompletedTask;
+    // }
 
-    private void ToggleAuthentication() => _loginOrRegister = !_loginOrRegister;
+    // private void SetLoginScreen() => _loginOrRegister = true;
+
+    // private void ToggleAuthentication() => _loginOrRegister = !_loginOrRegister;
 }

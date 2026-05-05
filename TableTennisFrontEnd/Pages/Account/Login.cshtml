@@ -1,0 +1,34 @@
+﻿@page
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@model TableTennisFrontEnd.Pages.Account.LoginModel
+
+<header class="fullscreen-header bg-primary h-100 d-flex no-padding-top">
+    <div class="row g-0 justify-content-center align-items-center background-image--crystal_tower w-100 vh-100">
+        <div class="col-md-5 text-center mx-2 background-gradient--purple_reversed rounded d-flex flex-column">
+            <div class="my-2 mx-5 py-5">
+                <h2>Login</h2>
+                <form method="post" action="/account/login">
+                    @Html.AntiForgeryToken()
+
+                    <div asp-validation-summary="All" class="text-danger"></div>
+
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" name="Email" class="form-control" />
+                    </div>
+
+                    <div class="form-group my-3">
+                        <label>Password</label>
+                        <input type="password" name="Password" class="form-control" />
+                    </div>
+
+                    <button type="submit" class="btn btn-primary bg-dark">Submit</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+@{
+}

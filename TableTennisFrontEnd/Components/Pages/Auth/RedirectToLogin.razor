@@ -7,7 +7,7 @@
         var currentUri = NavigationManager.ToBaseRelativePath(NavigationManager.Uri);
         if (!currentUri.StartsWith("login", StringComparison.OrdinalIgnoreCase))
         {
-            NavigationManager.NavigateTo("/login", forceLoad: true);
+            NavigationManager.NavigateTo("/account/login", forceLoad: true);
         }
     }
 
