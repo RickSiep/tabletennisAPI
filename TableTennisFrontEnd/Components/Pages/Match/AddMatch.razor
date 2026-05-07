@@ -88,19 +88,13 @@ else
     protected override async Task OnInitializedAsync()
     {
         _loading = true;
-        var token = (await LocalStorage.GetAsync<string>("authToken")).Value;
-        if (token == null)
-        {
-            throw new UnauthorizedAccessException("No authentication token found.");
-        }
-
         try
         {
-            Users = await Client.GetFromJsonAsyncAuthorized<List<UserIdAndNameDto>>("/user/firstname", token);
+            Users = await Client.GetFromJsonAsyncAuthorized<List<UserIdAndNameDto>>("/user/firstname");
 
             if (IsEditMode)
             {
-                await LoadMatchData(MatchId.Value, token);
+                await LoadMatchData(MatchId.Value);
             }
             else
             {
@@ -116,11 +110,11 @@ else
         _loading = false;
     }
 
-    private async Task LoadMatchData(int matchId, string token)
+    private async Task LoadMatchData(int matchId)
     {
         try
         {
-            Match = await Client.GetFromJsonAsyncAuthorized<MatchSubmissionDto>($"/match/{matchId}", token);
+            Match = await Client.GetFromJsonAsyncAuthorized<MatchSubmissionDto>($"/match/{matchId}");
         }
         catch (Exception e)
         {

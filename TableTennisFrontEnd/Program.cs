@@ -1,12 +1,6 @@
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
-using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 using TableTennisFrontEnd;
 using TableTennisFrontEnd.Authentication;
 using TableTennisFrontEnd.Components;
-using TableTennisShared.DTO.Token;
-using TableTennisShared.DTO.User;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -37,14 +31,13 @@ builder.Services.AddAuthorization();
 builder.Services.AddHttpClient<ApiClient>("api", client =>
 {
     client.BaseAddress = new("https://localhost:7149");
-});
+}).AddHttpMessageHandler<TokenRefreshHandler>();
 
 builder.Services.AddHttpClient<HttpClient>("local", client =>
 {
     client.BaseAddress = new("https://localhost:7147");
 });
 
-//.AddHttpMessageHandler<TokenRefreshHandler>();
 
 //builder.Services.AddScoped<TokenRefreshHandler>();
 
@@ -70,36 +63,36 @@ app.MapStaticAssets();
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
 
-app.MapPost("/auth/login", async (HttpContext context, IHttpClientFactory factory, [FromForm] LoginRequestDto request) =>
-{
-    var http = factory.CreateClient("api");
+//app.MapPost("/auth/login", async (HttpContext context, IHttpClientFactory factory, [FromForm] LoginRequestDto request) =>
+//{
+//    var http = factory.CreateClient("api");
 
-    // call your API
-    var response = await http.PostAsJsonAsync("auth/login", request);
+//    // call your API
+//    var response = await http.PostAsJsonAsync("auth/login", request);
 
-    if (!response.IsSuccessStatusCode)
-    {
-        return Results.Unauthorized();
-    }
+//    if (!response.IsSuccessStatusCode)
+//    {
+//        return Results.Unauthorized();
+//    }
 
-    var result = await response.Content.ReadFromJsonAsync<UserInfoWithTokens>();
+//    var result = await response.Content.ReadFromJsonAsync<UserInfoWithTokens>();
 
-    if (result == null)
-        return Results.Unauthorized();
+//    if (result == null)
+//        return Results.Unauthorized();
 
-    var claims = new List<Claim>
-    {
-        new(ClaimTypes.Name, result.FirstName),
-        new(ClaimTypes.NameIdentifier, result.UserId.ToString())
-    };
+//    var claims = new List<Claim>
+//    {
+//        new(ClaimTypes.Name, result.FirstName),
+//        new(ClaimTypes.NameIdentifier, result.UserId.ToString())
+//    };
 
-    var identity = new ClaimsIdentity(claims, "Cookies");
-    var principal = new ClaimsPrincipal(identity);
+//    var identity = new ClaimsIdentity(claims, "Cookies");
+//    var principal = new ClaimsPrincipal(identity);
 
-    await context.SignInAsync("Cookies", principal);
+//    await context.SignInAsync("Cookies", principal);
 
-    return Results.Ok();
-}).DisableAntiforgery();
+//    return Results.Ok();
+//}).DisableAntiforgery();
 
 //app.MapPost("/auth/logout", async (HttpContext context) =>
 //{

@@ -70,8 +70,7 @@
     private async Task UpdateMatches(int pageIndex)
     {
         _pageIndex = pageIndex;
-        _accessToken = (await LocalStorage.GetAsync<string>("authToken")).Value;
-        var formattedMatches = await ApiClient.GetFromJsonAsyncAuthorized<MatchInformationWithTotalMatchesDto>($"/match/formatted?pageIndex={_pageIndex}&pageSize=5", _accessToken);
+        var formattedMatches = await ApiClient.GetFromJsonAsyncAuthorized<MatchInformationWithTotalMatchesDto>($"/match/formatted?pageIndex={_pageIndex}&pageSize=5");
         MatchDtos = formattedMatches.MatchInformations;
         _totalMatches = formattedMatches.TotalMatches;
     }

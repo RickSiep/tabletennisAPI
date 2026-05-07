@@ -1,7 +1,8 @@
-﻿using System.Net.Http.Headers;
+﻿using Microsoft.AspNetCore.Components.Authorization;
+using System.Net.Http.Headers;
 namespace TableTennisFrontEnd
 {
-    public class ApiClient(HttpClient client)
+    public class ApiClient(HttpClient client, AuthenticationStateProvider authProvider)
     {
         public async Task<IAsyncEnumerable<T>> GetAllFromJsonAsync<T>(string path)
         {
@@ -10,9 +11,17 @@ namespace TableTennisFrontEnd
 
         public async Task<T> GetFromJsonAsync<T>(string path) => await client.GetFromJsonAsync<T>(path);
 
-        public async Task<T> GetFromJsonAsyncAuthorized<T>(string path, string token)
+        public async Task<T?> GetFromJsonAsyncAuthorized<T>(string path)
         {
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            var user = (await authProvider.GetAuthenticationStateAsync()).User;
+            var accessToken = user.FindFirst("access_token")?.Value;
+            
+            if (accessToken == null)
+            {
+                return default;
+            }
+
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
             return await client.GetFromJsonAsync<T>(path);
         }
 

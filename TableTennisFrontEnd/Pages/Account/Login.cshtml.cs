@@ -41,7 +41,9 @@ namespace TableTennisFrontEnd.Pages.Account
             var claims = new List<Claim>
             {
                 new(ClaimTypes.Name, result.FirstName),
-                new(ClaimTypes.NameIdentifier, result.UserId.ToString())
+                new(ClaimTypes.NameIdentifier, result.UserId.ToString()),
+                new("access_token", result.AccessToken),
+                new("refresh_token", result.RefreshToken)
             };
 
             var identity = new ClaimsIdentity(claims, "Cookies");

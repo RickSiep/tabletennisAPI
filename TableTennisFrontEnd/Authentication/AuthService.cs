@@ -10,45 +10,45 @@ namespace TableTennisFrontEnd.Authentication
 {
     public class AuthService(IHttpContextAccessor httpContextAccessor, AuthState authState, IHttpClientFactory factory)
     {
-        public async Task InitializeAsync()
-        {
-            var context = httpContextAccessor.HttpContext;
+        //public async Task InitializeAsync()
+        //{
+        //    var context = httpContextAccessor.HttpContext;
 
-            var refreshToken = context?.Request.Cookies["refreshToken"];
-            if (refreshToken == null)
-            {
-                return;
-            }
+        //    var refreshToken = context?.Request.Cookies["refreshToken"];
+        //    if (refreshToken == null)
+        //    {
+        //        return;
+        //    }
 
-            var newTokens = await RefreshTokensAsync(refreshToken);
-            if (newTokens == null)
-            {
-                return;
-            }
+        //    var newTokens = await RefreshTokensAsync(refreshToken);
+        //    if (newTokens == null)
+        //    {
+        //        return;
+        //    }
 
-            authState.SetTokens(newTokens.AccessToken, newTokens.RefreshToken);
-        }
+        //    authState.SetTokens(newTokens.AccessToken, newTokens.RefreshToken);
+        //}
 
-        private async Task<TokenResponseDto?> RefreshTokensAsync(string refreshToken)
-        {
-            try
-            {
-                var apiClient = new ApiClient(factory.CreateClient());
-                var response = await apiClient.PostJsonAsync("/auth/refresh-token-from-cookie", refreshToken);
-                if (!response.IsSuccessStatusCode)
-                {
-                    return null;
-                }
+        //private async Task<TokenResponseDto?> RefreshTokensAsync(string refreshToken)
+        //{
+        //    try
+        //    {
+        //        var apiClient = new ApiClient(factory.CreateClient());
+        //        var response = await apiClient.PostJsonAsync("/auth/refresh-token-from-cookie", refreshToken);
+        //        if (!response.IsSuccessStatusCode)
+        //        {
+        //            return null;
+        //        }
 
-                return await response.Content.ReadFromJsonAsync<TokenResponseDto>();
-            }
-            catch
-            {
+        //        return await response.Content.ReadFromJsonAsync<TokenResponseDto>();
+        //    }
+        //    catch
+        //    {
 
-            }
+        //    }
 
-            return null;
-        }
+        //    return null;
+        //}
 
         public async Task CreateClaimsAndSignIn()
         {

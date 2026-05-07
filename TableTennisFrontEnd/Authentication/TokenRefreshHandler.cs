@@ -66,31 +66,31 @@ namespace TableTennisFrontEnd.Authentication
             return -1;
         }
 
-        private async Task<TokenResponseDto?> RefreshAccessTokensAsync(int userId, string refreshToken, CancellationToken cancellationToken)
-        {
-            try
-            {
-                var refreshTokenDto = new RefreshTokenRequestDto()
-                {
-                    UserId = userId,
-                    RefreshToken = refreshToken,
-                };
+        //private async Task<TokenResponseDto?> RefreshAccessTokensAsync(int userId, string refreshToken, CancellationToken cancellationToken)
+        //{
+        //    try
+        //    {
+        //        var refreshTokenDto = new RefreshTokenRequestDto()
+        //        {
+        //            UserId = userId,
+        //            RefreshToken = refreshToken,
+        //        };
 
-                var apiClient = new ApiClient(factory.CreateClient());
-                var response = await apiClient.PostJsonAsync("/auth/refresh-token", refreshTokenDto);
-                if (!response.IsSuccessStatusCode)
-                {
-                    return null;
-                }
+        //        var apiClient = new ApiClient(factory.CreateClient());
+        //        var response = await apiClient.PostJsonAsync("/auth/refresh-token", refreshTokenDto);
+        //        if (!response.IsSuccessStatusCode)
+        //        {
+        //            return null;
+        //        }
 
-                return await response.Content.ReadFromJsonAsync<TokenResponseDto>(cancellationToken: cancellationToken);
-            }
-            catch
-            {
+        //        return await response.Content.ReadFromJsonAsync<TokenResponseDto>(cancellationToken: cancellationToken);
+        //    }
+        //    catch
+        //    {
 
-            }
+        //    }
 
-            return null;
-        }
+        //    return null;
+        //}
     }
 }

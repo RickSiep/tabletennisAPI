@@ -57,15 +57,8 @@
     protected override async Task OnInitializedAsync()
     {
         _isLoading = true;
-        var user = (await AuthStateProvider.GetAuthenticationStateAsync()).User;
-        await LoadMatches();
+        MatchesPerDayDtos = await ApiClient.GetFromJsonAsyncAuthorized<List<MatchesPerDayDto>>($"/match/formatted/date?pageIndex={_pageIndex}&pageSize={PageSize}");
         _isLoading = false;
-    }
-    
-    private async Task LoadMatches()
-    {
-        // var token = TokenHandler.AccessToken;
-        // MatchesPerDayDtos = await ApiClient.GetFromJsonAsyncAuthorized<List<MatchesPerDayDto>>($"/match/formatted/date?pageIndex={_pageIndex}&pageSize={PageSize}", token);
     }
 
     private string FormatDateString(DateTime dateTime) => $"{dateTime.ToString("dddd")} {dateTime.ToString("dd")} {dateTime.ToString("MMMM").Substring(0, 3)}";
