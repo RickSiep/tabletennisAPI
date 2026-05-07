@@ -55,10 +55,8 @@ namespace TableTennisAPI.Controllers
         }
 
         [HttpPost("refresh-token-from-cookie")]
-        public async Task<ActionResult> RefreshTokenFromCookie()
+        public async Task<ActionResult> RefreshTokenFromCookie([FromBody]string refreshToken)
         {
-            var refreshToken = Request.Cookies["refreshToken"];
-
             if (string.IsNullOrEmpty(refreshToken))
             {
                 return Unauthorized();

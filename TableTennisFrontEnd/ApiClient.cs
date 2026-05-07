@@ -1,38 +1,79 @@
-﻿using Microsoft.AspNetCore.Components.Authorization;
+﻿using Microsoft.AspNetCore.Components;
+using System.Net;
 using System.Net.Http.Headers;
+using TableTennisFrontEnd.Authentication;
+using TableTennisShared.DTO.Token;
 namespace TableTennisFrontEnd
 {
-    public class ApiClient(HttpClient client, AuthenticationStateProvider authProvider)
+    public class ApiClient(IHttpClientFactory factory, AuthState authState, NavigationManager navigationManager)
     {
+        private readonly HttpClient _api = factory.CreateClient("api");
+        private readonly HttpClient _localClient = factory.CreateClient("local");
         public async Task<IAsyncEnumerable<T>> GetAllFromJsonAsync<T>(string path)
         {
-            return client.GetFromJsonAsAsyncEnumerable<T>(path);
+            return _api.GetFromJsonAsAsyncEnumerable<T>(path);
         }
 
-        public async Task<T> GetFromJsonAsync<T>(string path) => await client.GetFromJsonAsync<T>(path);
+        public async Task<T> GetFromJsonAsync<T>(string path) => await _api.GetFromJsonAsync<T>(path);
 
         public async Task<T?> GetFromJsonAsyncAuthorized<T>(string path)
         {
-            var user = (await authProvider.GetAuthenticationStateAsync()).User;
-            var accessToken = user.FindFirst("access_token")?.Value;
-            
-            if (accessToken == null)
+            if (authState.AccessToken == null && authState.RefreshToken != null)
             {
-                return default;
+                await TryRefreshAsync();
             }
 
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-            return await client.GetFromJsonAsync<T>(path);
+            try
+            {
+                _api.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", authState.AccessToken);
+                return await _api.GetFromJsonAsync<T>(path);
+            }
+            catch (HttpRequestException ex) when (ex.StatusCode == HttpStatusCode.Unauthorized)
+            {
+                var refreshed = await TryRefreshAsync();
+
+                if (!refreshed)
+                {
+                    navigationManager.NavigateTo("/account/logout", true);
+                    return default;
+                }
+
+                _api.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", authState.AccessToken);
+                return await _api.GetFromJsonAsync<T>(path);
+            }
+        }
+
+        private async Task<bool> TryRefreshAsync()
+        {
+            try
+            {
+                var response = await PostJsonAsyncWithResponseModel<string, TokenResponseDto>("/auth/refresh-token-from-cookie", authState.RefreshToken);
+                if (response == null)
+                {
+                    navigationManager.NavigateTo("/account/logout", true);
+                    return false;
+                }
+
+                authState.SetTokens(response.AccessToken, response.RefreshToken);
+                await _localClient.PostAsJsonAsync("/account/RefreshToken", response);
+            }
+            catch (Exception e)
+            {
+                string yee = e.InnerException.Message;
+            }
+
+
+            return true;
         }
 
         public async Task<HttpResponseMessage> PostJsonAsync<T>(string path, T value)
         {
-            return await client.PostAsJsonAsync(path, value);
+            return await _api.PostAsJsonAsync(path, value);
         }
 
         public async Task<TOut> PostJsonAsyncWithResponseModel<TIn, TOut>(string path, TIn postModel)
         {
-            var response = await client.PostAsJsonAsync(path, postModel);
+            var response = await _api.PostAsJsonAsync(path, postModel);
             if (response == null || !response.IsSuccessStatusCode)
             {
                 return default;
@@ -43,8 +84,8 @@ namespace TableTennisFrontEnd
 
         public async Task<HttpResponseMessage> DeleteRouteAuthorizedAsync(string path, string token)
         {
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-            var response = await client.DeleteAsync(path);
+            _api.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            var response = await _api.DeleteAsync(path);
             return response;
         }
     }

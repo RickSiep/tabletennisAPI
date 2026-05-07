@@ -2,12 +2,13 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.Security.Claims;
+using TableTennisFrontEnd.Authentication;
 using TableTennisShared.DTO.Token;
 using TableTennisShared.DTO.User;
 
 namespace TableTennisFrontEnd.Pages.Account
 {
-    public class LoginModel(IHttpClientFactory factory) : PageModel
+    public class LoginModel(IHttpClientFactory factory, AuthState authState) : PageModel
     {
         [BindProperty] public string Email { get; set; } = string.Empty;
         [BindProperty] public string Password { get; set; } = string.Empty;
@@ -42,12 +43,13 @@ namespace TableTennisFrontEnd.Pages.Account
             {
                 new(ClaimTypes.Name, result.FirstName),
                 new(ClaimTypes.NameIdentifier, result.UserId.ToString()),
-                new("access_token", result.AccessToken),
                 new("refresh_token", result.RefreshToken)
             };
 
             var identity = new ClaimsIdentity(claims, "Cookies");
             var principal = new ClaimsPrincipal(identity);
+
+            authState.RefreshToken = result.RefreshToken;
 
             await HttpContext.SignInAsync("Cookies", principal); // ✅ THIS is the key
 

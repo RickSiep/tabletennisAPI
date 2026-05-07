@@ -82,7 +82,9 @@ namespace TableTennisAPI.Services.Auth
             var user = await ValidateRefreshTokenAsync(request.UserId, request.RefreshToken);
 
             if (user is null)
+            {
                 return null;
+            }
 
             return await CreateTokenResponse(user);
         }

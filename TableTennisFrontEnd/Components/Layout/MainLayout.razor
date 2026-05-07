@@ -1,7 +1,9 @@
 ﻿@inherits LayoutComponentBase
-@inject NavigationManager NavigationManager
 @using Microsoft.AspNetCore.Components.Authorization
 @using TableTennisFrontEnd.Authentication
+@inject AuthenticationStateProvider AuthProvider
+@inject NavigationManager NavigationManager
+@inject AuthState AuthState
 
 <NavMenu />
 @Body
@@ -15,7 +17,12 @@
 @code {
     protected override async Task OnInitializedAsync()
     {
-        // await AuthService.InitializeAsync();
-        base.OnInitializedAsync();
+        var user = (await AuthProvider.GetAuthenticationStateAsync()).User;
+        var refresh = user.FindFirst("refresh_token")?.Value;
+
+        if (AuthState.RefreshToken == null && refresh != null)
+        {
+            AuthState.RefreshToken = refresh;
+        }
     }
 }

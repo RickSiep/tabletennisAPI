@@ -1,10 +1,8 @@
 ﻿using System.Net;
-using System.Net.Http.Headers;
-using TableTennisShared.DTO.Token;
 
 namespace TableTennisFrontEnd.Authentication
 {
-    public class TokenRefreshHandler(AuthState authState, IHttpClientFactory factory) : DelegatingHandler
+    public class TokenRefreshHandler(AuthState authState) : DelegatingHandler
     {
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
@@ -16,27 +14,27 @@ namespace TableTennisFrontEnd.Authentication
                 {
                     var refreshToken = authState.RefreshToken;
                     var authToken = authState.AccessToken;
-
+                      
                     if (string.IsNullOrEmpty(refreshToken) || string.IsNullOrEmpty(authToken))
                     {
                         return response;
                     }
 
-                    var userId = ExtractUserIdFromToken(authToken);
-                    if (userId < 0)
-                    {
-                        return response;
-                    }
+                    //var userId = ExtractUserIdFromToken(authToken);
+                    //if (userId < 0)
+                    //{
+                    //    return response;
+                    //}
 
-                    var newTokens = await RefreshAccessTokensAsync(userId, refreshToken, cancellationToken);
+                    //var newTokens = await RefreshAccessTokensAsync(userId, refreshToken, cancellationToken);
 
-                    if (newTokens != null)
-                    {
-                        authState.SetTokens(newTokens.AccessToken, newTokens.RefreshToken);
+                    //if (newTokens != null)
+                    //{
+                    //    authState.SetTokens(newTokens.AccessToken, newTokens.RefreshToken);
 
-                        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", newTokens.AccessToken);
-                        response = await base.SendAsync(request, cancellationToken);
-                    }
+                    //    request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", newTokens.AccessToken);
+                    //    response = await base.SendAsync(request, cancellationToken);
+                    //}
                 }
                 catch (InvalidOperationException)
                 {
