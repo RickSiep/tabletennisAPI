@@ -9,11 +9,8 @@ namespace TableTennisFrontEnd
     {
         private readonly HttpClient _api = factory.CreateClient("api");
         private readonly HttpClient _localClient = factory.CreateClient("local");
-        public async Task<IAsyncEnumerable<T>> GetAllFromJsonAsync<T>(string path)
-        {
-            return _api.GetFromJsonAsAsyncEnumerable<T>(path);
-        }
-
+        public IAsyncEnumerable<T?> GetAllFromJsonAsync<T>(string path) => _api.GetFromJsonAsAsyncEnumerable<T>(path);
+        
         public async Task<T> GetFromJsonAsync<T>(string path) => await _api.GetFromJsonAsync<T>(path);
 
         public async Task<T?> GetFromJsonAsyncAuthorized<T>(string path)
@@ -47,15 +44,15 @@ namespace TableTennisFrontEnd
         {
             try
             {
-                var response = await PostJsonAsyncWithResponseModel<string, TokenResponseDto>("/auth/refresh-token-from-cookie", authState.RefreshToken);
-                if (response == null)
+                var response = await PostJsonAsyncWithContentReturn<string>("/auth/get-access-token-from-refresh", authState.RefreshToken);
+                if (string.IsNullOrEmpty(response))
                 {
                     navigationManager.NavigateTo("/account/logout", true);
                     return false;
                 }
 
-                authState.SetTokens(response.AccessToken, response.RefreshToken);
-                await _localClient.PostAsJsonAsync("/account/RefreshToken", response);
+                authState.AccessToken = response;  
+                //await _localClient.PostAsJsonAsync("/account/RefreshToken", response);
             }
             catch (Exception e)
             {
@@ -80,6 +77,17 @@ namespace TableTennisFrontEnd
             }
 
             return await response.Content.ReadFromJsonAsync<TOut>();
+        }
+
+        public async Task<string> PostJsonAsyncWithContentReturn<TIn>(string path, TIn postModel)
+        {
+            var response = await _api.PostAsJsonAsync(path, postModel);
+            if (response == null || !response.IsSuccessStatusCode)
+            {
+                return string.Empty;
+            }
+
+            return await response.Content.ReadAsStringAsync();
         }
 
         public async Task<HttpResponseMessage> DeleteRouteAuthorizedAsync(string path, string token)

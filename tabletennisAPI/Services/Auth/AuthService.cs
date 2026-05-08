@@ -44,7 +44,7 @@ namespace TableTennisAPI.Services.Auth
             return await userRepository.Save(user);
         }
 
-        public async Task<TokenResponseDto> CreateTokenResponse(User user)
+        public async Task<TokenResponseDto> CreateTokenResponseAsync(User user)
         {
             return new TokenResponseDto
             {
@@ -86,12 +86,17 @@ namespace TableTennisAPI.Services.Auth
                 return null;
             }
 
-            return await CreateTokenResponse(user);
+            return await CreateTokenResponseAsync(user);
         }
 
         public async Task<User> GetUserByRefreshTokenAsync(string refreshToken)
         {
             return await userRepository.GetUserByRefreshTokenAsync(refreshToken);
+        }
+
+        public string CreateAccessToken(User user)
+        {
+            return tokenProvider.Create(user);
         }
     }
 }

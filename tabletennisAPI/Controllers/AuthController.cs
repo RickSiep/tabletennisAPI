@@ -32,7 +32,7 @@ namespace TableTennisAPI.Controllers
                 return BadRequest("Email password combination isn't known.");
             }
 
-            var tokens = await authService.CreateTokenResponse(user);
+            var tokens = await authService.CreateTokenResponseAsync(user);
 
             return Ok(new UserInfoWithTokens() 
             {
@@ -72,6 +72,24 @@ namespace TableTennisAPI.Controllers
             return Ok(tokens);
         }
 
+        [HttpPost("get-access-token-from-refresh")]
+        public async Task<ActionResult<string>> GetAccessTokenFromRefresh([FromBody] string refreshToken)
+        {
+            if (string.IsNullOrEmpty(refreshToken))
+            {
+                return Unauthorized();
+            }
+
+            var user = await authService.GetUserByRefreshTokenAsync(refreshToken);
+            if (user == null)
+            {
+                return Unauthorized();
+            }
+
+            var accessToken = authService.CreateAccessToken(user);
+
+            return string.IsNullOrEmpty(accessToken) ? Unauthorized() : Ok(accessToken);
+        }
 
         //[Authorize]
         //[HttpGet("test")]

@@ -6,6 +6,7 @@ using TableTennisShared.DTO.Token;
 
 namespace TableTennisFrontEnd.Pages.Account
 {
+    [IgnoreAntiforgeryToken]
     public class RefreshTokenModel : PageModel
     {
         public async Task<IActionResult> OnPostAsync([FromBody] TokenResponseDto tokens)
