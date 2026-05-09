@@ -6,7 +6,7 @@
     <div class="row g-0 justify-content-center align-items-center background-image--crystal_tower w-100 vh-100">
         <div class="col-md-5 text-center mx-2 background-gradient--purple_reversed rounded d-flex flex-column">
             <div class="my-2 mx-5 py-5">
-                
+
                 @if (TempData["SuccessMessage"] != null)
                 {
                     <div class="alert alert-success">
@@ -30,9 +30,13 @@
                         <input type="password" name="Password" class="form-control" />
                     </div>
 
-                    <button type="submit" class="btn btn-primary bg-dark">Submit</button>
+                    <div class="d-flex align-items-center justify-content-center">
+                        <button type="submit" class="btn btn-primary bg-dark">Submit</button>
+                    </div>
                 </form>
-                <a href="/Account/Register" class="btn btn-secondary">Register</a>
+                <div class="d-flex align-items-end justify-content-end">
+                    <a href="/Account/Register" class="btn btn-secondary">Register</a>
+                </div>
             </div>
         </div>
     </div>

@@ -1,4 +1,5 @@
 ﻿@page
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @model TableTennisFrontEnd.Pages.Account.RegisterModel
 
 <header class="fullscreen-header bg-primary h-100 d-flex no-padding-top">
@@ -9,8 +10,6 @@
                 <form method="post" action="/account/register">
                     @Html.AntiForgeryToken()
                     <div asp-validation-summary="All" class="text-danger"></div>
-
-                    <button type="submit" class="btn btn-primary bg-dark">Submit</button>
 
                     <div class="d-flex flex-column">
                         <div class="form-group">
@@ -35,8 +34,11 @@
                     </div>
                     <button type="submit" class="btn btn-primary bg-dark">Submit</button>
                 </form>
+
+                <div class="d-flex justify-content-end">
+                    <a href="/Account/Register" class="btn btn-secondary">Register</a>
+                </div>
             </div>
-            <a href="/Account/Register" class="btn btn-secondary">Register</a>
         </div>
     </div>
 </header>
