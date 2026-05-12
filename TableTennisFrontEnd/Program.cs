@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Components;
 using TableTennisFrontEnd;
 using TableTennisFrontEnd.Authentication;
@@ -18,6 +19,12 @@ builder.Services.AddAuthentication("Cookies")
         options.SlidingExpiration = true;
         options.Cookie.SameSite = SameSiteMode.Lax;
         options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
+    })
+    .AddGoogle(GoogleDefaults.AuthenticationScheme, options =>
+    {
+        options.ClientId = builder.Configuration["Google:ClientId"]!;
+        options.ClientSecret = builder.Configuration["Google:ClientSecret"]!;
+        options.SignInScheme = "Cookies";
     });
 
 builder.Services.AddCascadingAuthenticationState();

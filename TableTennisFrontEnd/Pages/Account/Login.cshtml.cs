@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.Security.Claims;
@@ -54,6 +55,39 @@ namespace TableTennisFrontEnd.Pages.Account
             await HttpContext.SignInAsync("Cookies", principal); // ✅ THIS is the key
 
             return LocalRedirect(ReturnUrl == string.Empty ? "/" : ReturnUrl);
+        }
+
+        public IActionResult OnGetGoogleLogin(string returnUrl = "/")
+        {
+            var properties = new AuthenticationProperties
+            {
+                RedirectUri = Url.Page("/Account/Login", pageHandler: "GoogleCallback", values: new { returnUrl }, protocol: Request.Scheme)
+            };
+            return new ChallengeResult(GoogleDefaults.AuthenticationScheme, properties);
+        }
+
+        public async Task<IActionResult> OnGetGoogleCallbackAsync(string returnUrl = "/")
+        {
+            var authenticateResult = await HttpContext.AuthenticateAsync(GoogleDefaults.AuthenticationScheme);
+            if (!authenticateResult.Succeeded)
+            {
+                return RedirectToPage("/Account/Login");
+            }
+
+            // Extract user info from the Google authentication result
+            var claims = authenticateResult.Principal.Claims.ToList();
+            var emailClaim = claims.FirstOrDefault(c => c.Type == ClaimTypes.Email);
+            var nameClaim = claims.FirstOrDefault(c => c.Type == ClaimTypes.Name);
+            if (emailClaim == null || nameClaim == null)
+            {
+                return RedirectToPage("/Account/Login");
+            }
+            // Here you would typically check if the user exists in your database and create an account if not
+            // For demonstration, we'll just sign in the user with the information from Google
+            var identity = new ClaimsIdentity(claims, "Cookies");
+            var principal = new ClaimsPrincipal(identity);
+            await HttpContext.SignInAsync("Cookies", principal);
+            return LocalRedirect(returnUrl);
         }
     }
 }
