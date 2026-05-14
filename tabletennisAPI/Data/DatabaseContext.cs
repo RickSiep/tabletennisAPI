@@ -10,6 +10,8 @@ namespace TableTennisAPI.Data
         }
 
         public DbSet<User> Users { get; set; }
+        public DbSet<LocalCredential> LocalCredentials { get; set; }
+        public DbSet<ExternalLogin> ExternalCredentials { get; set; }
         public DbSet<Match> Matches { get; set; }
         public DbSet<UserMatch> UserMatches { get; set; }
 
@@ -27,6 +29,10 @@ namespace TableTennisAPI.Data
                 .HasMany(e => e.Matches)
                 .WithMany(e => e.Users)
                 .UsingEntity<UserMatch>();
+
+            modelBuilder.Entity<LocalCredential>()
+                .HasIndex(localCred => localCred.UserId)
+                .IsUnique();
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using TableTennisAPI.Models;
+﻿using Microsoft.AspNetCore.Identity;
+using TableTennisAPI.Models;
 using TableTennisAPI.Repositories.Users;
 using TableTennisAPI.Util;
 using TableTennisShared.DTO.Token;
@@ -21,7 +22,14 @@ namespace TableTennisAPI.Services.Auth
                 return null;
             }
 
-            if (!passwordHelper.VerifyPassword(user, user.Password, password))
+            var localUser = await userRepository.GetLocalCredentialByUserIdAsync(user.Id);
+            
+            if (localUser == null )
+            {
+                return null;
+            }
+
+            if (!passwordHelper.VerifyPassword(user, localUser.Password, password))
             {
                 return null;
             }
@@ -40,8 +48,16 @@ namespace TableTennisAPI.Services.Auth
                 Elo = 1000
             };
 
-            user.Password = passwordHelper.HashPassword(user, dto.Password);
-            return await userRepository.Save(user);
+            //user.Password = passwordHelper.HashPassword(user, dto.Password);
+            await userRepository.Save(user);
+            
+            var localCredential = new LocalCredential
+            {
+                UserId = user.Id,
+                Password = passwordHelper.HashPassword(user, dto.Password)
+            };
+
+            return user;
         }
 
         public async Task<TokenResponseDto> CreateTokenResponseAsync(User user)
@@ -63,7 +79,7 @@ namespace TableTennisAPI.Services.Auth
             return refreshToken;
         }
 
-        private async Task<User?> ValidateRefreshTokenAsync(int userId, string refreshToken)
+        private async Task<User?> ValidateRefreshTokenAsync(Guid userId, string refreshToken)
         {
             var user = await userRepository.FindUserByIdAsync(userId);
 

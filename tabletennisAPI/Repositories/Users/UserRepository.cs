@@ -15,7 +15,7 @@ namespace TableTennisAPI.Repositories.Users
             return _context.Users.ToList();
         }
 
-        public async Task<User?> FindUserByIdAsync(int id)
+        public async Task<User?> FindUserByIdAsync(Guid id)
         {
             return await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
         }
@@ -59,5 +59,7 @@ namespace TableTennisAPI.Repositories.Users
             var user = await _context.Users.FirstOrDefaultAsync(u => u.RefreshToken == refreshToken);
             return user;
         }
+
+        public async Task<LocalCredential?> GetLocalCredentialByUserIdAsync(Guid id) => await _context.LocalCredentials.FirstOrDefaultAsync(lc => lc.UserId == id);
     }
 }
