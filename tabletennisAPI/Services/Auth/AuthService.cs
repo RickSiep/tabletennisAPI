@@ -128,5 +128,10 @@ namespace TableTennisAPI.Services.Auth
 
             return externalCredential;
         }
+
+        public Task<User> RegisterExternalCredentialUser(ExternalUserRegisterDto externalCredential)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
