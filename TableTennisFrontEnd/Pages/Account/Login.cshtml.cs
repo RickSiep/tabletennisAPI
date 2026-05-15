@@ -89,7 +89,7 @@ namespace TableTennisFrontEnd.Pages.Account
                 Email = emailClaim.Value,
                 Name = nameClaim.Value,
                 Provider = "Google",
-                ProviderUserId = "wehweh" // debug what claim the provider is in
+                ProviderUserId = claims.FirstOrDefault(claim => claim.Type == ClaimTypes.NameIdentifier).Value // debug what claim the provider is in
             });
 
             var identity = new ClaimsIdentity(claims, "Cookies");

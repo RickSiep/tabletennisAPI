@@ -129,9 +129,29 @@ namespace TableTennisAPI.Services.Auth
             return externalCredential;
         }
 
-        public Task<User> RegisterExternalCredentialUser(ExternalUserRegisterDto externalCredential)
+        public async Task<User> RegisterExternalCredentialUser(ExternalUserRegisterDto externalCredential)
         {
-            throw new NotImplementedException();
+            var user = new User
+            {
+                FirstName = externalCredential.Name,
+                LastName = string.Empty,
+                Email = externalCredential.Email,
+                Roles = "User",
+                Elo = 1000
+            };
+
+            await userRepository.Save(user);
+
+            var newExternalCredential = new ExternalCredential
+            {
+                Id = user.Id,
+                ProviderUserId = externalCredential.ProviderUserId,
+                Provider = externalCredential.Provider
+            };
+
+            await userRepository.SaveExternalUserCredential(newExternalCredential);
+
+            return user;
         }
     }
 }
