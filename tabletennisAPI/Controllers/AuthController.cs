@@ -1,7 +1,6 @@
-﻿using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
+﻿using Microsoft.AspNetCore.Mvc;
 using TableTennisAPI.Services.Auth;
+using TableTennisAPI.Services.Users;
 using TableTennisShared.DTO.Token;
 using TableTennisShared.DTO.User;
 
@@ -9,7 +8,7 @@ namespace TableTennisAPI.Controllers
 {
     [Route("auth")]
     [ApiController]
-    public class AuthController(IAuthService authService) : ControllerBase
+    public class AuthController(IAuthService authService, IUserService userService) : ControllerBase
     {
         // POST api/<RegisterController>
         [HttpPost("register")]
@@ -91,18 +90,31 @@ namespace TableTennisAPI.Controllers
             return string.IsNullOrEmpty(accessToken) ? Unauthorized() : Ok(accessToken);
         }
 
+        [HttpPost("external-login")]
+        public async Task<ActionResult> ExternalLogin([FromBody] ExternalUserRegisterDto externalUserRegister)
+        {
+            var externalCred = await authService.GetExternalCredentialByProviderUserIdAsync(externalUserRegister.ProviderUserId);
+            
+            if (externalCred == null)
+            {
+                var user = await authService.RegisterExternalCredentialUser(externalUserRegister);
+            }
+
+            return Ok();
+        }
+
         //[Authorize]
         //[HttpGet("test")]
         //public IActionResult AuthenticatedEndpoint()
         //{
-        //    return Ok("What an user!");
+        //    return Ok("user!");
         //}
 
         //[Authorize(Roles = "Admin")]
         //[HttpGet("testAdmin")]
         //public IActionResult AuthenticatedAdmin()
         //{
-        //    return Ok("What an admin!");
+        //    return Ok("admin!");
         //}
     }
 }

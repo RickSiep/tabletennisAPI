@@ -11,7 +11,7 @@ namespace TableTennisAPI.Data
 
         public DbSet<User> Users { get; set; }
         public DbSet<LocalCredential> LocalCredentials { get; set; }
-        public DbSet<ExternalLogin> ExternalCredentials { get; set; }
+        public DbSet<ExternalCredential> ExternalCredentials { get; set; }
         public DbSet<Match> Matches { get; set; }
         public DbSet<UserMatch> UserMatches { get; set; }
 
@@ -31,8 +31,14 @@ namespace TableTennisAPI.Data
                 .UsingEntity<UserMatch>();
 
             modelBuilder.Entity<LocalCredential>()
-                .HasIndex(localCred => localCred.UserId)
-                .IsUnique();
+                .HasOne<User>()
+                .WithOne()
+                .HasForeignKey<LocalCredential>(lc => lc.Id);
+
+            modelBuilder.Entity<ExternalCredential>()
+                .HasOne<User>()
+                .WithOne()
+                .HasForeignKey<ExternalCredential>(ec => ec.Id);
         }
     }
 }

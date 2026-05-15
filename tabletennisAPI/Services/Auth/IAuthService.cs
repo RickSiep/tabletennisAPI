@@ -11,6 +11,8 @@ namespace TableTennisAPI.Services.Auth
         Task<string> GenerateAndSaveRefreshTokenAsync(User user);
         Task<TokenResponseDto?> RefreshTokenAsync(RefreshTokenRequestDto request);
         Task<User> GetUserByRefreshTokenAsync(string refreshToken);
+        Task<ExternalCredential?> GetExternalCredentialByProviderUserIdAsync(string providerUserId);
+        Task<User> RegisterExternalCredentialUser(ExternalUserRegisterDto externalCredential);
         Task<TokenResponseDto> CreateTokenResponseAsync(User user);
         string CreateAccessToken(User user);
     }

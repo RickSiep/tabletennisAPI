@@ -2,7 +2,7 @@
 {
     public class LocalCredential
     {
-        public Guid UserId { get; set; }
+        public int Id { get; set; }
         public string Password { get; set; } = string.Empty;
     }
 }

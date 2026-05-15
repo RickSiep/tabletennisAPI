@@ -74,7 +74,6 @@ namespace TableTennisFrontEnd.Pages.Account
                 return RedirectToPage("/Account/Login");
             }
 
-            // Extract user info from the Google authentication result
             var claims = authenticateResult.Principal.Claims.ToList();
             var emailClaim = claims.FirstOrDefault(c => c.Type == ClaimTypes.Email);
             var nameClaim = claims.FirstOrDefault(c => c.Type == ClaimTypes.Name);
@@ -82,8 +81,17 @@ namespace TableTennisFrontEnd.Pages.Account
             {
                 return RedirectToPage("/Account/Login");
             }
-            // Here you would typically check if the user exists in your database and create an account if not
-            // For demonstration, we'll just sign in the user with the information from Google
+
+            // maybe different function
+            var http = factory.CreateClient("api");
+            var response = await http.PostAsJsonAsync("auth/external-login", new ExternalUserRegisterDto
+            {
+                Email = emailClaim.Value,
+                Name = nameClaim.Value,
+                Provider = "Google",
+                ProviderUserId = "wehweh" // debug what claim the provider is in
+            });
+
             var identity = new ClaimsIdentity(claims, "Cookies");
             var principal = new ClaimsPrincipal(identity);
             await HttpContext.SignInAsync("Cookies", principal);

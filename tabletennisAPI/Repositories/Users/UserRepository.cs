@@ -15,7 +15,7 @@ namespace TableTennisAPI.Repositories.Users
             return _context.Users.ToList();
         }
 
-        public async Task<User?> FindUserByIdAsync(Guid id)
+        public async Task<User?> FindUserByIdAsync(int id)
         {
             return await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
         }
@@ -56,10 +56,21 @@ namespace TableTennisAPI.Repositories.Users
 
         public async Task<User> GetUserByRefreshTokenAsync(string refreshToken)
         {
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.RefreshToken == refreshToken);
-            return user;
+            return await _context.Users.FirstOrDefaultAsync(u => u.RefreshToken == refreshToken);
         }
 
-        public async Task<LocalCredential?> GetLocalCredentialByUserIdAsync(Guid id) => await _context.LocalCredentials.FirstOrDefaultAsync(lc => lc.UserId == id);
+        public async Task<LocalCredential?> GetLocalCredentialByUserIdAsync(int id) => await _context.LocalCredentials.FirstOrDefaultAsync(lc => lc.Id == id);
+
+        public async Task<LocalCredential?> SaveLocalUserCredential(LocalCredential localCredential)
+        {
+            _context.LocalCredentials.Add(localCredential);
+
+            await _context.SaveChangesAsync();
+
+            return localCredential;
+        }
+
+        public async Task<ExternalCredential?> GetUserByExternalCredentialAsync(string providerUserId) 
+            => await _context.ExternalCredentials.FirstOrDefaultAsync(ec => ec.ProviderUserId == providerUserId);
     }
 }

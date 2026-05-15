@@ -8,7 +8,6 @@ namespace TableTennisFrontEnd
     public class ApiClient(IHttpClientFactory factory, AuthState authState, NavigationManager navigationManager)
     {
         private readonly HttpClient _api = factory.CreateClient("api");
-        private readonly HttpClient _localClient = factory.CreateClient("local");
         public IAsyncEnumerable<T?> GetAllFromJsonAsync<T>(string path) => _api.GetFromJsonAsAsyncEnumerable<T>(path);
         
         public async Task<T> GetFromJsonAsync<T>(string path) => await _api.GetFromJsonAsync<T>(path);

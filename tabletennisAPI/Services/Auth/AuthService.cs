@@ -50,12 +50,14 @@ namespace TableTennisAPI.Services.Auth
 
             //user.Password = passwordHelper.HashPassword(user, dto.Password);
             await userRepository.Save(user);
-            
+
             var localCredential = new LocalCredential
             {
-                UserId = user.Id,
+                Id = user.Id,
                 Password = passwordHelper.HashPassword(user, dto.Password)
             };
+
+            await userRepository.SaveLocalUserCredential(localCredential);
 
             return user;
         }
@@ -79,7 +81,7 @@ namespace TableTennisAPI.Services.Auth
             return refreshToken;
         }
 
-        private async Task<User?> ValidateRefreshTokenAsync(Guid userId, string refreshToken)
+        private async Task<User?> ValidateRefreshTokenAsync(int userId, string refreshToken)
         {
             var user = await userRepository.FindUserByIdAsync(userId);
 
@@ -113,6 +115,18 @@ namespace TableTennisAPI.Services.Auth
         public string CreateAccessToken(User user)
         {
             return tokenProvider.Create(user);
+        }
+
+        public async Task<ExternalCredential?> GetExternalCredentialByProviderUserIdAsync(string providerUserId)
+        {
+            var externalCredential = await userRepository.GetUserByExternalCredentialAsync(providerUserId);
+
+            if (externalCredential == null)
+            {
+                return null;
+            }
+
+            return externalCredential;
         }
     }
 }
