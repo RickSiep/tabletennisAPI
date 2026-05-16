@@ -92,6 +92,10 @@ namespace TableTennisFrontEnd.Pages.Account
                 ProviderUserId = claims.FirstOrDefault(claim => claim.Type == ClaimTypes.NameIdentifier).Value // debug what claim the provider is in
             });
 
+            var result = await response.Content.ReadFromJsonAsync<UserInfoWithTokens>();
+            authState.RefreshToken = result.RefreshToken;
+            claims.Add(new("refresh_token", result.RefreshToken));
+
             var identity = new ClaimsIdentity(claims, "Cookies");
             var principal = new ClaimsPrincipal(identity);
             await HttpContext.SignInAsync("Cookies", principal);

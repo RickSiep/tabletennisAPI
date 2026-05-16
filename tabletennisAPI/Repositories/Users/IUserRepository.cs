@@ -12,7 +12,8 @@ namespace TableTennisAPI.Repositories.Users {
         Task<User> Save(User user);
         Task UpdateUser(User user);
         Task<User> GetUserByRefreshTokenAsync(string refreshToken);
-        Task<ExternalCredential?> GetUserByExternalCredentialAsync(string providerUserId);
+        Task<User?> GetUserByExternalCredentialAsync(ExternalCredential externalCredential);
+        Task<ExternalCredential?> GetExternalCredentialByProviderIdAsync(string providerUserId);
         Task<ExternalCredential> SaveExternalUserCredential(ExternalCredential externalCredential);
     }
 }

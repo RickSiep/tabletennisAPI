@@ -119,7 +119,7 @@ namespace TableTennisAPI.Services.Auth
 
         public async Task<ExternalCredential?> GetExternalCredentialByProviderUserIdAsync(string providerUserId)
         {
-            var externalCredential = await userRepository.GetUserByExternalCredentialAsync(providerUserId);
+            var externalCredential = await userRepository.GetExternalCredentialByProviderIdAsync(providerUserId);
 
             if (externalCredential == null)
             {
@@ -153,5 +153,8 @@ namespace TableTennisAPI.Services.Auth
 
             return user;
         }
+
+        public async Task<User?> GetUserByExternalCred(ExternalCredential externalCredential) 
+            => await userRepository.GetUserByExternalCredentialAsync(externalCredential);
     }
 }

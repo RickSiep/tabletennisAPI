@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using TableTennisAPI.Models;
 using TableTennisAPI.Services.Auth;
 using TableTennisAPI.Services.Users;
 using TableTennisShared.DTO.Token;
@@ -33,7 +34,7 @@ namespace TableTennisAPI.Controllers
 
             var tokens = await authService.CreateTokenResponseAsync(user);
 
-            return Ok(new UserInfoWithTokens() 
+            return Ok(new UserInfoWithTokens()
             {
                 UserId = user.Id,
                 FirstName = user.FirstName,
@@ -54,7 +55,7 @@ namespace TableTennisAPI.Controllers
         }
 
         [HttpPost("refresh-token-from-cookie")]
-        public async Task<ActionResult> RefreshTokenFromCookie([FromBody]string refreshToken)
+        public async Task<ActionResult> RefreshTokenFromCookie([FromBody] string refreshToken)
         {
             if (string.IsNullOrEmpty(refreshToken))
             {
@@ -94,13 +95,35 @@ namespace TableTennisAPI.Controllers
         public async Task<ActionResult> ExternalLogin([FromBody] ExternalUserRegisterDto externalUserRegister)
         {
             var externalCred = await authService.GetExternalCredentialByProviderUserIdAsync(externalUserRegister.ProviderUserId);
-            
+
             if (externalCred == null)
             {
                 var user = await authService.RegisterExternalCredentialUser(externalUserRegister);
+                var tokens = await authService.CreateTokenResponseAsync(user);
+
+                return Ok(new UserInfoWithTokens()
+                {
+                    UserId = user.Id,
+                    FirstName = user.FirstName,
+                    AccessToken = tokens.AccessToken,
+                    RefreshToken = tokens.RefreshToken,
+                });
             }
 
-            return Ok();
+            var newUser = await authService.GetUserByExternalCred(externalCred);
+            if (newUser == null)
+            {
+                return BadRequest("Couldn't find user");
+            }
+            var newTokens = await authService.CreateTokenResponseAsync(newUser);
+
+            return Ok(new UserInfoWithTokens()
+                {
+                    UserId = newUser.Id,
+                    FirstName = newUser.FirstName,
+                    AccessToken = newTokens.AccessToken,
+                    RefreshToken = newTokens.RefreshToken,
+                });
         }
 
         //[Authorize]

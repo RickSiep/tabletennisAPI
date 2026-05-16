@@ -70,7 +70,7 @@ namespace TableTennisAPI.Repositories.Users
             return localCredential;
         }
 
-        public async Task<ExternalCredential?> GetUserByExternalCredentialAsync(string providerUserId) 
+        public async Task<ExternalCredential?> GetExternalCredentialByProviderIdAsync(string providerUserId) 
             => await _context.ExternalCredentials.FirstOrDefaultAsync(ec => ec.ProviderUserId == providerUserId);
 
         public async Task<ExternalCredential> SaveExternalUserCredential(ExternalCredential externalCredential)
@@ -81,5 +81,9 @@ namespace TableTennisAPI.Repositories.Users
 
             return externalCredential;
         }
+
+        public async Task<User?> GetUserByExternalCredentialAsync(ExternalCredential externalCredential) 
+            => await _context.Users.FirstOrDefaultAsync(user => user.Id == externalCredential.Id);
+        
     }
 }
