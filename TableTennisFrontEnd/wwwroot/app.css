@@ -98,3 +98,16 @@ h1:focus {
 .custom-icon {
     line-height: 1.5rem !important;
 }
+
+.discord-button {
+    background-color: #7289da;
+}
+
+.discord-button:hover {
+    background-color: #424549
+}
+
+.google-button {
+    background-color: white;
+    color: black;
+}

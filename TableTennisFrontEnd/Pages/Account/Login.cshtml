@@ -37,12 +37,12 @@
                         </form>
                     </div>
                 </div>
-                <div class="col-4 background-gradient--purple_reversed rounded">
-                    <div class="d-flex flex-column px-3">
-                        <a href="/account/login?handler=GoogleLogin" class="btn btn-secondary">Sign in with Google</a>
-                        <a href="/account/login?handler=DiscordLogin" class="btn btn-secondary">Sign in with Discord</a>
-                        <a href="/Account/Register" class="btn btn-secondary">Register</a>
-                    </div>
+                <div class="col-4 background-gradient--purple_reversed rounded d-flex flex-column justify-content-end">
+                    <a href="/account/login?handler=GoogleLogin" class="btn btn-secondary rounded google-button">
+                        <span class="mx-2"><i class="bi bi-google"></i></span>Sign in with Google
+                    </a>
+                    <a href="/account/login?handler=DiscordLogin" class="btn btn-secondary rounded discord-button my-3"><span class="mx-2"><i class="bi bi-discord"></i></span>Sign in with Discord</a>
+                    <a href="/Account/Register" class="btn btn-secondary rounded">Register</a>
                 </div>
             </div>
         </div>
