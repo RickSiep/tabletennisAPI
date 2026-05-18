@@ -24,7 +24,6 @@ namespace TableTennisFrontEnd.Pages.Account
 
         public async Task<IActionResult> OnPostAsync()
         {
-            // call your external API to validate credentials
             var http = factory.CreateClient("api");
             var response = await http.PostAsJsonAsync("auth/login", new LoginRequestDto { Email = Email, Password = Password });
 
@@ -53,7 +52,7 @@ namespace TableTennisFrontEnd.Pages.Account
 
             authState.RefreshToken = result.RefreshToken;
 
-            await HttpContext.SignInAsync("Cookies", principal); // ✅ THIS is the key
+            await HttpContext.SignInAsync("Cookies", principal);
 
             return LocalRedirect(ReturnUrl == string.Empty ? "/" : ReturnUrl);
         }
@@ -62,7 +61,7 @@ namespace TableTennisFrontEnd.Pages.Account
         {
             var properties = new AuthenticationProperties
             {
-                RedirectUri = Url.Page("/Account/Login", pageHandler: "GoogleCallback", values: new { GoogleDefaults.AuthenticationScheme, returnUrl }, protocol: Request.Scheme)
+                RedirectUri = Url.Page("/Account/Login", pageHandler: "ExternalCallback", values: new { GoogleDefaults.AuthenticationScheme, returnUrl }, protocol: Request.Scheme)
             };
             return new ChallengeResult(GoogleDefaults.AuthenticationScheme, properties);
         }
@@ -71,12 +70,12 @@ namespace TableTennisFrontEnd.Pages.Account
         {
             var properties = new AuthenticationProperties
             {
-                RedirectUri = Url.Page("/Account/Login", pageHandler: "GoogleCallback", values: new { DiscordAuthenticationDefaults.AuthenticationScheme, returnUrl }, protocol: Request.Scheme)
+                RedirectUri = Url.Page("/Account/Login", pageHandler: "ExternalCallback", values: new { DiscordAuthenticationDefaults.AuthenticationScheme, returnUrl }, protocol: Request.Scheme)
             };
             return new ChallengeResult(DiscordAuthenticationDefaults.AuthenticationScheme, properties);
         }
 
-        public async Task<IActionResult> OnGetGoogleCallbackAsync(string authenticationScheme, string returnUrl = "/")
+        public async Task<IActionResult> OnGetExternalCallbackAsync(string authenticationScheme, string returnUrl = "/")
         {
             var authenticateResult = await HttpContext.AuthenticateAsync(authenticationScheme);
             if (!authenticateResult.Succeeded)
@@ -103,6 +102,12 @@ namespace TableTennisFrontEnd.Pages.Account
             });
 
             var result = await response.Content.ReadFromJsonAsync<UserInfoWithTokens>();
+            
+            if (result == null)
+            {
+                return RedirectToPage("/Account/Login");
+            }
+
             authState.RefreshToken = result.RefreshToken;
             claims.Add(new("refresh_token", result.RefreshToken));
 

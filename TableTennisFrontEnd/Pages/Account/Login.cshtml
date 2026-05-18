@@ -2,42 +2,47 @@
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @model TableTennisFrontEnd.Pages.Account.LoginModel
 
-<header class="fullscreen-header bg-primary h-100 d-flex no-padding-top">
-    <div class="row g-0 justify-content-center align-items-center background-image--crystal_tower w-100 vh-100">
-        <div class="col-md-5 text-center mx-2 background-gradient--purple_reversed rounded d-flex flex-column">
-            <div class="my-2 mx-5 py-5">
+<header class="fullscreen-header bg-primary h-100 background-image--crystal_tower w-100 d-flex no-padding-top">
+    <div class="container">
+        <div class="row g-0 justify-content-center align-items-center vh-100">
+            <div class="d-flex flex-row justify-content-center">
+                <div class="col-8 text-center mx-5 background-gradient--purple_reversed rounded d-flex flex-column">
+                    <div class="p-5 m-5">
+                        @if (TempData["SuccessMessage"] != null)
+                        {
+                            <div class="alert alert-success">
+                                @TempData["SuccessMessage"]
+                            </div>
+                        }
 
-                @if (TempData["SuccessMessage"] != null)
-                {
-                    <div class="alert alert-success">
-                        @TempData["SuccessMessage"]
+                        <h2>Login</h2>
+                        <form method="post" action="/account/login">
+                            @Html.AntiForgeryToken()
+
+                            <div asp-validation-summary="All" class="text-danger"></div>
+
+                            <div class="form-group">
+                                <label>Email</label>
+                                <input type="email" name="Email" class="form-control" />
+                            </div>
+
+                            <div class="form-group my-3">
+                                <label>Password</label>
+                                <input type="password" name="Password" class="form-control" />
+                            </div>
+
+                            <div class="d-flex align-items-center justify-content-center">
+                                <button type="submit" class="btn btn-primary bg-dark">Submit</button>
+                            </div>
+                        </form>
                     </div>
-                }
-
-                <h2>Login</h2>
-                <form method="post" action="/account/login">
-                    @Html.AntiForgeryToken()
-
-                    <div asp-validation-summary="All" class="text-danger"></div>
-
-                    <div class="form-group">
-                        <label>Email</label>
-                        <input type="email" name="Email" class="form-control" />
+                </div>
+                <div class="col-4 background-gradient--purple_reversed rounded">
+                    <div class="d-flex flex-column px-3">
+                        <a href="/account/login?handler=GoogleLogin" class="btn btn-secondary">Sign in with Google</a>
+                        <a href="/account/login?handler=DiscordLogin" class="btn btn-secondary">Sign in with Discord</a>
+                        <a href="/Account/Register" class="btn btn-secondary">Register</a>
                     </div>
-
-                    <div class="form-group my-3">
-                        <label>Password</label>
-                        <input type="password" name="Password" class="form-control" />
-                    </div>
-
-                    <div class="d-flex align-items-center justify-content-center">
-                        <button type="submit" class="btn btn-primary bg-dark">Submit</button>
-                    </div>
-                </form>
-                <div class="d-flex flex-row-reverse mt-2">
-                    <a href="/account/login?handler=GoogleLogin" class="btn btn-secondary">Sign in with Google</a>
-                    <a href="/account/login?handler=DiscordLogin" class="btn btn-secondary mx-2">Sign in with Discord</a>
-                    <a href="/Account/Register" class="btn btn-secondary">Register</a>
                 </div>
             </div>
         </div>
