@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authentication;
+﻿using AspNet.Security.OAuth.Discord;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -61,14 +62,23 @@ namespace TableTennisFrontEnd.Pages.Account
         {
             var properties = new AuthenticationProperties
             {
-                RedirectUri = Url.Page("/Account/Login", pageHandler: "GoogleCallback", values: new { returnUrl }, protocol: Request.Scheme)
+                RedirectUri = Url.Page("/Account/Login", pageHandler: "GoogleCallback", values: new { GoogleDefaults.AuthenticationScheme, returnUrl }, protocol: Request.Scheme)
             };
             return new ChallengeResult(GoogleDefaults.AuthenticationScheme, properties);
         }
 
-        public async Task<IActionResult> OnGetGoogleCallbackAsync(string returnUrl = "/")
+        public IActionResult OnGetDiscordLogin(string returnUrl = "/")
         {
-            var authenticateResult = await HttpContext.AuthenticateAsync(GoogleDefaults.AuthenticationScheme);
+            var properties = new AuthenticationProperties
+            {
+                RedirectUri = Url.Page("/Account/Login", pageHandler: "GoogleCallback", values: new { DiscordAuthenticationDefaults.AuthenticationScheme, returnUrl }, protocol: Request.Scheme)
+            };
+            return new ChallengeResult(DiscordAuthenticationDefaults.AuthenticationScheme, properties);
+        }
+
+        public async Task<IActionResult> OnGetGoogleCallbackAsync(string authenticationScheme, string returnUrl = "/")
+        {
+            var authenticateResult = await HttpContext.AuthenticateAsync(authenticationScheme);
             if (!authenticateResult.Succeeded)
             {
                 return RedirectToPage("/Account/Login");
@@ -88,7 +98,7 @@ namespace TableTennisFrontEnd.Pages.Account
             {
                 Email = emailClaim.Value,
                 Name = nameClaim.Value,
-                Provider = "Google",
+                Provider = authenticationScheme,
                 ProviderUserId = claims.FirstOrDefault(claim => claim.Type == ClaimTypes.NameIdentifier).Value // debug what claim the provider is in
             });
 

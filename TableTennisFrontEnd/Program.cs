@@ -1,3 +1,4 @@
+using AspNet.Security.OAuth.Discord;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Components;
 using TableTennisFrontEnd;
@@ -22,9 +23,17 @@ builder.Services.AddAuthentication("Cookies")
     })
     .AddGoogle(GoogleDefaults.AuthenticationScheme, options =>
     {
-        options.ClientId = builder.Configuration["Google:ClientId"]!;
-        options.ClientSecret = builder.Configuration["Google:ClientSecret"]!;
+        options.ClientId = builder.Configuration["Authentication:Google:ClientId"]!;
+        options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"]!;
         options.SignInScheme = "Cookies";
+    })
+    .AddDiscord(DiscordAuthenticationDefaults.AuthenticationScheme, options =>
+    {
+        options.ClientId = builder.Configuration["Authentication:Discord:ClientId"]!;
+        options.ClientSecret = builder.Configuration["Authentication:Discord:ClientSecret"]!;
+        options.SignInScheme = "Cookies";
+        options.Scope.Add("identify");
+        options.Scope.Add("email");
     });
 
 builder.Services.AddCascadingAuthenticationState();
