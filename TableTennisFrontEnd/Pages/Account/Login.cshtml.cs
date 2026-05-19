@@ -1,4 +1,5 @@
 ﻿using AspNet.Security.OAuth.Discord;
+using AspNet.Security.OAuth.Twitch;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Mvc;
@@ -75,6 +76,15 @@ namespace TableTennisFrontEnd.Pages.Account
             return new ChallengeResult(DiscordAuthenticationDefaults.AuthenticationScheme, properties);
         }
 
+        public IActionResult OnGetTwitchLogin(string returnUrl = "/")
+        {
+            var properties = new AuthenticationProperties
+            {
+                RedirectUri = Url.Page("/Account/Login", pageHandler: "ExternalCallback", values: new { TwitchAuthenticationDefaults.AuthenticationScheme, returnUrl }, protocol: Request.Scheme)
+            };
+            return new ChallengeResult(TwitchAuthenticationDefaults.AuthenticationScheme, properties);
+        }
+
         public async Task<IActionResult> OnGetExternalCallbackAsync(string authenticationScheme, string returnUrl = "/")
         {
             var authenticateResult = await HttpContext.AuthenticateAsync(authenticationScheme);
@@ -102,7 +112,7 @@ namespace TableTennisFrontEnd.Pages.Account
             });
 
             var result = await response.Content.ReadFromJsonAsync<UserInfoWithTokens>();
-            
+
             if (result == null)
             {
                 return RedirectToPage("/Account/Login");

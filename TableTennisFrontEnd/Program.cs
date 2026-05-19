@@ -1,4 +1,5 @@
 using AspNet.Security.OAuth.Discord;
+using AspNet.Security.OAuth.Twitch;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Components;
 using TableTennisFrontEnd;
@@ -34,6 +35,12 @@ builder.Services.AddAuthentication("Cookies")
         options.SignInScheme = "Cookies";
         options.Scope.Add("identify");
         options.Scope.Add("email");
+    })
+    .AddTwitch(TwitchAuthenticationDefaults.AuthenticationScheme, options =>
+    {
+        options.ClientId = builder.Configuration["Authentication:Twitch:ClientId"]!;
+        options.ClientSecret = builder.Configuration["Authentication:Twitch:ClientSecret"]!;
+        options.SignInScheme = "Cookies";
     });
 
 builder.Services.AddCascadingAuthenticationState();
