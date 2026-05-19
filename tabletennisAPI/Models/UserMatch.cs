@@ -10,5 +10,8 @@
 
         public bool IsWinner { get; set; }
         public int? TeamNumber { get; set; }
+        public int RatingBefore { get; set; }
+        public int RatingAfter { get; set; }
+        public int RatingDelta { get; set; }
     }
 }

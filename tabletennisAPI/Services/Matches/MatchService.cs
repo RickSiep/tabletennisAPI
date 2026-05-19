@@ -53,7 +53,7 @@ namespace TableTennisAPI.Services.Matches
                 {
                     MatchId = userMatch.MatchId,
                     WinnerName = winnerName,
-                    WinnerElo = userMatch.User.Elo,
+                    WinnerElo = userMatch.User.SinglesRating,
                     DatePlayed = userMatch.Match.DatePlayed,
                     Winner = userMatch.IsWinner,
                     LoserName = loserName,
@@ -133,7 +133,7 @@ namespace TableTennisAPI.Services.Matches
                     userMatchInfo.Matches.Add(new() 
                     {
                         WinnerName = winnerName,
-                        WinnerElo = match.User.Elo,
+                        WinnerElo = match.User.SinglesRating,
                         DatePlayed = match.Match.DatePlayed,
                         Winner = match.IsWinner,
                         LoserName = loserName,

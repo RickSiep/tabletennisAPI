@@ -45,7 +45,6 @@ namespace TableTennisAPI.Services.Auth
                 LastName = dto.LastName,
                 Email = dto.Email,
                 Roles = "User",
-                Elo = 1000
             };
 
             //user.Password = passwordHelper.HashPassword(user, dto.Password);
@@ -137,7 +136,6 @@ namespace TableTennisAPI.Services.Auth
                 LastName = string.Empty,
                 Email = externalCredential.Email,
                 Roles = "User",
-                Elo = 1000
             };
 
             await userRepository.Save(user);
