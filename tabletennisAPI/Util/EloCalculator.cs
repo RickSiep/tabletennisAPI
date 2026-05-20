@@ -2,9 +2,15 @@
 {
     public static class EloCalculator
     {
-        public static (int winnerElo, int loserElo) CalculateEloForSinglesGame(int winnerCurrentElo, int loserCurrentElo)
+        public static (double winnerElo, double loserElo) CalculateEloForSinglesGame(double winnerCurrentElo, double loserCurrentElo)
         {
-            return (winnerCurrentElo + 15, loserCurrentElo + 15);
+            double playerAChanceOfWinning = 1.00 / (1.00 + (Math.Pow(10.00, (loserCurrentElo - winnerCurrentElo) / 400)));
+            double playerBChanceOfWinning = 1 - playerAChanceOfWinning;
+
+            var newRatingPlayerA = winnerCurrentElo + 32 * (1 - playerAChanceOfWinning);
+            var newRatingPlayerB = loserCurrentElo + 32 * (0 - playerBChanceOfWinning);
+
+            return (newRatingPlayerA, newRatingPlayerB);
         }
     }
 }
