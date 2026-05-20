@@ -1,0 +1,53 @@
+﻿@typeparam TItem
+@typeparam TOutput
+@inject ApiClient ApiClient
+@inherits InputBase<TOutput?>
+
+<div class="position-relative">
+    <input type="text" class="form-control @CssClass" value="@SearchText"
+           @oninput="HandleInput" @onblur="HandleBlur" />
+
+    @if (IsLoading)
+    {
+        <div class="position-absolute top-50 end-0 translate-middle-y me-2">
+            <div class="spinner-border spinner-border-sm text-primary"></div>
+        </div>
+    }
+
+    @if (Suggestions.Any())
+    {
+        <ul class="list-group position-absolute w-100 shadow z-3">
+            @foreach (var item in Suggestions)
+            {
+                <li class="list-group-item list-group-item-action" role="button" @onclick="() => SelectItem(item)">
+                    @DisplayTextSelector(item)
+                </li>
+            }
+        </ul>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public string SearchText { get; set; } = string.Empty;
+    [Parameter]
+    public Func<TItem, string> DisplayTextSelector { get; set; }
+
+    public bool IsLoading { get; set; }
+    public List<TItem> Suggestions { get; set; }
+
+    public async Task SelectItem(TItem item)
+    {
+        await Task.CompletedTask;
+    }
+
+    public async Task HandleInput()
+    {
+        await Task.CompletedTask;
+    }
+
+    public async Task HandleBlur()
+    {
+        await Task.CompletedTask;
+    }
+}

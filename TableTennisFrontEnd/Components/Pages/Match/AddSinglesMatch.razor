@@ -1,0 +1,36 @@
+﻿@page "/matches/add-singles-match"
+@using TableTennisFrontEnd.Components.UI
+@using TableTennisShared.DTO.Match
+@using TableTennisShared.DTO.User
+
+@if (_loading)
+{
+    <LoadingSpinnerComponent IsLoading=@_loading />
+}
+
+<div class="container">
+    <h3>Add a match!</h3>
+    <EditForm method="post" FormName="AddMatchForm" Model="@SinglesMatchDto" OnValidSubmit="HandleValidSubmit" Enhance>
+        <DataAnnotationsValidator />
+        <ValidationSummary class="text-danger" />
+        <div class="col-12 col-md-6">
+            <h4>Winner</h4>
+            <div class="form-group">
+                <label for="winner" class="form-label">Winner</label>
+                @* <SuggestionInputText TItem=User TOutput=int  />  *@
+            </div>
+        </div>
+    </EditForm>
+</div>
+
+@code {
+    private bool _loading;
+
+    // public User Player { get; set; }
+    public SinglesMatchDto SinglesMatchDto { get; set; }
+
+    private async Task HandleValidSubmit()
+    {
+
+    }
+}
