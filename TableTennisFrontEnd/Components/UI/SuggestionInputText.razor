@@ -1,10 +1,10 @@
-﻿@typeparam TItem
-@typeparam TOutput
+﻿@using System.Diagnostics.CodeAnalysis
+@typeparam TItem
 @inject ApiClient ApiClient
-@inherits InputBase<TOutput?>
+@inherits InputBase<int?>
 
 <div class="position-relative">
-    <input type="text" class="form-control @CssClass" value="@SearchText"
+    <input type="text" class="form-control @CssClass" @bind=CurrentValueAsString
            @oninput="HandleInput" @onblur="HandleBlur" />
 
     @if (IsLoading)
@@ -29,12 +29,29 @@
 
 @code {
     [Parameter]
-    public string SearchText { get; set; } = string.Empty;
-    [Parameter]
-    public Func<TItem, string> DisplayTextSelector { get; set; }
+    public Func<TItem, string> DisplayTextSelector { get; set; } = default!;
 
+    [Parameter]
+    public Func<string, Task<List<TItem>>> SearchMethod { get; set; } = default!;
+
+    private CancellationTokenSource _cts = new();
+
+    public string SearchText { get; set; } = string.Empty;
     public bool IsLoading { get; set; }
-    public List<TItem> Suggestions { get; set; }
+    public List<TItem> Suggestions { get; set; } = [];
+
+    protected override string FormatValueAsString(int? value)
+    {
+        return base.FormatValueAsString(value);
+    }
+
+    protected override bool TryParseValueFromString(string value, [MaybeNullWhen(false)] out int? result, [NotNullWhen(false)] out string validationErrorMessage)
+    {
+        // var user = await ApiClient.GetFromJsonAsyncAuthorized<TItem>($"/user/firstname/{value}");
+        result = null;
+        validationErrorMessage = string.Empty;
+        return true;
+    }
 
     public async Task SelectItem(TItem item)
     {
@@ -43,6 +60,11 @@
 
     public async Task HandleInput()
     {
+        var theText = CurrentValueAsString;
+        Suggestions.Clear();
+
+        _cts.Cancel();
+
         await Task.CompletedTask;
     }
 

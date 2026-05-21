@@ -1,7 +1,9 @@
-﻿@page "/matches/add-singles-match"
+﻿@page "/matches/singles"
+@rendermode InteractiveServer
 @using TableTennisFrontEnd.Components.UI
 @using TableTennisShared.DTO.Match
 @using TableTennisShared.DTO.User
+<PageTitle>Add singles</PageTitle>
 
 @if (_loading)
 {
@@ -10,14 +12,14 @@
 
 <div class="container">
     <h3>Add a match!</h3>
-    <EditForm method="post" FormName="AddMatchForm" Model="@SinglesMatchDto" OnValidSubmit="HandleValidSubmit" Enhance>
+    <EditForm method="post" FormName="AddMatchForm" Model=SinglesMatch OnValidSubmit="HandleValidSubmit" Enhance>
         <DataAnnotationsValidator />
         <ValidationSummary class="text-danger" />
         <div class="col-12 col-md-6">
             <h4>Winner</h4>
             <div class="form-group">
                 <label for="winner" class="form-label">Winner</label>
-                @* <SuggestionInputText TItem=User TOutput=int  />  *@
+                <SuggestionInputText TItem=UserIdAndNameDto @bind-Value="Player.Id" />
             </div>
         </div>
     </EditForm>
@@ -26,8 +28,13 @@
 @code {
     private bool _loading;
 
-    // public User Player { get; set; }
-    public SinglesMatchDto SinglesMatchDto { get; set; }
+    public UserIdAndNameDto Player { get; set; } = new();
+    public SinglesMatchDto SinglesMatch { get; set; } = new();
+
+    protected override Task OnInitializedAsync()
+    {
+        return Task.CompletedTask;
+    }
 
     private async Task HandleValidSubmit()
     {

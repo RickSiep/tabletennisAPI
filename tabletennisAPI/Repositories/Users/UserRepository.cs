@@ -7,7 +7,6 @@ namespace TableTennisAPI.Repositories.Users
 {
     public class UserRepository(DatabaseContext context) : IUserRepository
     {
-
         private readonly DatabaseContext _context = context;
 
         public List<User> FindAll()
@@ -48,7 +47,7 @@ namespace TableTennisAPI.Repositories.Users
         public async Task UpdateUser(User user)
         {
             _context.Users.Update(user);
-            
+
             await _context.SaveChangesAsync();
 
             return;
@@ -70,7 +69,7 @@ namespace TableTennisAPI.Repositories.Users
             return localCredential;
         }
 
-        public async Task<ExternalCredential?> GetExternalCredentialByProviderIdAsync(string providerUserId) 
+        public async Task<ExternalCredential?> GetExternalCredentialByProviderIdAsync(string providerUserId)
             => await _context.ExternalCredentials.FirstOrDefaultAsync(ec => ec.ProviderUserId == providerUserId);
 
         public async Task<ExternalCredential> SaveExternalUserCredential(ExternalCredential externalCredential)
@@ -82,8 +81,19 @@ namespace TableTennisAPI.Repositories.Users
             return externalCredential;
         }
 
-        public async Task<User?> GetUserByExternalCredentialAsync(ExternalCredential externalCredential) 
+        public async Task<User?> GetUserByExternalCredentialAsync(ExternalCredential externalCredential)
             => await _context.Users.FirstOrDefaultAsync(user => user.Id == externalCredential.Id);
-        
+
+        public async Task<UserIdAndNameDto?> GetUserByFirstNameAsync(string firstName)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.FirstName == firstName);
+            
+            if (user == null)
+            {
+                return null;
+            }
+
+            return new() { Id = user.Id, FirstName = user.FirstName };
+        }
     }
 }
