@@ -4,7 +4,7 @@
 @inherits InputBase<int?>
 
 <div class="position-relative">
-    <input type="text" class="form-control @CssClass" @bind=CurrentValueAsString
+    <input type="text" class="form-control @CssClass" @bind=SearchText @onkeypress="SelectTyped"
            @oninput="HandleInput" @onblur="HandleBlur" />
 
     @if (IsLoading)
@@ -32,13 +32,16 @@
     public Func<TItem, string> DisplayTextSelector { get; set; } = default!;
 
     [Parameter]
-    public Func<string, Task<List<TItem>>> SearchMethod { get; set; } = default!;
+    public Func<TItem, int?> ValueSelector { get; set; } = default!;
 
-    private CancellationTokenSource _cts = new();
+    [Parameter]
+    public Func<string, Task<List<TItem>>> SearchMethod { get; set; } = default!;
 
     public string SearchText { get; set; } = string.Empty;
     public bool IsLoading { get; set; }
     public List<TItem> Suggestions { get; set; } = [];
+
+    private CancellationTokenSource _cts = new();
 
     protected override string FormatValueAsString(int? value)
     {
@@ -55,17 +58,69 @@
 
     public async Task SelectItem(TItem item)
     {
-        await Task.CompletedTask;
+        SearchText = DisplayTextSelector(item);
+        CurrentValue = ValueSelector(item);
+        Suggestions.Clear();
+        await ValueChanged.InvokeAsync(CurrentValue);
+        EditContext?.NotifyFieldChanged(FieldIdentifier);
     }
 
-    public async Task HandleInput()
+    public async Task HandleInput(ChangeEventArgs args)
     {
-        var theText = CurrentValueAsString;
+        SearchText = args.Value?.ToString() ?? "";
         Suggestions.Clear();
 
         _cts.Cancel();
+        _cts = new();
 
-        await Task.CompletedTask;
+        try
+        {
+            IsLoading = true;
+            await Task.Delay(1000, _cts.Token);
+            var items = await ApiClient.GetFromJsonAsyncAuthorized<List<TItem>>($"/user/firstname/{SearchText}", _cts).ConfigureAwait(false);
+
+            if (items == null)
+            {
+                return;
+            }
+
+            foreach (var item in items)
+            {
+                Suggestions.Add(item);
+            }
+        }
+        catch (OperationCanceledException operationCancelled)
+        {
+            IsLoading = false;
+        }
+
+        IsLoading = false;
+    }
+
+    private async Task SelectTyped(KeyboardEventArgs args)
+    {
+        if (args.Code != "Enter" && args.Code != "NumpadEnter")
+        {
+            return;
+        }
+
+        _cts.Cancel();
+        _cts = new();
+
+        try
+        {
+            var item = await ApiClient.GetFromJsonAsyncAuthorized<TItem>($"/user/firstname/get/{SearchText}", _cts);
+            if (item == null)
+            {
+                return;
+            }
+
+            await SelectItem(item);
+        }
+        catch (OperationCanceledException exception)
+        {
+            
+        }
     }
 
     public async Task HandleBlur()

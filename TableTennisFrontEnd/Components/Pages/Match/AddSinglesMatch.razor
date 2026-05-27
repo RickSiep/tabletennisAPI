@@ -19,7 +19,8 @@
             <h4>Winner</h4>
             <div class="form-group">
                 <label for="winner" class="form-label">Winner</label>
-                <SuggestionInputText TItem=UserIdAndNameDto @bind-Value="Player.Id" />
+                <SuggestionInputText TItem=UserIdAndNameDto @bind-Value="Player.Id" 
+                DisplayTextSelector="player => player.FirstName" ValueSelector="player => player.Id" />
             </div>
         </div>
     </EditForm>

@@ -26,9 +26,11 @@ namespace TableTennisAPI.Controllers
         }
 
         [HttpGet("/user/firstname/{firstName}")]
-        public async Task<ActionResult<UserIdAndNameDto?>> GetUserFirstNameById(string firstName)
-        {
-            return Ok(await _userService.GetUserByFirstNameAsync(firstName));
-        }
+        public async Task<ActionResult<UserIdAndNameDto?>> GetUsersWithSimilarFirstName(string firstName) 
+            => Ok(await _userService.GetUsersByFirstNameAsync(firstName));
+
+        [HttpGet("/user/firstname/get/{firstName}")]
+        public async Task<ActionResult<UserIdAndNameDto?>> GetUserByFirstName(string firstName)
+            => Ok(await _userService.GetUserByFirstNameAsync(firstName));
     }
 }

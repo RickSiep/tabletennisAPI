@@ -12,17 +12,20 @@ namespace TableTennisFrontEnd
         
         public async Task<T> GetFromJsonAsync<T>(string path) => await _api.GetFromJsonAsync<T>(path);
 
-        public async Task<T?> GetFromJsonAsyncAuthorized<T>(string path)
+        public async Task<T?> GetFromJsonAsyncAuthorized<T>(string path, CancellationTokenSource cts = null)
         {
             if (authState.AccessToken == null && authState.RefreshToken != null)
             {
                 await TryRefreshAsync();
             }
 
+            cts ??= new CancellationTokenSource();
+
             try
             {
                 _api.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", authState.AccessToken);
-                return await _api.GetFromJsonAsync<T>(path);
+                var result = await _api.GetFromJsonAsync<T>(path, cts.Token);
+                return result ?? default;
             }
             catch (HttpRequestException ex) when (ex.StatusCode == HttpStatusCode.Unauthorized)
             {

@@ -1,4 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using System.Reflection.Metadata.Ecma335;
 using TableTennisAPI.Data;
 using TableTennisAPI.Models;
 using TableTennisShared.DTO.User;
@@ -84,16 +86,30 @@ namespace TableTennisAPI.Repositories.Users
         public async Task<User?> GetUserByExternalCredentialAsync(ExternalCredential externalCredential)
             => await _context.Users.FirstOrDefaultAsync(user => user.Id == externalCredential.Id);
 
-        public async Task<UserIdAndNameDto?> GetUserByFirstNameAsync(string firstName)
+        public async Task<IEnumerable<UserIdAndNameDto?>> GetUsersByFirstNameAsync(string firstName)
         {
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.FirstName == firstName);
-            
-            if (user == null)
+            var users = await _context.Users.Where(user => user.FirstName.StartsWith(firstName)).ToListAsync();
+
+            if (users == null)
             {
                 return null;
             }
 
-            return new() { Id = user.Id, FirstName = user.FirstName };
+            var userIdAndNameList = new List<UserIdAndNameDto>();
+
+            foreach (var user in users)
+            {
+                userIdAndNameList.Add(new() { Id = user.Id, FirstName = user.FirstName });
+            }
+
+            return userIdAndNameList;
+        }
+
+        public async Task<UserIdAndNameDto?> GetUserByFirstNameAsync(string firstName)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(user => user.FirstName == firstName);
+
+            return user == null ? null : new() { Id = user.Id, FirstName = user.FirstName };
         }
     }
 }

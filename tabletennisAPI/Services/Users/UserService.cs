@@ -16,9 +16,10 @@ namespace TableTennisAPI.Services.Users
             return await userRepository.GetUsersInfoAsync();
         }
 
-        public async Task<UserIdAndNameDto?> GetUserByFirstNameAsync(string name)
-        {
-            return await userRepository.GetUserByFirstNameAsync(name);
-        }
+        public async Task<IEnumerable<UserIdAndNameDto?>> GetUsersByFirstNameAsync(string firstName)
+            => await userRepository.GetUsersByFirstNameAsync(firstName);
+
+        public async Task<UserIdAndNameDto?> GetUserByFirstNameAsync(string firstName)
+            => await userRepository.GetUserByFirstNameAsync(firstName);
     }
 }
