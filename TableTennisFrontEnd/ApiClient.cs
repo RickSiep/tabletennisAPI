@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components;
 using System.Net;
 using System.Net.Http.Headers;
+using System.Text.Json;
 using TableTennisFrontEnd.Authentication;
 using TableTennisShared.DTO.Token;
 namespace TableTennisFrontEnd
@@ -39,6 +40,11 @@ namespace TableTennisFrontEnd
 
                 _api.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", authState.AccessToken);
                 return await _api.GetFromJsonAsync<T>(path);
+            }
+            catch (JsonException exception)
+            {
+                Console.WriteLine(exception.InnerException);
+                return default;
             }
         }
 
