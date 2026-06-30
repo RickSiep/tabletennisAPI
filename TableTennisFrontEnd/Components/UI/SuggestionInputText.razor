@@ -61,6 +61,11 @@
 
     public async Task SelectItem(TItem item)
     {
+        if (item == null)
+        {
+            return;
+        }
+
         SearchText = DisplayTextSelector(item);
         CurrentValue = ValueSelector(item);
         Suggestions.Clear();
@@ -127,6 +132,15 @@
         }
 
         _keyboardIndex = keyCode == "ArrowUp" ? _keyboardIndex - 1 : _keyboardIndex + 1;
+
+        if (_keyboardIndex >= Suggestions.Count || _keyboardIndex <= -1)
+        {
+            _keyboardIndex = -1;
+            _selectedItem = default;
+            StateHasChanged();
+            return;
+        }
+
         _selectedItem = Suggestions[_keyboardIndex];
 
         StateHasChanged();
