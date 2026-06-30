@@ -4,7 +4,7 @@
 @inherits InputBase<int?>
 
 <div class="position-relative">
-    <input type="text" class="form-control @CssClass" @bind=SearchText @onkeypress="SelectTyped"
+    <input type="text" class="form-control @CssClass" @bind=SearchText @onkeypress="SelectTyped" @onkeydown="SelectThroughKeyboard"
            @oninput="HandleInput" @onblur="HandleBlur" />
 
     @if (IsLoading)
@@ -19,7 +19,7 @@
         <ul class="list-group position-absolute w-100 shadow z-3">
             @foreach (var item in Suggestions)
             {
-                <li class="list-group-item list-group-item-action" role="button" @onclick="() => SelectItem(item)">
+                <li class="list-group-item list-group-item-action @(Equals(item, _selectedItem) ? "bg-white text-black" : "")" role="button" @onclick="() => SelectItem(item)">
                     @DisplayTextSelector(item)
                 </li>
             }
@@ -40,6 +40,9 @@
     public string SearchText { get; set; } = string.Empty;
     public bool IsLoading { get; set; }
     public List<TItem> Suggestions { get; set; } = [];
+
+    private int _keyboardIndex = -1;
+    private TItem? _selectedItem;
 
     private CancellationTokenSource _cts = new();
 
@@ -104,23 +107,30 @@
             return;
         }
 
-        _cts.Cancel();
-        _cts = new();
-
         try
         {
-            var item = await ApiClient.GetFromJsonAsyncAuthorized<TItem>($"/user/firstname/get/{SearchText}", _cts);
-            if (item == null)
-            {
-                return;
-            }
-
-            await SelectItem(item);
+            await SelectItem(_selectedItem);
         }
         catch (OperationCanceledException exception)
         {
-            
+
         }
+    }
+
+    private async Task SelectThroughKeyboard(KeyboardEventArgs args)
+    {
+        var keyCode = args.Code;
+        if (keyCode != "ArrowDown" && keyCode != "ArrowUp")
+        {
+            _keyboardIndex = -1;
+            return;
+        }
+
+        _keyboardIndex = keyCode == "ArrowUp" ? _keyboardIndex - 1 : _keyboardIndex + 1;
+        _selectedItem = Suggestions[_keyboardIndex];
+
+        StateHasChanged();
+        return;
     }
 
     public async Task HandleBlur()
