@@ -6,6 +6,7 @@ namespace TableTennisAPI.Services.Matches
     public interface IMatchService
     {
         Task<Match?> SaveMatchAsync(MatchSubmissionDto match);
+        Task<Match?> SaveMatchAsync(SinglesMatchDto singlesMatch);
         Task<Match?> UpdateMatchAsync(MatchSubmissionDto match);
         Task DeleteMatchAsync(int matchId);
         Task<Match?> GetMatchById(int matchId);

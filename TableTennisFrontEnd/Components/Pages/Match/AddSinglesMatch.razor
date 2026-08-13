@@ -3,7 +3,9 @@
 @using TableTennisFrontEnd.Components.UI
 @using TableTennisShared.DTO.Match
 @using TableTennisShared.DTO.User
-<PageTitle>Add singles</PageTitle>
+@inject ApiClient Client
+
+<PageTitle>Add Single match</PageTitle>
 
 @if (_loading)
 {
@@ -15,21 +17,44 @@
     <EditForm method="post" FormName="AddMatchForm" Model=SinglesMatch OnValidSubmit="HandleValidSubmit" Enhance>
         <DataAnnotationsValidator />
         <ValidationSummary class="text-danger" />
-        <div class="col-12 col-md-6">
-            <h4>Winner</h4>
-            <div class="form-group">
-                <label for="winner" class="form-label">Winner</label>
-                <SuggestionInputText TItem=UserIdAndNameDto @bind-Value="Player.Id" 
-                DisplayTextSelector="player => player.FirstName" ValueSelector="player => player.Id" />
+        <div class="row">
+            <div class="col-12 col-md-6">
+                <h4>Winner</h4>
+                <div class="form-group">
+                    <label for="winner" class="form-label">Winner</label>
+                    <SuggestionInputText TItem=UserIdAndNameDto @bind-Value="Winner.Id" 
+                    DisplayTextSelector="Winner => Winner.FirstName" ValueSelector="Winner => Winner.Id" />
+                </div>
+
+                <div class="form-group">
+                    <label for="winnerScore" class="form-label">Games</label>
+                    <InputNumber class="form-control" @bind-Value="SinglesMatch.WinnerScore" ParsingErrorMessage="Must be a valid number" min="0" max="10" />
+                </div>
+            </div>
+
+            <div class="col-12 col-md-6">
+                <h4>Loser</h4>
+                <div class="form-group">
+                    <label for="loser" class="form-label">Loser</label>
+                    <SuggestionInputText TItem=UserIdAndNameDto @bind-Value="Loser.Id" 
+                    DisplayTextSelector="loser => loser.FirstName" ValueSelector="loser => loser.Id" />
+                </div>
+
+                <div class="form-group">
+                    <label for="winnerScore" class="form-label">Games</label>
+                    <InputNumber class="form-control" @bind-Value="SinglesMatch.LoserScore" ParsingErrorMessage="Must be a valid number" min="0" max="10" />
+                </div>
             </div>
         </div>
+        <input type="submit" class="btn btn-primary" value="Save" />
     </EditForm>
 </div>
 
 @code {
     private bool _loading;
 
-    public UserIdAndNameDto Player { get; set; } = new();
+    public UserIdAndNameDto Winner { get; set; } = new();
+    public UserIdAndNameDto Loser { get; set; } = new();
     public SinglesMatchDto SinglesMatch { get; set; } = new();
 
     protected override Task OnInitializedAsync()
@@ -39,6 +64,19 @@
 
     private async Task HandleValidSubmit()
     {
+        _loading = true;
 
+        try
+        {
+            SinglesMatch.WinnerId = Winner.Id ?? 0;
+            SinglesMatch.LoserId = Loser.Id ?? 0;
+            var response = await Client.PostJsonAsync<SinglesMatchDto>("/match/save/single", SinglesMatch);
+        }
+        catch (Exception e)
+        {
+
+        }
+
+        _loading = false;
     }
 }

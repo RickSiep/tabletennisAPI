@@ -25,6 +25,18 @@ namespace TableTennisAPI.Controllers
             return Ok();
         }
 
+        [HttpPost("save/single")]
+        public async Task<ActionResult<Match>> RegisterSinglesMatch([FromBody]SinglesMatchDto singlesDto)
+        {
+            var match = await _matchService.SaveMatchAsync(singlesDto);
+            if (match is null)
+            {
+                return BadRequest("Something went wrong saving the match, try again later");
+            }
+
+            return Ok(match);
+        }
+
         [HttpPut("update")]
         public async Task<ActionResult<Match>> UpdateMatch([FromBody] MatchSubmissionDto request)
         {

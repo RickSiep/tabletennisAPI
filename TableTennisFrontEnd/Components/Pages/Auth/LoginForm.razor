@@ -39,7 +39,9 @@
     public EventCallback<bool> SpinnerChanged { get; set; }
 
     public string ErrorMessage { get; set; } = string.Empty;
+
     private HttpClient _http => Factory.CreateClient("local");
+
     private bool _isLoading;
     public bool IsLoading
     {

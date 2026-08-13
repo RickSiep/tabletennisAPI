@@ -13,7 +13,7 @@ namespace TableTennisAPI.Services.Matches
 
         public async Task<Match?> SaveMatchAsync(MatchSubmissionDto match)
         {
-            var newMatch = await _matchRepository.AddMatchAsync(new() { DatePlayed = DateTime.Today.Date, WinnerScore = match.WinnerScore, LoserScore = match.LoserScore});
+            var newMatch = await _matchRepository.AddMatchAsync(new(DateTime.Today.Date, match.WinnerScore, match.LoserScore));
 
             foreach (var participant in match.Participants)
             {
@@ -31,6 +31,24 @@ namespace TableTennisAPI.Services.Matches
             return newMatch;
         }
 
+        public async Task<Match?> SaveMatchAsync(SinglesMatchDto singlesMatch)
+        {
+            if (singlesMatch == null)
+            {
+                return null;
+            }
+
+            var match = await _matchRepository.AddMatchAsync(new(DateTime.Today.Date, singlesMatch.WinnerScore, singlesMatch.LoserScore));
+
+            await SaveUserMatch(match.Id, singlesMatch.WinnerId, true);
+            await SaveUserMatch(match.Id, singlesMatch.LoserId, false);
+
+            return match;
+        }
+
+        private Task SaveUserMatch(int matchId, int userId, bool isWinner) 
+            => _userMatchRepository.AddUserMatch(new() { MatchId = matchId, UserId =  userId, IsWinner = isWinner });
+        
         public async Task<IEnumerable<Match>> GetAllMatchesAsync() => await _matchRepository.GetAllMatchesAsync();
 
         public async Task<MatchInformationWithTotalMatchesDto> GetFormattedMatchesAsync(int pageIndex, int pageSize)
@@ -62,7 +80,7 @@ namespace TableTennisAPI.Services.Matches
                 });
             }
 
-            return new() { MatchInformations = formattedMatches, TotalMatches = totalMatches};
+            return new() { MatchInformations = formattedMatches, TotalMatches = totalMatches };
         }
 
         //private UserMatch GetUserMatch(UserMatch userMatch)
@@ -130,7 +148,7 @@ namespace TableTennisAPI.Services.Matches
                         ? (userName, oppenentsName)
                         : (oppenentsName, userName);
 
-                    userMatchInfo.Matches.Add(new() 
+                    userMatchInfo.Matches.Add(new()
                     {
                         WinnerName = winnerName,
                         WinnerElo = match.User.SinglesRating,
