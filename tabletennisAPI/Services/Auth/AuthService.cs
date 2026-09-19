@@ -82,7 +82,7 @@ namespace TableTennisAPI.Services.Auth
 
         private async Task<User?> ValidateRefreshTokenAsync(int userId, string refreshToken)
         {
-            var user = await userRepository.FindUserByIdAsync(userId);
+            var user = await userRepository.GetUserByIdAsync(userId);
 
             if (user is null || user.RefreshToken != refreshToken
                 || user.RefreshTokenExpiryTime <= DateTime.UtcNow)

@@ -4,7 +4,7 @@ using TableTennisShared.DTO.User;
 namespace TableTennisAPI.Repositories.Users {
     public interface IUserRepository {
         List<User> FindAll();
-        Task<User?> FindUserByIdAsync(int id);
+        Task<User?> GetUserByIdAsync(int id);
         Task<User?> GetUserByEmailAsync(string email);
         Task<LocalCredential?> GetLocalCredentialByUserIdAsync(int id);
         Task<LocalCredential?> SaveLocalUserCredential(LocalCredential localCredential);

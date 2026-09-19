@@ -2,18 +2,17 @@
 using TableTennisAPI.Repositories.Matches;
 using TableTennisAPI.Repositories.UserMatches;
 using TableTennisAPI.Repositories.Users;
+using TableTennisAPI.Util;
 using TableTennisShared.DTO.Match;
 
 namespace TableTennisAPI.Services.Matches
 {
-    public class MatchService(IMatchRepository matchRepository, IUserMatchRepository userMatchRepository) : IMatchService
+    public class MatchService(IMatchRepository matchRepository, IUserMatchRepository userMatchRepository, IUserRepository userRepository) : IMatchService
     {
-        private readonly IMatchRepository _matchRepository = matchRepository;
-        private readonly IUserMatchRepository _userMatchRepository = userMatchRepository;
 
         public async Task<Match?> SaveMatchAsync(MatchSubmissionDto match)
         {
-            var newMatch = await _matchRepository.AddMatchAsync(new(DateTime.Today.Date, match.WinnerScore, match.LoserScore));
+            var newMatch = await matchRepository.AddMatchAsync(new(DateTime.Today.Date, match.WinnerScore, match.LoserScore));
 
             foreach (var participant in match.Participants)
             {
@@ -25,7 +24,7 @@ namespace TableTennisAPI.Services.Matches
                     TeamNumber = participant.TeamNumber
                 };
 
-                await _userMatchRepository.AddUserMatch(userMatch);
+                await userMatchRepository.AddUserMatch(userMatch);
             }
 
             return newMatch;
@@ -38,23 +37,39 @@ namespace TableTennisAPI.Services.Matches
                 return null;
             }
 
-            var match = await _matchRepository.AddMatchAsync(new(DateTime.Today.Date, singlesMatch.WinnerScore, singlesMatch.LoserScore));
+            var match = await matchRepository.AddMatchAsync(new(DateTime.Today.Date, singlesMatch.WinnerScore, singlesMatch.LoserScore));
 
             await SaveUserMatch(match.Id, singlesMatch.WinnerId, true);
             await SaveUserMatch(match.Id, singlesMatch.LoserId, false);
 
+            await SetUserEloAfterMatch(singlesMatch.WinnerId, singlesMatch.LoserId);
+
             return match;
         }
 
+        private async Task SetUserEloAfterMatch(int winnerId, int loserId)
+        {
+            var winner = await userRepository.GetUserByIdAsync(winnerId);
+            var loser = await userRepository.GetUserByIdAsync(loserId);
+
+            var (winnerElo, loserElo) = EloCalculator.CalculateEloForSinglesGame(winner.SinglesRating, loser.SinglesRating);
+
+            winner.SinglesRating = (int)winnerElo;
+            loser.SinglesRating = (int)loserElo;
+
+            await userRepository.UpdateUser(winner);
+            await userRepository.UpdateUser(loser);
+        }
+
         private Task SaveUserMatch(int matchId, int userId, bool isWinner) 
-            => _userMatchRepository.AddUserMatch(new() { MatchId = matchId, UserId =  userId, IsWinner = isWinner });
+            => userMatchRepository.AddUserMatch(new() { MatchId = matchId, UserId =  userId, IsWinner = isWinner });
         
-        public async Task<IEnumerable<Match>> GetAllMatchesAsync() => await _matchRepository.GetAllMatchesAsync();
+        public async Task<IEnumerable<Match>> GetAllMatchesAsync() => await matchRepository.GetAllMatchesAsync();
 
         public async Task<MatchInformationWithTotalMatchesDto> GetFormattedMatchesAsync(int pageIndex, int pageSize)
         {
-            var totalMatches = (await _matchRepository.GetAllMatchesAsync()).ToList().Count;
-            var userMatches = await _userMatchRepository.GetUserMatchesPaginatedAsync(pageIndex, pageSize);
+            var totalMatches = (await matchRepository.GetAllMatchesAsync()).ToList().Count;
+            var userMatches = await userMatchRepository.GetUserMatchesPaginatedAsync(pageIndex, pageSize);
             var opponentsByMatch = await GetOpponentsByMatchIdsAsync(userMatches);
             var formattedMatches = new List<MatchInformationDto>();
 
@@ -98,7 +113,7 @@ namespace TableTennisAPI.Services.Matches
                 .Distinct()
                 .ToList();
 
-            var userMatchesWithUsers = await _userMatchRepository
+            var userMatchesWithUsers = await userMatchRepository
                 .GetUserMatchesByMatchIdsAsync(allMatchIds);
 
             var opponentsByMatch = userMatchesWithUsers
@@ -128,7 +143,7 @@ namespace TableTennisAPI.Services.Matches
 
         public async Task<List<MatchesPerDayDto>> GetFormattedMatchesByDateAsync(int pageIndex, int pageSize)
         {
-            var userMatches = await _userMatchRepository.GetUserMatchesPaginatedAsync(pageIndex, pageSize);
+            var userMatches = await userMatchRepository.GetUserMatchesPaginatedAsync(pageIndex, pageSize);
             userMatches = userMatches.Reverse();
             var opponentsByMatch = await GetOpponentsByMatchIdsAsync(userMatches);
             var formattedMatches = new List<MatchesPerDayDto>();
@@ -164,8 +179,8 @@ namespace TableTennisAPI.Services.Matches
             return formattedMatches;
         }
 
-        public async Task<Match?> GetMatchById(int matchId) => await _matchRepository.FindMatchById(matchId);
+        public async Task<Match?> GetMatchById(int matchId) => await matchRepository.FindMatchById(matchId);
 
-        public async Task DeleteMatchAsync(int matchId) => await _matchRepository.DeleteMatchAsync(matchId);
+        public async Task DeleteMatchAsync(int matchId) => await matchRepository.DeleteMatchAsync(matchId);
     }
 }
