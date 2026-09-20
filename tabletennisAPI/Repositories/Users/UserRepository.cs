@@ -57,7 +57,8 @@ namespace TableTennisAPI.Repositories.Users
 
         public async Task<User> GetUserByRefreshTokenAsync(string refreshToken)
         {
-            return await _context.Users.FirstOrDefaultAsync(u => u.RefreshToken == refreshToken);
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.RefreshToken == refreshToken);
+            return user;
         }
 
         public async Task<LocalCredential?> GetLocalCredentialByUserIdAsync(int id) => await _context.LocalCredentials.FirstOrDefaultAsync(lc => lc.Id == id);
@@ -110,6 +111,19 @@ namespace TableTennisAPI.Repositories.Users
             var user = await _context.Users.FirstOrDefaultAsync(user => user.FirstName == firstName);
 
             return user == null ? null : new() { Id = user.Id, FirstName = user.FirstName };
+        }
+
+        public async Task<IEnumerable<TopPlayerDto>> GetTopPlayersByCutoffAsync(int cutoff)
+        {
+            var users = await _context.Users.OrderByDescending(user => user.SinglesRating).Take(cutoff).ToListAsync();
+            var topPlayerList = new List<TopPlayerDto>();
+
+            foreach (var user in users)
+            {
+                topPlayerList.Add(new() { FirstName = user.FirstName, LastName = user.LastName, SinglesRating = user.SinglesRating });
+            }
+
+            return topPlayerList;
         }
     }
 }

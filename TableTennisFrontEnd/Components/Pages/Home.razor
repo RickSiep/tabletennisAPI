@@ -1,6 +1,7 @@
 ﻿@page "/"
 @rendermode InteractiveServer
 @using Microsoft.AspNetCore.Authorization
+@using TableTennisFrontEnd.Components.UI
 @inject ApiClient ApiClient
 @attribute [Authorize]
 
@@ -36,27 +37,12 @@
     </div>
 
     <div class="row g-3 mt-2">
-        <div class="col-5">
+        <div class="col-4">
             <div class="h-100 background-dark grey-border rounded p-5">
-                <div class="d-flex align-items-center justify-content-center mb-3">
-                    <div class="me-2">
-                        <i class="bi bi-trophy-fill"></i>
-                    </div>
-                    <div class="d-flex flex-column justify-content-center">
-                        <h5 class="mb-1">TOP COMPETITORS</h5>
-                        <p class="mb-0">The best of the best</p>
-                    </div>
-                </div>
-                <h2>WELCOME BACK, CHAMP.</h2>
-                <p>The digital arena is active. Your current win rate is 78%. Ready for the next serve?</p>
-
-                <div class="d-flex flex-row mt-5">
-                    <button type="button" class="btn me-5 btn-primary rounded">Register match</button>
-                    <button type="button" class="btn btn-secondary rounded">View rankings</button>
-                </div>
+                <TopPlayersComponent Cutoff="5" />
             </div>
         </div>
-        <div class="col-7">
+        <div class="col-8">
             <div class="h-100 background-dark grey-border rounded p-5">
                 <h2>WELCOME BACK, CHAMP.</h2>
                 <p>The digital arena is active. Your current win rate is 78%. Ready for the next serve?</p>

@@ -21,5 +21,8 @@ namespace TableTennisAPI.Services.Users
 
         public async Task<UserIdAndNameDto?> GetUserByFirstNameAsync(string firstName)
             => await userRepository.GetUserByFirstNameAsync(firstName);
+
+        public async Task<IEnumerable<TopPlayerDto>> GetTopPlayersWithCutoffAsync(int cutoff)
+            => await userRepository.GetTopPlayersByCutoffAsync(cutoff).ConfigureAwait(false);
     }
 }

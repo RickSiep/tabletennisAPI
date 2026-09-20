@@ -9,5 +9,6 @@ namespace TableTennisAPI.Services.Users
         Task<IEnumerable<UserIdAndNameDto>> GetUsersInfoAsync();
         Task<IEnumerable<UserIdAndNameDto?>> GetUsersByFirstNameAsync(string firstName);
         Task<UserIdAndNameDto?> GetUserByFirstNameAsync(string firstName);
+        Task<IEnumerable<TopPlayerDto>> GetTopPlayersWithCutoffAsync(int cutoff);
     }
 }

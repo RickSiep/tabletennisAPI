@@ -32,5 +32,9 @@ namespace TableTennisAPI.Controllers
         [HttpGet("/user/firstname/get/{firstName}")]
         public async Task<ActionResult<UserIdAndNameDto?>> GetUserByFirstName(string firstName)
             => Ok(await _userService.GetUserByFirstNameAsync(firstName));
+
+        [HttpGet("/user/top/{cutoff}")]
+        public async Task<ActionResult<IEnumerable<TopPlayerDto>>> GetTopPlayersWithCutoff(int cutoff)
+            => Ok(await _userService.GetTopPlayersWithCutoffAsync(cutoff));
     }
 }

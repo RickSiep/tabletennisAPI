@@ -17,5 +17,6 @@ namespace TableTennisAPI.Repositories.Users {
         Task<ExternalCredential> SaveExternalUserCredential(ExternalCredential externalCredential);
         Task<IEnumerable<UserIdAndNameDto?>> GetUsersByFirstNameAsync(string firstName);
         Task<UserIdAndNameDto?> GetUserByFirstNameAsync(string firstName);
+        Task<IEnumerable<TopPlayerDto>> GetTopPlayersByCutoffAsync(int cutoff);
     }
 }
