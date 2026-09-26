@@ -6,10 +6,12 @@ using System.Text;
 using TableTennisAPI.Data;
 using TableTennisAPI.Models;
 using TableTennisAPI.Repositories.Matches;
+using TableTennisAPI.Repositories.Statistics;
 using TableTennisAPI.Repositories.UserMatches;
 using TableTennisAPI.Repositories.Users;
 using TableTennisAPI.Services.Auth;
 using TableTennisAPI.Services.Matches;
+using TableTennisAPI.Services.Statistics;
 using TableTennisAPI.Services.Users;
 using TableTennisAPI.Util;
 
@@ -45,12 +47,17 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped<TokenProvider>();
+
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IMatchRepository, MatchRepository>();
+
+builder.Services.AddScoped<IStatisticsRepository, StatisticsRepository>();
 builder.Services.AddScoped<IUserMatchRepository, UserMatchRepository>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IStatisticsService, StatisticsService>();
 builder.Services.AddScoped<MatchService>();
+
 builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
 
 builder.Services.AddScoped<IPasswordHelper, PasswordHelper>();

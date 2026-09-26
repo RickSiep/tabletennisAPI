@@ -1,8 +1,11 @@
 ﻿@page "/"
 @rendermode InteractiveServer
 @using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.Authorization
 @using TableTennisFrontEnd.Components.UI
+@using TableTennisShared.DTO.Dashboard;
 @inject ApiClient ApiClient
+@inject AuthenticationStateProvider AuthStateProvider
 @attribute [Authorize]
 
 <PageTitle>Home</PageTitle>
@@ -22,17 +25,11 @@
         </div>
 
         <div class="col-3">
-            <div class="h-100 grey-border d-flex flex-column justify-content-center align-items-center background-dark rounded p-3">
-                <p>TOTAL MATCHES PLAYED</p>
-                <h2>14,259</h2>
-            </div>
+            <StatsCard Title="TOTAL MATCHES PLAYED" Value="dashboardStats.TotalMatchesPlayed" />
         </div>
 
         <div class="col-3">
-            <div class="h-100 grey-border d-flex flex-column justify-content-center align-items-center background-dark rounded p-3">
-                <p>MATCHES PLAYED THIS WEEK</p>
-                <h2>7</h2>
-            </div>
+            <StatsCard Title="Matches played this week" Value="dashboardStats.MatchesPlayedThisWeek" />
         </div>
     </div>
 
@@ -58,5 +55,23 @@
 
 @code
 {
+    public DashboardStatsDto dashboardStats { get; set; } = new();
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var statistics = await ApiClient.GetFromJsonAsyncAuthorized<DashboardStatsDto>("/stats/dashboard");
 
+            if (statistics == null)
+            {
+                return;
+            }
+
+            dashboardStats = statistics;
+        }
+        catch
+        {
+            return;
+        }
+    }
 }

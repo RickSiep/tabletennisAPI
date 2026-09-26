@@ -1,0 +1,12 @@
+﻿<div class="h-100 grey-border d-flex flex-column justify-content-center align-items-center background-dark rounded p-3">
+    <p>@Title.ToUpper()</p>
+    <h2>@Value</h2>
+</div>
+
+@code {
+    [Parameter]
+    public string Title { get; set; } = "";
+
+    [Parameter]
+    public int Value { get; set; }
+}
