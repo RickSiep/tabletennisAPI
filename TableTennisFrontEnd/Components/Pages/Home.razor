@@ -15,7 +15,7 @@
         <div class="col-6">
             <div class="h-100 background-dark grey-border rounded p-5">
                 <h2>WELCOME BACK, CHAMP.</h2>
-                <p>The digital arena is active. Your current win rate is 78%. Ready for the next serve?</p>
+                <p>The digital arena is active. Your current win rate is @DashBoardStats.WinRate percent. Ready for the next serve?</p>
 
                 <div class="d-flex flex-row mt-5">
                     <button type="button" class="btn me-5 btn-primary rounded">Register match</button>
@@ -25,11 +25,11 @@
         </div>
 
         <div class="col-3">
-            <StatsCard Title="TOTAL MATCHES PLAYED" Value="dashboardStats.TotalMatchesPlayed" />
+            <StatsCard Title="TOTAL MATCHES PLAYED" Value="DashBoardStats.TotalMatchesPlayed" />
         </div>
 
         <div class="col-3">
-            <StatsCard Title="Matches played this week" Value="dashboardStats.MatchesPlayedThisWeek" />
+            <StatsCard Title="Matches played this week" Value="DashBoardStats.MatchesPlayedThisWeek" />
         </div>
     </div>
 
@@ -55,19 +55,19 @@
 
 @code
 {
-    public DashboardStatsDto dashboardStats { get; set; } = new();
+    public DashboardStatsDto DashBoardStats { get; set; } = new();
     protected override async Task OnInitializedAsync()
     {
         try
         {
-            var statistics = await ApiClient.GetFromJsonAsyncAuthorized<DashboardStatsDto>("/stats/dashboard");
+            var statistics = await ApiClient.GetFromJsonAsyncAuthorized<DashboardStatsDto>($"/stats/dashboard");
 
             if (statistics == null)
             {
                 return;
             }
 
-            dashboardStats = statistics;
+            DashBoardStats = statistics;
         }
         catch
         {

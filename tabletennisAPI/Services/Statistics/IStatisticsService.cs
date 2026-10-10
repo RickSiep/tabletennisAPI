@@ -4,5 +4,5 @@ namespace TableTennisAPI.Services.Statistics;
 
 public interface IStatisticsService
 {
-    public Task<DashboardStatsDto> GetDashboardStatsAsync();
+    public Task<DashboardStatsDto> GetDashboardStatsAsync(int userId);
 }
